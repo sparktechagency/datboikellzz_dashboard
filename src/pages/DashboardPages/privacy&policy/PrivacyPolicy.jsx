@@ -27,7 +27,6 @@ const PrivacyPolicy = () => {
   //   }
   // };
 
-
   // if (isLoading) {
   //   return (
   //     <div>
@@ -37,7 +36,7 @@ const PrivacyPolicy = () => {
   //           <div
   //             key={x}
   //             className="bg-gray-300 h-3 w-full animate-pulse"
-              
+
   //           ></div>
   //         ))}
   //       </div>
@@ -60,6 +59,9 @@ const PrivacyPolicy = () => {
           justifyContent: 'center',
           alignItems: 'center',
           marginTop: '10px',
+          backgroundColor: 'var(--bg-green-high)',
+          color: '#fff',
+          height: 40,
         }}
         className="max-w-48 sidebar-button-black"
       >

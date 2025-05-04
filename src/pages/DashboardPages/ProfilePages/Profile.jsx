@@ -39,16 +39,18 @@ const Profile = () => {
           >
             <img
               className="w-full h-full object-cover rounded-full"
-              src={'https://wallpapercat.com/w/full/b/9/2/2144467-1920x1080-desktop-full-hd-hinata-naruto-wallpaper.jpg'}
+              src={
+                'https://wallpapercat.com/w/full/b/9/2/2144467-1920x1080-desktop-full-hd-hinata-naruto-wallpaper.jpg'
+              }
               // src={profileImage}
               alt="Profile"
             />
             {tab === 'Edit Profile' && (
               <button
                 aria-label="Edit Profile Picture"
-                className="absolute right-0 bottom-2 rounded-full bg-[] p-2"
+                className="absolute right-0 bottom-2 rounded-full bg-[var(--bg-green-high)]  p-2"
               >
-                <FaCameraRetro size={12} className=" cursor-pointer" />
+                <FaCameraRetro size={12} className="text-white cursor-pointer" />
               </button>
             )}
 

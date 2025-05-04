@@ -55,11 +55,20 @@ function FrequentlyAskedQuestions() {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between !w-full mb-12">
-        <PageHeading title={'FAQ'} />
-        <Button onClick={handleAddClick} type="primary">
-          <FaPlus />
-          Add FAQ
-        </Button>
+        <div className="w-full bg-white flex items-center justify-between pr-12 shadow-sm rounded-lg">
+          <PageHeading title={'FAQ'} />
+          <Button
+            style={{
+              width: '200px',
+              backgroundColor: 'var(--bg-green-high)',
+              color: 'var(--text-light)',
+            }}
+            onClick={handleAddClick}
+          >
+            <FaPlus />
+            Add FAQ
+          </Button>
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
         {faqs.map((item, index) => (

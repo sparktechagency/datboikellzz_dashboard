@@ -18,13 +18,13 @@ function ManagePost() {
 
   return (
     <div>
-      <PageHeading title="Manage post" />
-      <div className="flex mb-4 items-center justify-end w-full">
+      <div className="flex mb-4 items-center justify-between bg-white shadow-sm pr-12 rounded-md w-full">
+        <PageHeading title="Manage post" />
         <Button
           onClick={showModal}
           className="!bg-[var(--bg-green-high)] !text-[var(--color-white)]"
         >
-          <CiCirclePlus /> Add New Post
+          <CiCirclePlus size={20} /> Add New Post
         </Button>
       </div>
       <PostTable />

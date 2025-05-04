@@ -64,11 +64,14 @@ const TermsCondition = () => {
           justifyContent: 'center',
           alignItems: 'center',
           marginTop: '10px',
+          backgroundColor: 'var(--bg-green-high)',
+          color: '#fff',
+          height: 40,
         }}
         className="max-w-48 sidebar-button-black"
       >
         {/* {isSubmitting ? 'Submitting...' : 'Submit'} */}
-        submit
+        Submit
       </Button>
     </>
   );

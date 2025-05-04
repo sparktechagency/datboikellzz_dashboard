@@ -64,7 +64,7 @@ const ProfileEdit = ({
             style={{
               width: '100%',
               height: 40,
-              border: 'none',
+              border: '1px solid #222',
               borderRadius: '5px',
               color: '#111',
               backgroundColor: '#fff',
@@ -83,7 +83,7 @@ const ProfileEdit = ({
             style={{
               width: '100%',
               height: 40,
-              border: 'none',
+              border: '1px solid #222',
               borderRadius: '5px',
               color: '#111',
               backgroundColor: '#fff',
@@ -105,7 +105,7 @@ const ProfileEdit = ({
             style={{
               width: '100%',
               height: 40,
-              border: 'none',
+              border: '1px solid #222',
               borderRadius: '5px',
               color: '#111',
               backgroundColor: '#fff',
