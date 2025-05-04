@@ -7,12 +7,12 @@ import ResetPassword from '../pages/Auth/ResetPassword';
 import Dashboard from '../Layout/Dashboard';
 import DashboardHome from '../pages/DashboardPages/DashboardHome/DashboardHome';
 import UsersManage from '../pages/DashboardPages/UsersManage/UsersManage';
-import EarningPage from '../pages/DashboardPages/EarningManage/EarningPage';
 import TermsCondition from '../pages/DashboardPages/terms&condition/TermsCondition';
 import PrivateRoute from './PrivetRoute';
 import PrivacyPolicy from '../pages/DashboardPages/privacy&policy/PrivacyPolicy';
 import Profile from '../pages/DashboardPages/ProfilePages/Profile';
 import FrequentlyAskedQuestions from '../pages/DashboardPages/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
+import ManagePost from '../pages/DashboardPages/manage-post/ManagePost';
 
 export const Routes = createBrowserRouter([
   {
@@ -33,7 +33,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/manage-post',
-        element: <UsersManage />,
+        element: <ManagePost />,
       },
       {
         path: '/terms-condition',
