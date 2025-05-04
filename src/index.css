@@ -218,9 +218,6 @@ body {
   width: 100% !important;
 }
 
-.ant-pagination-item-link {
-  color: white !important;
-}
 .ant-pagination-item a {
   color: black !important;
 }
@@ -248,12 +245,14 @@ body {
   margin-top: 20px !important;
 }
 .ant-pagination-item-link {
-  border-radius: 100% !important;
+  border-radius: 10px !important;
   background-color: white !important;
   color: #111 !important;
 }
 .ant-pagination-item-active {
-  background-color: #9333ea !important;
+  background-color: #022c22 !important;
+}
+.ant-pagination-item-active a {
   color: white !important;
 }
 .car_upload .ant-upload {

@@ -1,17 +1,19 @@
 import { Avatar, Space, Table, Tabs, Button, Modal } from 'antd';
 import React, { useState } from 'react';
-import {  EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { FaEye } from 'react-icons/fa';
+import AddTipModal from '../../../pages/DashboardPages/manage-post/AddtipModal';
+import toast from 'react-hot-toast';
 
 function PostTable() {
   const posts = [
     {
       key: '1',
       postInfo: 'Los Angeles Lakers —vs— Golden State Warriors',
-      img: 'https://xsgames.co/randomusers/avatar.php?g=male',
+      img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
       postedBy: {
         name: 'Floyd Miles',
-        img: 'https://xsgames.co/randomusers/avatar.php?g=male',
+        img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
         email: 'danten@mail.ru',
       },
       inoformation: {
@@ -30,10 +32,10 @@ function PostTable() {
     {
       key: '2',
       postInfo: 'Chicago Bulls —vs— Brooklyn Nets',
-      img: 'https://xsgames.co/randomusers/avatar.php?g=male',
+      img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
       postedBy: {
         name: 'Marvin McKinney',
-        img: 'https://xsgames.co/randomusers/avatar.php?g=male',
+        img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
         email: 'redaniel@gmail.com',
       },
       inoformation: {
@@ -52,10 +54,10 @@ function PostTable() {
     {
       key: '3',
       postInfo: 'Real Madrid —vs— FC Barcelona',
-      img: 'https://xsgames.co/randomusers/avatar.php?g=male',
+      img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
       postedBy: {
         name: 'Floyd Miles',
-        img: 'https://xsgames.co/randomusers/avatar.php?g=male',
+        img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
         email: 'danten@mail.ru',
       },
       inoformation: {
@@ -73,6 +75,7 @@ function PostTable() {
     },
   ];
 
+  const [detils, setDetails] = useState(false);
   const [filteredPosts, setFilteredPosts] = useState(posts);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -95,6 +98,9 @@ function PostTable() {
         setFilteredPosts(posts);
     }
   };
+  const handleCanceldetails = () => {
+    setDetails(false);
+  };
 
   const handleEyeClick = (post) => {
     setSelectedPost(post);
@@ -113,7 +119,9 @@ function PostTable() {
       key: 'postInfo',
       render: (text, record) => (
         <div className="flex items-center">
-          <Avatar src={record.img} />
+          <div className="w-24 h-14 overflow-hidden rounded-md  bg-[var(--bg-green-high)]">
+            <img src={record.img} alt={record.postInfo} />
+          </div>
           <div className="ml-3">
             <p className="text-[var(--bg-green-high)] font-bold">{text}</p>
           </div>
@@ -170,12 +178,12 @@ function PostTable() {
           <Button
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<EditOutlined />}
-            onClick={() => console.log('Edit:', record.key)}
+            onClick={() => setDetails(true)}
           />
           <Button
             className="!border-red-500 !text-red-500"
             icon={<DeleteOutlined />}
-            onClick={() => console.log('Delete:', record.key)}
+            onClick={() => toast.success('Post deleted successfully')}
           />
         </Space>
       ),
@@ -194,7 +202,7 @@ function PostTable() {
         columns={columns}
         dataSource={filteredPosts}
         rowKey="key"
-        pagination={false}
+        pagination={true}
         bordered
       />
 
@@ -208,25 +216,32 @@ function PostTable() {
               key="delete"
               className="!w-full"
               danger
-              onClick={() => console.log('Delete Post')}
+              onClick={() => {
+                toast.success('Post deleted successfully');
+                handleCancel();
+              }}
             >
               Delete Post
             </Button>
             <Button
               key="modify"
               className="!w-full !bg-[var(--bg-green-high)] !text-white"
-              onClick={() => console.log('Modify Post')}
+              onClick={() => {
+                setDetails(true);
+                handleCancel();
+              }}
             >
               Modify Post
             </Button>
           </div>
         }
       >
-        <div className="flex items-center mb-3">
-          <Avatar src={selectedPost?.img} />
-          <div className="ml-3">
-            <h2 className="font-bold">{selectedPost?.postedBy?.name}</h2>
-            <p>{selectedPost?.postedBy?.email}</p>
+        <div className="flex items-start flex-col mb-3">
+          <div className="w-full h-48 overflow-hidden rounded-md">
+            <img src={selectedPost?.img} />
+          </div>
+          <div className="mt-3 text-2xl">
+            <h2 className="font-bold">{selectedPost?.postInfo}</h2>
           </div>
         </div>
         <h3>Information</h3>
@@ -263,6 +278,11 @@ function PostTable() {
           </div>
         </div>
       </Modal>
+      <AddTipModal
+        visible={detils}
+        onCancel={handleCanceldetails}
+        details={true}
+      />
     </div>
   );
 }

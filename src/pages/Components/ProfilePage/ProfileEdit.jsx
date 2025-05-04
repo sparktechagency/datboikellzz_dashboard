@@ -1,43 +1,48 @@
 import React from 'react';
 import { Button, Form, Spin } from 'antd';
 import toast from 'react-hot-toast';
-import { useUpdateProfileDataMutation } from '../../../Redux/services/profileApis';
+// import { useUpdateProfileDataMutation } from '../../../Redux/services/profileApis';
 
-const ProfileEdit = ({ image, data }) => {
+const ProfileEdit = ({
+  image = 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Wikipe-tan_full_length.png',
+  data = {
+    name: '',
+    phoneNumber: '',
+    email: '',
+  },
+}) => {
   const [form] = Form.useForm();
-  const [setProfileUpdate, { isLoading: isProfileUpdate }] =
-    useUpdateProfileDataMutation();
+  // const [setProfileUpdate, { isLoading: isProfileUpdate }] =
+  //   useUpdateProfileDataMutation();
   const onFinish = async (values) => {
-    console.log(values);
     const updateData = {
       name: values?.name,
       phoneNumber: values?.phoneNumber,
     };
     console.log(updateData);
-    const formData = new FormData();
-    Object.keys(updateData).forEach((key) => {
-      formData.append(key, updateData[key]);
-    });
+    // const formData = new FormData();
+    // Object.keys(updateData).forEach((key) => {
+    //   formData.append(key, updateData[key]);
+    // });
 
-    if (image === null) {
-      formData.delete('profile_image', image);
-    } else {
-      formData.append('profile_image', image);
-    }
+    // if (image === null) {
+    //   formData.delete('profile_image', image);
+    // } else {
+    //   formData.append('profile_image', image);
+    // }
 
-    try {
-      const res = await setProfileUpdate(formData);
-      if (res?.data?.success) {
-        toast.success(res?.data?.message || 'Profile updated successfully');
-      }
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-    }
+    // try {
+    //   const res = await setProfileUpdate(formData);
+    //   if (res?.data?.success) {
+    //     toast.success(res?.data?.message || 'Profile updated successfully');
+    //   }
+    // } catch (error) {
+    //   console.error('Failed to update profile:', error);
+    // }
   };
-  console.log(data);
   return (
     <div>
-      <p className="text-[#3872F0] text-3xl text-center">Edit Profile</p>
+      <p className="text-[var(--bg-green-high)] text-3xl text-center">Edit Your Profile</p>
       <Form
         className="text-white"
         requiredMark={false}
@@ -112,12 +117,17 @@ const ProfileEdit = ({ image, data }) => {
         </Form.Item>
 
         <Button
-          type="primary"
           htmlType="submit"
-          disabled={isProfileUpdate}
-          className="!bg-[#3872F0] !hover:bg-[#3872F0] active:bg-[#3872F0] w-full"
+          // disabled={isProfileUpdate}
+          style={{
+            backgroundColor: 'var(--bg-green-high)',
+            color: '#fff',
+            height: 40,
+          }}
+          className="!bg-[var(--bg-green-high] !hover:bg-[var(--bg-green-low] w-full"
         >
-          {isProfileUpdate ? <Spin /> : 'Update Profile'}
+          {/* {isProfileUpdate ? <Spin /> : 'Update Profile'} */}
+          Update Profile
         </Button>
       </Form>
     </div>

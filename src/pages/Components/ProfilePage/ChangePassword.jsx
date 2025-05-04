@@ -4,9 +4,9 @@ import { Button, Form, Input, message, Spin } from 'antd';
 
 const ChangePassword = () => {
   const [form] = Form.useForm();
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // const [showOldPassword, setShowOldPassword] = useState(false);
+  // const [showNewPassword, setShowNewPassword] = useState(false);
+  // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // const [setNewPassword, { isLoading: isNewPassChange }] =
   //   usePatchNewPasswordMutation({});
 
@@ -32,7 +32,7 @@ const ChangePassword = () => {
       layout="vertical"
     >
       <Form.Item
-        type={showOldPassword ? 'text' : 'password'}
+        // type={showOldPassword ? 'text' : 'password'}
         name="oldPassword"
         label={<span className="text-black">Old Password</span>}
         rules={[
@@ -108,10 +108,15 @@ const ChangePassword = () => {
         type="primary"
         htmlType="submit"
         // disabled={isNewPassChange}
-        className="!bg-[#3872F0] !hover:bg-[#3872F0] active:bg-[#3872F0] w-full"
+        style={{
+          backgroundColor: 'var(--bg-green-high)',
+          color: '#fff',
+          height: 40,
+        }}
+        className=" w-full"
       >
         {/* {isNewPassChange ? <Spin /> : "Update password"} */}
-        update pass
+        update password
       </Button>
     </Form>
   );

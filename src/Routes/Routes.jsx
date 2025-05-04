@@ -14,6 +14,7 @@ import Profile from '../pages/DashboardPages/ProfilePages/Profile';
 import FrequentlyAskedQuestions from '../pages/DashboardPages/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
 import ManagePost from '../pages/DashboardPages/manage-post/ManagePost';
 
+
 export const Routes = createBrowserRouter([
   {
     path: '/',
@@ -31,6 +32,7 @@ export const Routes = createBrowserRouter([
         path: '/user-management',
         element: <UsersManage />,
       },
+
       {
         path: '/manage-post',
         element: <ManagePost />,

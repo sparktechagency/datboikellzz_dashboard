@@ -85,6 +85,78 @@ const AllUsers = ({ recentUser }) => {
       isBlocked: true,
       avatar: null,
     },
+    {
+      key: '7',
+      id: '7',
+      name: 'Lana Kiehn',
+      contactNumber: '234-567-8901',
+      email: 'lana.kiehn@example.com',
+      joined: '2025-01-11',
+      status: true,
+      role: 'Gold User',
+      isBlocked: false,
+      avatar: null,
+    },
+    {
+      key: '8',
+      id: '8',
+      name: 'Sammy Bednar',
+      contactNumber: '345-678-9012',
+      email: 'sammy.bednar@example.com',
+      joined: '2025-01-12',
+      status: false,
+      role: 'Bronze User',
+      isBlocked: true,
+      avatar: null,
+    },
+    {
+      key: '9',
+      id: '9',
+      name: 'Kory Spinka',
+      contactNumber: '456-789-0123',
+      email: 'kory.spinka@example.com',
+      joined: '2025-01-13',
+      status: true,
+      role: 'Silver User',
+      isBlocked: false,
+      avatar: null,
+    },
+    {
+      key: '10',
+      id: '10',
+      name: 'Rosa Kertzmann',
+      contactNumber: '567-890-1234',
+      email: 'rosa.kertzmann@example.com',
+      joined: '2025-01-14',
+      status: false,
+      role: 'Gold User',
+      isBlocked: true,
+      avatar: null,
+    },
+    {
+      key: '11',
+      id: '11',
+      name: 'Hollis Parisian',
+      contactNumber: '678-901-2345',
+      email: 'hollis.parisian@example.com',
+      joined: '2025-01-15',
+      status: true,
+      role: 'Bronze User',
+      isBlocked: false,
+      avatar: null,
+    },
+    {
+      key: '12',
+      id: '12',
+      name: 'Kip Stark',
+      contactNumber: '789-012-3456',
+      email: 'kip.stark@example.com',
+      joined: '2025-01-16',
+      status: false,
+      role: 'Silver User',
+      isBlocked: true,
+      avatar: null,
+    },
   ];
 
   const handleUnblockUser = async () => {
@@ -218,11 +290,7 @@ const AllUsers = ({ recentUser }) => {
   return (
     <div className="w-full overflow-x-auto">
       {recentUser !== true && (
-        <Tabs
-          defaultActiveKey="1"
-          type="card"
-          onChange={handleTabChange}
-        >
+        <Tabs defaultActiveKey="1" type="card" onChange={handleTabChange}>
           <Tabs.TabPane tab="All Users" key="1" />
           <Tabs.TabPane tab="Gold User" key="2" />
           <Tabs.TabPane tab="Silver User" key="3" />
@@ -235,7 +303,7 @@ const AllUsers = ({ recentUser }) => {
         columns={columns}
         dataSource={filteredUsers}
         rowKey="id"
-        pagination={false}
+        pagination={true}
         bordered
       />
 

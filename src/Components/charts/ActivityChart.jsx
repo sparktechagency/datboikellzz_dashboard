@@ -14,7 +14,7 @@ const ActivityStatisticsChart = () => {
 
   const totalValue = datas.reduce((sum, item) => sum + item.value, 0);
 
-  const COLORS = ['#166534', '#059669'];
+  const COLORS = ['#35564E', '#059669'];
 
   return (
     <div className="bg-purple-50 rounded-xl p-6 w-full h-[450px]">
@@ -76,7 +76,10 @@ const ActivityStatisticsChart = () => {
               ></div>
               <span className="text-xl text-gray-800">{entry.name}</span>
             </div>
-            <div className="bg-[#022c22a9] min-w-[100px] flex items-center justify-center rounded-lg px-4 py-1 text-xl text-white">
+            <div
+              style={{ backgroundColor: COLORS[index % COLORS.length] }}
+              className="min-w-[100px] flex items-center justify-center rounded-lg px-4 py-1 text-xl text-white"
+            >
               {entry.value || 0}
             </div>
           </div>

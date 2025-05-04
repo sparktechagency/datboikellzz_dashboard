@@ -3,16 +3,21 @@ import { Avatar, Dropdown, Image, Menu } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
 import logo from '../../assets/icons/DUDU.svg';
-import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
-import { imageUrl } from '../../Utils/server';
+// import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
+// import { imageUrl } from '../../Utils/server';
 function Header() {
-  const { data: profileData, isLoading } = useGetProfileDataQuery({});
+  // const { data: profileData, isLoading } = useGetProfileDataQuery({});
 
   const user = {
-    photoURL: imageUrl(profileData?.data?.profile_image),
-    displayName: profileData?.data?.name,
-    email: profileData?.data?.email,
+    photoURL: 'https://wallpapercat.com/w/full/b/9/2/2144467-1920x1080-desktop-full-hd-hinata-naruto-wallpaper.jpg',
+    displayName: 'Hinata',
+    email: 'hinata@yandex',
   };
+  // const user = {
+  //   photoURL: imageUrl(profileData?.data?.profile_image),
+  //   displayName: profileData?.data?.name,
+  //   email: profileData?.data?.email,
+  // };
 
   const handleSignOut = () => {
     console.log('sign out');
