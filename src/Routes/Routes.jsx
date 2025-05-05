@@ -13,7 +13,8 @@ import PrivacyPolicy from '../pages/DashboardPages/privacy&policy/PrivacyPolicy'
 import Profile from '../pages/DashboardPages/ProfilePages/Profile';
 import FrequentlyAskedQuestions from '../pages/DashboardPages/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
 import ManagePost from '../pages/DashboardPages/manage-post/ManagePost';
-
+import EarningPage from '../pages/DashboardPages/EarningManage/EarningPage';
+import ManageAdmins from '../pages/DashboardPages/Manage_Admins/ManageAdmins';
 
 export const Routes = createBrowserRouter([
   {
@@ -32,10 +33,13 @@ export const Routes = createBrowserRouter([
         path: '/user-management',
         element: <UsersManage />,
       },
-
       {
         path: '/manage-post',
         element: <ManagePost />,
+      },
+      {
+        path: '/manage-admins',
+        element: <ManageAdmins />,
       },
       {
         path: '/terms-condition',
@@ -44,6 +48,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/privacy-policy',
         element: <PrivacyPolicy />,
+      },
+      {
+        path: '/earnings',
+        element: <EarningPage />,
       },
       {
         path: '/profile-setting',
