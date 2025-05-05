@@ -1,30 +1,31 @@
-import React, { useState } from 'react';
-import { Avatar, Badge, Button, Dropdown, Image, Menu } from 'antd';
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link } from 'react-router';
-import logo from '../../assets/icons/DUDU.svg';
-import { IoMdNotificationsOutline } from 'react-icons/io';
-import Notify from '../../pages/Components/Notify_components/Notify';
+import React, { useState } from "react";
+import { Avatar, Badge, Button, Dropdown, Image, Menu } from "antd";
+import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
+import { Link } from "react-router";
+import logo from "../../assets/icons/DUDU.svg";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import Notify from "../../pages/Components/Notify_components/Notify";
 
 function Header() {
   const [notifications, setNotifications] = useState(
     Array.from({ length: 5 }).map((_, i) => ({
       id: i,
       message: `Notification ${i + 1}`,
-      date: '2025-04-24 • 09:20 AM',
+      date: "2025-04-24 • 09:20 AM",
     }))
   );
 
   const user = {
     photoURL:
-      'https://wallpapercat.com/w/full/b/9/2/2144467-1920x1080-desktop-full-hd-hinata-naruto-wallpaper.jpg',
-    displayName: 'Hinata',
-    email: 'hinata@yandex',
+      "https://wallpapercat.com/w/full/b/9/2/2144467-1920x1080-desktop-full-hd-hinata-naruto-wallpaper.jpg",
+    displayName: "Hinata Hyuga",
+    email: "hinata@yandex",
+    role: "admin",
   };
 
   const handleSignOut = () => {
-    console.log('sign out');
-    window.location.href = '/login';
+    console.log("sign out");
+    window.location.href = "/login";
   };
 
   const handleRemoveNotification = (index) => {
@@ -70,21 +71,29 @@ function Header() {
   );
 
   return (
-    <div className="px-10  h-16 flex justify-between items-center">
+    <div className="px-10 shadow-md mb-1 !z-[999] h-16 flex justify-between items-center">
       <img className="h-12" src={logo} alt="Dudu" />
       <div className="flex items-center gap-4 text-2xl">
         <Dropdown
           overlay={notification}
-          trigger={['click']}
+          trigger={["click"]}
           placement="bottomRight"
         >
           <Badge count={notifications.length}>
             <Button shape="circle" icon={<IoMdNotificationsOutline />} />
           </Badge>
         </Dropdown>
-        <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-          <Avatar size={40} src={user?.photoURL} className="cursor-pointer" />
-        </Dropdown>
+        <div className="flex items-center gap-3">
+          <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
+            <Avatar size={40} src={user?.photoURL} className="cursor-pointer" />
+          </Dropdown>
+          <div>
+            <h1 className="text-sm font-normal leading-3">{user?.displayName}</h1>
+            <div className="rounded-md flex items-center justify-center px-1 text-sm font-normal py-1 leading-3 bg-[#DCFCE7]">
+              {user?.role}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

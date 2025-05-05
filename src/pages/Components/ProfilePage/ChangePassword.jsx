@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, message, Spin } from 'antd';
+import React, { useState } from "react";
+import { Button, Form, Input, message, Spin } from "antd";
 // import { usePatchNewPasswordMutation } from '../../Redux/services/authApis';
 
 const ChangePassword = () => {
@@ -18,10 +18,10 @@ const ChangePassword = () => {
     };
     try {
       // await setNewPassword(ChangePasswordDatas).unwrap();
-      message.success('Password Changed successfully.');
+      message.success("Password Changed successfully.");
     } catch (error) {
-      console.error('Failed to change password:', error);
-      message.error('Failed to change Password.');
+      console.error("Failed to change password:", error);
+      message.error("Failed to change Password.");
     }
   };
   return (
@@ -38,19 +38,20 @@ const ChangePassword = () => {
         rules={[
           {
             required: true,
-            message: 'name is required',
+            message: "name is required",
           },
         ]}
       >
         <Input.Password
+          placeholder="*****************"
           style={{
-            width: '100%',
+            width: "100%",
             height: 40,
-            border: '1px solid #222',
-            borderRadius: '5px',
-            color: '#111',
-            backgroundColor: '#fff',
-            outline: 'none',
+            border: "1px solid #222",
+            borderRadius: "5px",
+            color: "#111",
+            backgroundColor: "#fff",
+            outline: "none",
           }}
           className=" p-2 w-full outline-none"
         />
@@ -62,19 +63,20 @@ const ChangePassword = () => {
         rules={[
           {
             required: true,
-            message: 'name is required',
+            message: "name is required",
           },
         ]}
       >
         <Input.Password
+          placeholder="*****************"
           style={{
-            width: '100%',
+            width: "100%",
             height: 40,
-            border: '1px solid #222',
-            borderRadius: '5px',
-            color: '#111',
-            backgroundColor: '#fff',
-            outline: 'none',
+            border: "1px solid #222",
+            borderRadius: "5px",
+            color: "#111",
+            backgroundColor: "#fff",
+            outline: "none",
           }}
           className=" p-2 w-full outline-none"
         />
@@ -86,19 +88,20 @@ const ChangePassword = () => {
         rules={[
           {
             required: true,
-            message: 'phone number is required',
+            message: "phone number is required",
           },
         ]}
       >
         <Input.Password
+          placeholder="*****************"
           style={{
-            width: '100%',
+            width: "100%",
             height: 40,
-            border: '1px solid #222',
-            borderRadius: '5px',
-            color: '#111',
-            backgroundColor: '#fff',
-            outline: 'none',
+            border: "1px solid #222",
+            borderRadius: "5px",
+            color: "#111",
+            backgroundColor: "#fff",
+            outline: "none",
           }}
           className=" p-2 w-full outline-none"
         />
@@ -109,8 +112,8 @@ const ChangePassword = () => {
         htmlType="submit"
         // disabled={isNewPassChange}
         style={{
-          backgroundColor: 'var(--bg-green-high)',
-          color: '#fff',
+          backgroundColor: "var(--bg-green-high)",
+          color: "#fff",
           height: 40,
         }}
         className=" w-full"

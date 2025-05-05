@@ -1,8 +1,8 @@
-import React from 'react';
-import { useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router';
-import { SidebarLink } from '../../Utils/Sideber/SidebarLink.jsx';
-const Sidebar = () => {
+import React from "react";
+import { useRef, useState } from "react";
+import { NavLink, useLocation } from "react-router";
+import { SidebarLink } from "../../Utils/Sideber/SidebarLink.jsx";
+const Sidebar = ({ role }) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -16,15 +16,15 @@ const Sidebar = () => {
           }}
           to={item?.path}
           style={{
-            width: '100%',
-            justifyContent: 'start',
-            paddingLeft: '14px',
-            paddingRight: '14px',
+            width: "100%",
+            justifyContent: "start",
+            paddingLeft: "14px",
+            paddingRight: "14px",
           }}
           className={`button-white w-full ${
             item?.path === location.pathname
-              ? '!bg-[var(--bg-green-high)] !text-[var(--text-light)]'
-              : '!bg-[var(--text-light)] !text-[var(--text-dark)]'
+              ? "!bg-[var(--bg-green-high)] !text-[var(--text-light)]"
+              : "hover:!bg-[var(--bg-green-nano)] !text-[var(--text-dark)]"
           } whitespace-nowrap links`}
           key={item?.path}
         >
@@ -39,7 +39,7 @@ const Sidebar = () => {
         ref={ref}
         className={`flex justify-start flex-col gap-1 transition-all rounded-md duration-300 overflow-hidden`}
         style={{
-          height: open ? `${ref.current.scrollHeight}px` : '0',
+          height: open ? `${ref.current.scrollHeight}px` : "0",
         }}
       ></div>
     </div>

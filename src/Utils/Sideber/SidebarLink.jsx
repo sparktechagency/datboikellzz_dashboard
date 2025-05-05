@@ -1,4 +1,3 @@
-import { icons } from 'antd/es/image/PreviewGroup';
 import React from 'react';
 
 export const SidebarLink = [
