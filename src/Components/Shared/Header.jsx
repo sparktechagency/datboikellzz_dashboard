@@ -1,13 +1,19 @@
-import React from 'react';
-import { Avatar, Badge, Button, Card, Dropdown, Image, Menu } from 'antd';
+import React, { useState } from 'react';
+import { Avatar, Badge, Button, Dropdown, Image, Menu } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
 import logo from '../../assets/icons/DUDU.svg';
 import { IoMdNotificationsOutline } from 'react-icons/io';
-// import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
-// import { imageUrl } from '../../Utils/server';
+import Notify from '../../pages/Components/Notify_components/Notify';
+
 function Header() {
-  // const { data: profileData, isLoading } = useGetProfileDataQuery({});
+  const [notifications, setNotifications] = useState(
+    Array.from({ length: 5 }).map((_, i) => ({
+      id: i,
+      message: `Notification ${i + 1}`,
+      date: '2025-04-24 • 09:20 AM',
+    }))
+  );
 
   const user = {
     photoURL:
@@ -15,15 +21,16 @@ function Header() {
     displayName: 'Hinata',
     email: 'hinata@yandex',
   };
-  // const user = {
-  //   photoURL: imageUrl(profileData?.data?.profile_image),
-  //   displayName: profileData?.data?.name,
-  //   email: profileData?.data?.email,
-  // };
 
   const handleSignOut = () => {
     console.log('sign out');
     window.location.href = '/login';
+  };
+
+  const handleRemoveNotification = (index) => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((_, i) => i !== index)
+    );
   };
 
   const menu = (
@@ -51,26 +58,13 @@ function Header() {
 
   const notification = (
     <Menu className="!w-[500px]">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Menu.Item key={i}>
-          <Card>
-            <div className="flex items-start gap-2">
-              <Avatar
-                size={40}
-                src={user?.photoURL}
-                className="cursor-pointer !min-w-12 !min-h-12"
-              />
-              <div>
-                <h2>New User Joined</h2>
-                <h3>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Libero voluptatem porro aperiam odit fugiat? Quod?
-                </h3>
-                <p className="text-xs opacity-75">2025-04-24 • 09:20 AM</p>
-              </div>
-            </div>
-          </Card>
-        </Menu.Item>
+      {notifications.map((notif, i) => (
+        <Notify
+          key={notif.id}
+          i={i}
+          user={user}
+          onRemove={handleRemoveNotification}
+        />
       ))}
     </Menu>
   );
@@ -78,13 +72,13 @@ function Header() {
   return (
     <div className="px-10  h-16 flex justify-between items-center">
       <img className="h-12" src={logo} alt="Dudu" />
-      <div className="flex items-center  gap-4 text-2xl">
+      <div className="flex items-center gap-4 text-2xl">
         <Dropdown
           overlay={notification}
           trigger={['click']}
           placement="bottomRight"
         >
-          <Badge count={1}>
+          <Badge count={notifications.length}>
             <Button shape="circle" icon={<IoMdNotificationsOutline />} />
           </Badge>
         </Dropdown>

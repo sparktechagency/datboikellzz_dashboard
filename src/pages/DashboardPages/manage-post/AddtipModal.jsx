@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Input, Select, Form, Upload, message } from 'antd';
+import { Modal, Button, Input, Select, Form, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
 

@@ -127,7 +127,7 @@ function FrequentlyAskedQuestions() {
 
           <Form.Item>
             <div className="flex items-center justify-end">
-              <Button type="primary" htmlType="submit">
+              <Button className='!bg-[var(--bg-green-high)] !text-white' htmlType="submit">
                 {editingIndex !== null ? 'Update FAQ' : 'Save FAQ'}
               </Button>
             </div>

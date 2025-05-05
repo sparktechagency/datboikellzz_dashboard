@@ -15,6 +15,7 @@ import FrequentlyAskedQuestions from '../pages/DashboardPages/FrequentlyAskedQue
 import ManagePost from '../pages/DashboardPages/manage-post/ManagePost';
 import EarningPage from '../pages/DashboardPages/EarningManage/EarningPage';
 import ManageAdmins from '../pages/DashboardPages/Manage_Admins/ManageAdmins';
+import Subscription from '../pages/DashboardPages/Subscription/Subscription';
 
 export const Routes = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/manage-post',
         element: <ManagePost />,
+      },
+      {
+        path: '/subscription',
+        element: <Subscription />,
       },
       {
         path: '/manage-admins',
