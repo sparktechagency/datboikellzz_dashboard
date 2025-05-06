@@ -3,7 +3,7 @@ import { Form, Input, Button, Typography, Card } from 'antd';
 import { EyeTwoTone } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { Link } from 'react-router';
-// import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import BrandLogo from '../../Components/Shared/BrandLogo';
 import Logo from '../../assets/icons/DUDU.svg';
 // import { useLoginUserMutation } from '../../Redux/services/AuthApis/authApis';
@@ -11,12 +11,13 @@ import Logo from '../../assets/icons/DUDU.svg';
 
 const { Title, Text } = Typography;
 const Login = () => {
-  // const route = useNavigate();
+  const route = useNavigate();
   // const [loginUser, { isLoading: isSubmitting }] = useLoginUserMutation();
 
   const onFinish = async (values) => {
     const data = { email: values.email, password: values.password };
-    alert(JSON.stringify(data));
+    console.log(data);
+    route('/');
     // try {
     //   localStorage.removeItem('accessToken');
     //   const res = await loginUser({ data });

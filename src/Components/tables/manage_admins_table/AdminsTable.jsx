@@ -10,12 +10,17 @@ import { FaRegCircle } from 'react-icons/fa6';
 import { IoIosWarning } from 'react-icons/io';
 import toast from 'react-hot-toast';
 import Success from '../../Shared/Success';
+import CreateNewAdmin from './CreateNewAdmin';
+import UpdateAdminInformatio from './UpdateAdminInformatio';
 
 const AdminsTable = () => {
   const [showModal, setShowModal] = useState();
   const [isUserBlock, setUserBlock] = useState(false);
   const [blockUserId, setBlockUserId] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
+  const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
+  const [selectAdmin, setSelectAdmin] = useState(null);
   const admins = [
     {
       key: '1',
@@ -119,6 +124,10 @@ const AdminsTable = () => {
             size="small"
           />
           <Button
+            onClick={() => {
+              setSelectAdmin(record.key);
+              setUpdateAdminInfo(true);
+            }}
             className="!bg-[var(--bg-green-high)]"
             type="default"
             icon={<EditOutlined className="!text-white" />}
@@ -148,7 +157,6 @@ const AdminsTable = () => {
     if (!blockUserId) {
       return toast.error('Please select a user to block');
     }
-    // toast.success('User successfully unblocked');
     setShowSuccessModal(true);
     setShowModal(false);
   };
@@ -165,6 +173,7 @@ const AdminsTable = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Admins</h1>
         <Button
+          onClick={() => setCreateNewAdminModal(true)}
           icon={<PlusOutlined />}
           className="!bg-[var(--bg-green-high)] !text-white"
         >
@@ -184,6 +193,7 @@ const AdminsTable = () => {
       />
       <Modal
         open={showModal}
+        centered
         onCancel={() => setShowModal(false)}
         footer={null}
       >
@@ -208,6 +218,7 @@ const AdminsTable = () => {
       </Modal>
       <Modal
         open={showSuccessModal}
+        centered
         closeIcon={false}
         okButtonProps={{
           style: {
@@ -224,7 +235,7 @@ const AdminsTable = () => {
               : 'User successfully blocked'
           }
         />
-        <div className='flex items-center justify-center w-full'>
+        <div className="flex items-center justify-center w-full">
           <Button
             type="primary"
             className="!bg-[var(--bg-green-high)] !text-white"
@@ -233,6 +244,15 @@ const AdminsTable = () => {
             Ok
           </Button>
         </div>
+      </Modal>
+      <Modal open={createNewAdminModal} footer={null} closeIcon={false}>
+        <CreateNewAdmin closeModal={setCreateNewAdminModal} />
+      </Modal>
+      <Modal centered open={updateAdminInfo} footer={null} closeIcon={false}>
+        <UpdateAdminInformatio
+          id={selectAdmin}
+          closeModal={setUpdateAdminInfo}
+        />
       </Modal>
     </div>
   );

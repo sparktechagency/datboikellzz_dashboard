@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckIcon, PlusIcon, XMarkIcon, PencilIcon } from './icons.jsx';
-
+import toast from 'react-hot-toast';
+import { CiWarning } from 'react-icons/ci';
 export default function SubscriptionManagement() {
   const initialPlans = {
     bronze: {
@@ -105,8 +106,11 @@ export default function SubscriptionManagement() {
 
   // Add a new feature
   const handleAddFeature = () => {
-    if (newFeature.trim() === '') return;
-
+    if (newFeature.trim() === '')
+      return toast.error('please add a valid feature');
+    if (tempFeatures.length >= 6) {
+      return toast.error('Feature limit reached.');
+    }
     const newId =
       tempFeatures.length > 0
         ? Math.max(...tempFeatures.map((f) => f.id)) + 1
@@ -176,37 +180,38 @@ export default function SubscriptionManagement() {
           >
             <div className="border-2 rounded-lg shadow-sm">
               <div className="p-6 border-b">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h2 className="text-2xl font-bold">
-                      {plans[planKey].displayName}
-                    </h2>
-                    <p className="text-gray-500">
-                      Subscription details and features
-                    </p>
+                <div>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h2 className="text-2xl font-bold">
+                        {plans[planKey].displayName}
+                      </h2>
+                      <p className="text-gray-500">
+                        Subscription details and features
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleOpenPriceModal}
+                      className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
+                    >
+                      <PencilIcon className="mr-2 h-4 w-4" />
+                      Update Price
+                    </button>
                   </div>
-                  <button
-                    onClick={handleOpenPriceModal}
-                    className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
-                  >
-                    <PencilIcon className="mr-2 h-4 w-4" />
-                    Update Price
-                  </button>
+                  <div className="mb-6">
+                    <span className="text-[#022C22] text-4xl font-bold">
+                      $ {plans[planKey].price}
+                    </span>
+                    <span className="text-gray-500 ml-1">
+                      /{plans[planKey].period}
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="p-6">
-                <div className="mb-6">
-                  <span className="text-[#022C22] text-4xl font-bold">
-                    UM {plans[planKey].price}
-                  </span>
-                  <span className="text-gray-500 ml-1">
-                    /{plans[planKey].period}
-                  </span>
-                </div>
-
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-lg">Features</h3>
+                    <h3 className="text-2xl font-bold">Features</h3>
                     <button
                       onClick={handleOpenFeatureModal}
                       className="border border-[#022C22] text-[#022C22]  cursor-pointer hover:bg-[#022C22] hover:!text-white px-4 py-2 rounded-md flex items-center"
@@ -267,7 +272,7 @@ export default function SubscriptionManagement() {
 
               <div className="space-y-2">
                 <label htmlFor="price" className="block text-sm font-medium">
-                  Price (UM)
+                  Price ($)
                 </label>
                 <input
                   id="price"
@@ -279,7 +284,7 @@ export default function SubscriptionManagement() {
                 />
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label htmlFor="period" className="block text-sm font-medium">
                   Billing Period
                 </label>
@@ -292,7 +297,7 @@ export default function SubscriptionManagement() {
                   <option value="month">Monthly</option>
                   <option value="year">Yearly</option>
                 </select>
-              </div>
+              </div> */}
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -322,6 +327,10 @@ export default function SubscriptionManagement() {
               <p className="text-gray-500">
                 Add, edit, or remove features for the{' '}
                 {plans[selectedPlan]?.displayName}.
+              </p>
+              <p className="p-1 flex items-center animate-pulse gap-1 bg-yellow-100 rounded-md text-xs">
+                <CiWarning size={18} />
+                Please add the feature and save it.
               </p>
             </div>
 
