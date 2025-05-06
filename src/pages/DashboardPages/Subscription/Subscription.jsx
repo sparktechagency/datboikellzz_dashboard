@@ -1,291 +1,392 @@
-import React, { useState } from 'react';
-import { FaCheck } from 'react-icons/fa';
-import { Modal } from 'antd';
-import { RxCross2 } from 'react-icons/rx';
-import { GoPlus } from 'react-icons/go';
-import PageHeading from '../../../Components/Shared/PageHeading';
+import React, { useState, useEffect } from 'react';
+import { CheckIcon, PlusIcon, XMarkIcon, PencilIcon } from './icons.jsx';
 
-export default function Subscription() {
-  const [plan, setPlan] = useState('Bronze');
-  const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [updateModalOpen2, setUpdateModalOpen2] = useState(false);
-  const [subscriptionType, setSubscriptionType] = useState('');
-  const [newPrice, setNewPrice] = useState('49');
-
-  const plans = {
-    Bronze: {
-      name: 'Bronze Plan',
-      price: 'UM 2.99',
-      period: '/month',
+export default function SubscriptionManagement() {
+  const initialPlans = {
+    bronze: {
+      id: 'bronze',
+      name: 'bronze',
+      displayName: 'Bronze Plan',
+      price: '2.99',
+      period: 'month',
+      features: [
+        { id: 1, text: 'Priority listing' },
+        { id: 2, text: 'Customer messaging' },
+        { id: 3, text: 'Basic analytics' },
+        { id: 4, text: 'Email support' },
+      ],
     },
-    Silver: {
-      name: 'Silver Plan',
-      price: 'UM 24.99',
-      period: '/month',
+    silver: {
+      id: 'silver',
+      name: 'silver',
+      displayName: 'Silver Plan',
+      price: '24.99',
+      period: 'month',
+      features: [
+        { id: 1, text: 'Priority listing' },
+        { id: 2, text: 'Customer messaging' },
+        { id: 3, text: 'Advanced analytics' },
+        { id: 4, text: 'Premium support' },
+        { id: 5, text: 'Unlimited listings' },
+      ],
     },
-    Gold: {
-      name: 'Gold Plan',
-      price: 'UM 232.99',
-      period: '/year',
+    gold: {
+      id: 'gold',
+      name: 'gold',
+      displayName: 'Gold Plan',
+      price: '232.99',
+      period: 'year',
+      features: [
+        { id: 1, text: 'Priority listing' },
+        { id: 2, text: 'Customer messaging' },
+        { id: 3, text: 'Advanced analytics' },
+        { id: 4, text: 'Premium support' },
+        { id: 5, text: 'Unlimited listings' },
+        { id: 6, text: 'Dedicated account manager' },
+      ],
     },
   };
 
-  const features = [
-    'Priority listing',
-    'Customer messaging',
-    'Advanced analytics',
-    'Premium support',
-    'Customer messaging',
-  ];
+  const [selectedPlan, setSelectedPlan] = useState('bronze');
+  const [plans, setPlans] = useState(initialPlans);
 
-  const [cities, setCities] = useState([
-    { id: 1, name: '', features: '' },
-    { id: 2, name: '', features: '' },
-    { id: 3, name: '', features: '' },
-  ]);
+  // Modals state
+  const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
 
-  const handleAddCity = () => {
+  // Form states
+  const [newPrice, setNewPrice] = useState('');
+  const [newPeriod, setNewPeriod] = useState('');
+  const [newFeature, setNewFeature] = useState('');
+  const [tempFeatures, setTempFeatures] = useState([]);
+
+  // Update form values when selected plan changes
+  useEffect(() => {
+    if (plans[selectedPlan]) {
+      setNewPrice(plans[selectedPlan].price);
+      setNewPeriod(plans[selectedPlan].period);
+    }
+  }, [selectedPlan, plans]);
+
+  // Open price update modal
+  const handleOpenPriceModal = () => {
+    setNewPrice(plans[selectedPlan].price);
+    setNewPeriod(plans[selectedPlan].period);
+    setIsPriceModalOpen(true);
+  };
+
+  // Save updated price
+  const handleSavePrice = () => {
+    const updatedPlans = {
+      ...plans,
+      [selectedPlan]: {
+        ...plans[selectedPlan],
+        price: newPrice,
+        period: newPeriod,
+      },
+    };
+
+    setPlans(updatedPlans);
+    setIsPriceModalOpen(false);
+
+    // Log data for backend integration
+    console.log('Updated price data:', {
+      planId: selectedPlan,
+      price: newPrice,
+      period: newPeriod,
+    });
+  };
+
+  // Open feature management modal
+  const handleOpenFeatureModal = () => {
+    setTempFeatures([...plans[selectedPlan].features]);
+    setIsFeatureModalOpen(true);
+  };
+
+  // Add a new feature
+  const handleAddFeature = () => {
+    if (newFeature.trim() === '') return;
+
     const newId =
-      cities.length > 0 ? Math.max(...cities.map((city) => city.id)) + 1 : 1;
-    setCities([...cities, { id: newId, name: '', features: '' }]);
+      tempFeatures.length > 0
+        ? Math.max(...tempFeatures.map((f) => f.id)) + 1
+        : 1;
+
+    setTempFeatures([...tempFeatures, { id: newId, text: newFeature }]);
+    setNewFeature('');
   };
 
-  const handleClearCity = (id) => {
-    setCities(cities.filter((city) => city.id !== id));
+  // Remove a feature
+  const handleRemoveFeature = (id) => {
+    setTempFeatures(tempFeatures.filter((feature) => feature.id !== id));
   };
 
-  const showModal3 = () => {
-    setUpdateModalOpen(true);
-  };
-  const handleCancel3 = () => {
-    setUpdateModalOpen(false);
-    setUpdateModalOpen2(true);
-  };
-  const handleCancel5 = () => {
-    setUpdateModalOpen2(false);
-  };
+  // Save updated features
+  function handleSaveFeatures() {
+    const updatedPlans = {
+      ...plans,
+      [selectedPlan]: {
+        ...plans[selectedPlan],
+        features: [...tempFeatures],
+      },
+    };
+
+    setPlans(updatedPlans);
+    setIsFeatureModalOpen(false);
+
+    // Log data for backend integration
+    console.log('Updated features data:', {
+      planId: selectedPlan,
+      features: tempFeatures,
+    });
+  }
 
   return (
-    <div className="">
-      <div className="flex items-center justify-start mb-5">
-        <PageHeading title="Subscription Management" />
+    <div className="container mx-auto p-4 max-w-4xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Subscription Management</h1>
+        <p className="text-gray-500 mt-2">
+          Manage your subscription plans, pricing, and features
+        </p>
       </div>
-      <div className="flex justify-center items-center p-5">
-        <div className="relative rounded-2xl px-5 py-20 w-full max-w-xl text-center">
-          <h1 className="text-2xl font-bold text-center mb-6">
-            Management Your Subscription Plan
-          </h1>
 
-          {/* Plan Toggle */}
-          <div className="flex border-[1px] p-1  rounded-md mb-6">
+      {/* Plan Tabs */}
+      <div className="w-full">
+        <div className="grid grid-cols-3 mb-8 border rounded-md overflow-hidden">
+          {Object.keys(plans).map((planKey) => (
             <button
-              className={`flex-1 py-2 px-4 rounded-md text-center transition-colors ${
-                plan === 'Bronze' ? 'bg-[#022C22] !text-white shadow-sm' : ''
-              }`}
-              onClick={() => setPlan('Bronze')}
+              key={planKey}
+              onClick={() => setSelectedPlan(planKey)}
+              className={`py-3 px-4 text-center transition-colors ${
+                selectedPlan === planKey
+                  ? 'bg-[#022C22] !text-white'
+                  : 'bg-white hover:bg-gray-50'
+              } cursor-pointer`}
             >
-              Bronze
+              {planKey.charAt(0).toUpperCase() + planKey.slice(1)}
             </button>
-            <button
-              className={`flex-1 py-2 px-4 rounded-md text-center transition-colors ${
-                plan === 'Silver' ? 'bg-[#022C22] !text-white shadow-sm' : ''
-              }`}
-              onClick={() => setPlan('Silver')}
-            >
-              Silver
-            </button>
-            <button
-              className={`flex-1 py-2 px-4 rounded-md text-center transition-colors ${
-                plan === 'Gold' ? 'bg-[#022C22] !text-white shadow-sm' : ''
-              }`}
-              onClick={() => setPlan('Gold')}
-            >
-              Gold
-            </button>
-          </div>
-
-          {/* Plan Details */}
-          <div className="p-5 !text-start bg-white rounded-md shadow-sm">
-            <h2 className="text-xl font-bold mb-4">{plans[plan].name}</h2>
-            <div className="mb-6">
-              <span className="text-[#022C22] text-3xl font-bold">
-                {plans[plan].price}
-              </span>
-              <span className="text-gray-500">{plans[plan].period}</span>
-            </div>
-
-            {/* Features List */}
-            <ul className="space-y-4 mb-6">
-              {features.map((feature, index) => (
-                <li key={index} className="flex items-center gap-1">
-                  <svg
-                    width="14"
-                    height="11"
-                    viewBox="0 0 14 11"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M13.7063 0.793945C14.0969 1.18457 14.0969 1.81895 13.7063 2.20957L5.70627 10.2096C5.31565 10.6002 4.68127 10.6002 4.29065 10.2096L0.290649 6.20957C-0.0999756 5.81895 -0.0999756 5.18457 0.290649 4.79395C0.681274 4.40332 1.31565 4.40332 1.70627 4.79395L5.00002 8.08457L12.2938 0.793945C12.6844 0.40332 13.3188 0.40332 13.7094 0.793945H13.7063Z"
-                      fill="#22C55E"
-                    />
-                  </svg>
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            {/* Action Button */}
-            <div className="text-white w-full">
-              <button
-                onClick={showModal3}
-                className="w-full bg-[var(--bg-green-high)] !text-white py-3 rounded-md transition-colors"
-              >
-                Update Now
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
-      <Modal
-        open={updateModalOpen}
-        centered
-        onCancel={handleCancel3}
-        footer={null}
-      >
-        <div className="p-5">
-          <h2 className="text-center text-2xl font-bold">
-            Update Subscription Price
-          </h2>
-          <p className="text-center text-gray-500 mt-2">
-            Please fill out the details below to update the subscription
-            pricing.
-          </p>
 
-          {/* Modal Content */}
-          <div className="mt-6 space-y-6">
-            {/* Subscription Type */}
-            <div>
-              <label
-                htmlFor="subscription-type"
-                className="block text-sm font-medium text-gray-800 mb-2"
-              >
-                Subscription Type:
-              </label>
-              <select
-                id="subscription-type"
-                value={subscriptionType}
-                onChange={(e) => setSubscriptionType(e.target.value)}
-                className="p-2 block w-full border border-gray-400 rounded-lg"
-              >
-                <option value="">Select one</option>
-                <option value="basic">Bronze</option>
-                <option value="premium">Gold</option>
-              </select>
-            </div>
-
-            {/* New Price */}
-            <div>
-              <label
-                htmlFor="new-price"
-                className="block text-sm font-medium text-gray-800 mb-2"
-              >
-                New Price ($):
-              </label>
-              <input
-                id="new-price"
-                type="number"
-                value={newPrice}
-                onChange={(e) => setNewPrice(e.target.value)}
-                className="p-2 block w-full border border-gray-400 rounded-md shadow-lg"
-              />
-            </div>
-          </div>
-
-          {/* Action buttons */}
-          <div className="grid grid-cols-2 gap-4 mt-5">
-            <button
-              onClick={handleCancel3}
-              className="px-4 py-2 border border-red-200 bg-red-50 text-red-500 rounded-md hover:bg-red-100 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleCancel3}
-              className="px-4 py-2 bg-[var(--bg-green-high)] !text-white rounded-md transition-colors"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        open={updateModalOpen2}
-        centered
-        onCancel={handleCancel5}
-        footer={null}
-      >
-        <div className="p-5">
-          {/* Header */}
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-2">Add New Location</h2>
-            <p className="text-gray-600">
-              Please enter the details below to add a new Wilaya (region) to the
-              system. This will help users filter listings by their geographic
-              area.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {cities.map((city, index) => (
-              <div key={city.id} className="space-y-1">
+        {/* Plan Content */}
+        {Object.keys(plans).map((planKey) => (
+          <div
+            key={planKey}
+            className={`mt-0 ${selectedPlan !== planKey ? 'hidden' : ''}`}
+          >
+            <div className="border-2 rounded-lg shadow-sm">
+              <div className="p-6 border-b">
                 <div className="flex justify-between items-center">
-                  <label className="font-medium">
-                    Features {String(index + 1).padStart(2, '0')}
-                  </label>
+                  <div>
+                    <h2 className="text-2xl font-bold">
+                      {plans[planKey].displayName}
+                    </h2>
+                    <p className="text-gray-500">
+                      Subscription details and features
+                    </p>
+                  </div>
                   <button
-                    onClick={() => handleClearCity(city.id)}
-                    className="text-gray-400 hover:text-gray-600"
+                    onClick={handleOpenPriceModal}
+                    className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
                   >
-                    <RxCross2 className="h-4 w-4" />
+                    <PencilIcon className="mr-2 h-4 w-4" />
+                    Update Price
                   </button>
                 </div>
+              </div>
+              <div className="p-6">
+                <div className="mb-6">
+                  <span className="text-[#022C22] text-4xl font-bold">
+                    UM {plans[planKey].price}
+                  </span>
+                  <span className="text-gray-500 ml-1">
+                    /{plans[planKey].period}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-lg">Features</h3>
+                    <button
+                      onClick={handleOpenFeatureModal}
+                      className="border border-[#022C22] text-[#022C22]  cursor-pointer hover:bg-[#022C22] hover:!text-white px-4 py-2 rounded-md flex items-center"
+                    >
+                      <PencilIcon className="mr-2 h-4 w-4" />
+                      Manage Features
+                    </button>
+                  </div>
+
+                  <ul className="space-y-3 mt-4">
+                    {plans[planKey].features.map((feature) => (
+                      <li key={feature.id} className="flex items-center gap-2">
+                        <div className="flex-shrink-0 h-5 w-5 rounded-full bg-transparent border-1 bortder-[#022C22] flex items-center justify-center">
+                          <CheckIcon className="h-3 w-3 text-[#022C22]" />
+                        </div>
+                        <span>{feature.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Price Update Modal */}
+      {isPriceModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold">Update Subscription Price</h2>
+              <p className="text-gray-500">
+                Update the price and billing period for the{' '}
+                {plans[selectedPlan]?.displayName}.
+              </p>
+            </div>
+
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="plan-type"
+                  className="block text-sm font-medium"
+                >
+                  Plan Type
+                </label>
+                <select
+                  id="plan-type"
+                  value={selectedPlan}
+                  onChange={(e) => setSelectedPlan(e.target.value)}
+                  className="w-full border rounded-md p-2"
+                >
+                  <option value="bronze">Bronze Plan</option>
+                  <option value="silver">Silver Plan</option>
+                  <option value="gold">Gold Plan</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="price" className="block text-sm font-medium">
+                  Price (UM)
+                </label>
                 <input
-                  placeholder={`Features ${String(index + 1).padStart(2, '0')}`}
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  value={newPrice}
+                  onChange={(e) => setNewPrice(e.target.value)}
                   className="w-full border rounded-md p-2"
                 />
               </div>
-            ))}
-          </div>
 
-          <div className="flex justify-end items-center my-4 !text-white">
-            <div className="flex justify-center items-center text-center">
+              <div className="space-y-2">
+                <label htmlFor="period" className="block text-sm font-medium">
+                  Billing Period
+                </label>
+                <select
+                  id="period"
+                  value={newPeriod}
+                  onChange={(e) => setNewPeriod(e.target.value)}
+                  className="w-full border rounded-md p-2"
+                >
+                  <option value="month">Monthly</option>
+                  <option value="year">Yearly</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={handleAddCity}
-                className="rounded-full !bg-[var(--bg-green-high)]  !text-white p-2"
+                onClick={() => setIsPriceModalOpen(false)}
+                className="border-red-200 bg-red-50 cursor-pointer text-red-500 hover:bg-red-100 hover:text-red-600 py-2 rounded-md"
               >
-                <GoPlus className="h-5 w-5" />
+                Cancel
+              </button>
+              <button
+                onClick={handleSavePrice}
+                className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white py-2 rounded-md"
+              >
+                Save Changes
               </button>
             </div>
           </div>
-          {/* buttons */}
-          <div className="grid grid-cols-2 gap-4 mt-5">
-            <button
-              onClick={handleCancel5}
-              className="py-2 px-4 rounded-lg border border-[#EF4444] bg-red-50"
-            >
-              Cancel
-            </button>
+        </div>
+      )}
 
-            <button
-              onClick={handleCancel5}
-              className="py-2 px-4 rounded-lg !bg-[var(--bg-green-high)] !text-white"
-            >
-              Save
-            </button>
+      {/* Feature Management Modal */}
+      {isFeatureModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold">Manage Features</h2>
+              <p className="text-gray-500">
+                Add, edit, or remove features for the{' '}
+                {plans[selectedPlan]?.displayName}.
+              </p>
+            </div>
+
+            <div className="py-4">
+              <div className="flex items-center space-x-2 gap-2 mb-4">
+                <input
+                  placeholder="Add a new feature..."
+                  value={newFeature}
+                  onChange={(e) => setNewFeature(e.target.value)}
+                  className="flex-1 border rounded-md p-2"
+                />
+                <button
+                  onClick={handleAddFeature}
+                  className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white p-2 rounded-md"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                {tempFeatures.map((feature, index) => (
+                  <div
+                    key={feature.id}
+                    className={`flex items-center justify-between p-3 border rounded-md ${
+                      !plans[selectedPlan].features.some(
+                        (f) => f.id === feature.id
+                      )
+                        ? 'bg-green-50 border-green-200'
+                        : ''
+                    }`}
+                  >
+                    <span>{feature.text}</span>
+                    <button
+                      onClick={() => handleRemoveFeature(feature.id)}
+                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 cursor-pointer hover:bg-red-50 rounded-full"
+                    >
+                      <XMarkIcon className="h-4 w-4 mx-auto" />
+                    </button>
+                  </div>
+                ))}
+                {tempFeatures.length === 0 && (
+                  <p className="text-center text-gray-500 py-4">
+                    No features added yet.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setIsFeatureModalOpen(false)}
+                className="border-red-200 bg-red-50 text-red-500 cursor-pointer hover:bg-red-100 hover:text-red-600 py-2 rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveFeatures}
+                className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white py-2 rounded-md"
+              >
+                Save Features
+              </button>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
     </div>
   );
 }
