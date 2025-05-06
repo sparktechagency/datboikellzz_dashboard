@@ -1,66 +1,77 @@
-import React, { useState } from "react";
-import { Table, Tag, Space, Avatar, Button } from "antd";
-import { UserOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { FaRegCircle } from "react-icons/fa6";
+import React, { useState } from 'react';
+import { Table, Tag, Space, Avatar, Button, Modal } from 'antd';
+import {
+  UserOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import { FaRegCircle } from 'react-icons/fa6';
+import { IoIosWarning } from 'react-icons/io';
+import toast from 'react-hot-toast';
+import Success from '../../Shared/Success';
 
 const AdminsTable = () => {
+  const [showModal, setShowModal] = useState();
+  const [isUserBlock, setUserBlock] = useState(false);
+  const [blockUserId, setBlockUserId] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const admins = [
     {
-      key: "1",
-      name: "Theodore Mosciski",
-      contactNumber: "901-474-6265",
-      email: "maka@yandex.ru",
-      joined: "2025-01-10",
-      status: "Active",
+      key: '1',
+      name: 'Theodore Mosciski',
+      contactNumber: '901-474-6265',
+      email: 'maka@yandex.ru',
+      joined: '2025-01-10',
+      status: 'Active',
     },
     {
-      key: "2",
-      name: "Russell Veum",
-      contactNumber: "983-842-7095",
-      email: "Nigel16@hotmail.com",
-      joined: "2025-01-10",
-      status: "Active",
+      key: '2',
+      name: 'Russell Veum',
+      contactNumber: '983-842-7095',
+      email: 'Nigel16@hotmail.com',
+      joined: '2025-01-10',
+      status: 'Active',
     },
     {
-      key: "3",
-      name: "Tracy Grady",
-      contactNumber: "564-667-5097",
-      email: "rrian@yandex.ru",
-      joined: "2025-01-10",
-      status: "Active",
+      key: '3',
+      name: 'Tracy Grady',
+      contactNumber: '564-667-5097',
+      email: 'rrian@yandex.ru',
+      joined: '2025-01-10',
+      status: 'Active',
     },
     {
-      key: "4",
-      name: "Dana Daniel",
-      contactNumber: "443-393-4346",
-      email: "rrian@yandex.ru",
-      joined: "2025-01-10",
-      status: "Inactive",
+      key: '4',
+      name: 'Dana Daniel',
+      contactNumber: '443-393-4346',
+      email: 'rrian@yandex.ru',
+      joined: '2025-01-10',
+      status: 'Inactive',
     },
     {
-      key: "5",
-      name: "Gerardo Barrows",
-      contactNumber: "344-223-4982",
-      email: "cido@gmail.com",
-      joined: "2025-01-10",
-      status: "Inactive",
+      key: '5',
+      name: 'Gerardo Barrows',
+      contactNumber: '344-223-4982',
+      email: 'cido@gmail.com',
+      joined: '2025-01-10',
+      status: 'Inactive',
     },
     {
-      key: "6",
-      name: "Sheryl Gusikowski",
-      contactNumber: "752-792-1071",
-      email: "cedennar@gmail.com",
-      joined: "2025-01-10",
-      status: "Active",
+      key: '6',
+      name: 'Sheryl Gusikowski',
+      contactNumber: '752-792-1071',
+      email: 'cedennar@gmail.com',
+      joined: '2025-01-10',
+      status: 'Active',
     },
   ];
 
-  // Define columns for the Ant Design Table
   const columns = [
     {
-      title: "Admin Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Admin Name',
+      dataIndex: 'name',
+      key: 'name',
       render: (text) => (
         <div className="flex items-center">
           <Avatar
@@ -73,31 +84,32 @@ const AdminsTable = () => {
       ),
     },
     {
-      title: "Contact Number",
-      dataIndex: "contactNumber",
-      key: "contactNumber",
+      title: 'Contact Number',
+      dataIndex: 'contactNumber',
+      key: 'contactNumber',
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
-      title: "Joined",
-      dataIndex: "joined",
-      key: "joined",
+      title: 'Joined',
+      dataIndex: 'joined',
+      key: 'joined',
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
       render: (status) => (
-        <Tag color={status === "Active" ? "success" : "error"}>{status}</Tag>
+        <Tag color={status === 'Active' ? 'success' : 'error'}>{status}</Tag>
       ),
     },
     {
-      title: "Action",
-      key: "action",
+      title: 'Action',
+      key: 'action',
+
       render: (_, record) => (
         <Space size="small">
           <Button
@@ -118,25 +130,110 @@ const AdminsTable = () => {
             icon={<DeleteOutlined />}
             size="small"
           />
-          <Button type="default" icon={<FaRegCircle />} size="small" />
+          <Button
+            onClick={() => {
+              setShowModal(true);
+              setUserBlock(record.status === 'Active');
+              setBlockUserId(record.key);
+            }}
+            type="default"
+            icon={<FaRegCircle />}
+            size="small"
+          />
         </Space>
       ),
     },
   ];
+  const handleUnblockUser = async () => {
+    if (!blockUserId) {
+      return toast.error('Please select a user to block');
+    }
+    // toast.success('User successfully unblocked');
+    setShowSuccessModal(true);
+    setShowModal(false);
+  };
 
+  const handleBlockUser = async () => {
+    if (!blockUserId) {
+      return toast.error('Please select a user to block');
+    }
+    toast.success('User successfully blocked');
+    setShowModal(false);
+  };
   return (
     <div className="admin-table">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Admins</h1>
+        <Button
+          icon={<PlusOutlined />}
+          className="!bg-[var(--bg-green-high)] !text-white"
+        >
+          Add New Admin
+        </Button>
+      </div>
       <Table
         columns={columns}
         dataSource={admins}
         pagination={{
-          position: ["bottomCenter"],
+          position: ['bottomCenter'],
           showSizeChanger: false,
           defaultPageSize: 10,
           showQuickJumper: false,
-          size: "small",
+          size: 'small',
         }}
       />
+      <Modal
+        open={showModal}
+        onCancel={() => setShowModal(false)}
+        footer={null}
+      >
+        <div className="flex flex-col items-center">
+          <IoIosWarning size={60} color="#f6a112" />
+          <h1 className="text-2xl font-bold text-black">Warning</h1>
+          <p className="text-sm text-black">
+            Are you sure you want to {isUserBlock ? 'unblock' : 'block'} this
+            Admin?
+          </p>
+          <div className="flex justify-center gap-4 mt-4">
+            <Button
+              type="primary"
+              className="!bg-[var(--bg-green-high)] !text-white"
+              onClick={isUserBlock ? handleUnblockUser : handleBlockUser}
+            >
+              Yes
+            </Button>
+            <Button onClick={() => setShowModal(false)}>Cancel</Button>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        open={showSuccessModal}
+        closeIcon={false}
+        okButtonProps={{
+          style: {
+            backgroundColor: 'var(--bg-green-high)',
+          },
+        }}
+        footer={null}
+      >
+        <Success
+          title={isUserBlock ? 'Unblocked' : 'Blocked'}
+          description={
+            isUserBlock
+              ? 'User successfully unblocked'
+              : 'User successfully blocked'
+          }
+        />
+        <div className='flex items-center justify-center w-full'>
+          <Button
+            type="primary"
+            className="!bg-[var(--bg-green-high)] !text-white"
+            onClick={() => setShowSuccessModal(false)}
+          >
+            Ok
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 };
