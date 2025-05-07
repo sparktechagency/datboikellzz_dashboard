@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckIcon, PlusIcon, XMarkIcon, PencilIcon } from './icons.jsx';
-import toast from 'react-hot-toast';
-import { CiWarning } from 'react-icons/ci';
+// import toast from 'react-hot-toast';
+// import { CiWarning } from 'react-icons/ci';
 export default function SubscriptionManagement() {
   const initialPlans = {
     bronze: {
@@ -53,13 +53,13 @@ export default function SubscriptionManagement() {
 
   // Modals state
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
-  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
+  // const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
 
   // Form states
   const [newPrice, setNewPrice] = useState('');
   const [newPeriod, setNewPeriod] = useState('');
-  const [newFeature, setNewFeature] = useState('');
-  const [tempFeatures, setTempFeatures] = useState([]);
+  // const [newFeature, setNewFeature] = useState('');
+  // const [tempFeatures, setTempFeatures] = useState([]);
 
   // Update form values when selected plan changes
   useEffect(() => {
@@ -70,11 +70,11 @@ export default function SubscriptionManagement() {
   }, [selectedPlan, plans]);
 
   // Open price update modal
-  const handleOpenPriceModal = () => {
-    setNewPrice(plans[selectedPlan].price);
-    setNewPeriod(plans[selectedPlan].period);
-    setIsPriceModalOpen(true);
-  };
+  // const handleOpenPriceModal = () => {
+  //   setNewPrice(plans[selectedPlan].price);
+  //   setNewPeriod(plans[selectedPlan].period);
+  //   setIsPriceModalOpen(true);
+  // };
 
   // Save updated price
   const handleSavePrice = () => {
@@ -99,51 +99,51 @@ export default function SubscriptionManagement() {
   };
 
   // Open feature management modal
-  const handleOpenFeatureModal = () => {
-    setTempFeatures([...plans[selectedPlan].features]);
-    setIsFeatureModalOpen(true);
-  };
+  // const handleOpenFeatureModal = () => {
+  //   setTempFeatures([...plans[selectedPlan].features]);
+  //   setIsFeatureModalOpen(true);
+  // };
 
   // Add a new feature
-  const handleAddFeature = () => {
-    if (newFeature.trim() === '')
-      return toast.error('please add a valid feature');
-    if (tempFeatures.length >= 6) {
-      return toast.error('Feature limit reached.');
-    }
-    const newId =
-      tempFeatures.length > 0
-        ? Math.max(...tempFeatures.map((f) => f.id)) + 1
-        : 1;
+  // const handleAddFeature = () => {
+  //   if (newFeature.trim() === '')
+  //     return toast.error('please add a valid feature');
+  //   if (tempFeatures.length >= 6) {
+  //     return toast.error('Feature limit reached.');
+  //   }
+  //   const newId =
+  //     tempFeatures.length > 0
+  //       ? Math.max(...tempFeatures.map((f) => f.id)) + 1
+  //       : 1;
 
-    setTempFeatures([...tempFeatures, { id: newId, text: newFeature }]);
-    setNewFeature('');
-  };
+  //   setTempFeatures([...tempFeatures, { id: newId, text: newFeature }]);
+  //   setNewFeature('');
+  // };
 
   // Remove a feature
-  const handleRemoveFeature = (id) => {
-    setTempFeatures(tempFeatures.filter((feature) => feature.id !== id));
-  };
+  // const handleRemoveFeature = (id) => {
+  //   setTempFeatures(tempFeatures.filter((feature) => feature.id !== id));
+  // };
 
-  // Save updated features
-  function handleSaveFeatures() {
-    const updatedPlans = {
-      ...plans,
-      [selectedPlan]: {
-        ...plans[selectedPlan],
-        features: [...tempFeatures],
-      },
-    };
+  // // Save updated features
+  // function handleSaveFeatures() {
+  //   const updatedPlans = {
+  //     ...plans,
+  //     [selectedPlan]: {
+  //       ...plans[selectedPlan],
+  //       features: [...tempFeatures],
+  //     },
+  //   };
 
-    setPlans(updatedPlans);
-    setIsFeatureModalOpen(false);
+  //   setPlans(updatedPlans);
+  //   setIsFeatureModalOpen(false);
 
-    // Log data for backend integration
-    console.log('Updated features data:', {
-      planId: selectedPlan,
-      features: tempFeatures,
-    });
-  }
+  //   // Log data for backend integration
+  //   console.log('Updated features data:', {
+  //     planId: selectedPlan,
+  //     features: tempFeatures,
+  //   });
+  // }
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
@@ -190,13 +190,13 @@ export default function SubscriptionManagement() {
                         Subscription details and features
                       </p>
                     </div>
-                    <button
+                    {/* <button
                       onClick={handleOpenPriceModal}
                       className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
                     >
                       <PencilIcon className="mr-2 h-4 w-4" />
                       Update Price
-                    </button>
+                    </button> */}
                   </div>
                   <div className="mb-6">
                     <span className="text-[#022C22] text-4xl font-bold">
@@ -212,13 +212,13 @@ export default function SubscriptionManagement() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <h3 className="text-2xl font-bold">Features</h3>
-                    <button
+                    {/* <button
                       onClick={handleOpenFeatureModal}
                       className="border border-[#022C22] text-[#022C22]  cursor-pointer hover:bg-[#022C22] hover:!text-white px-4 py-2 rounded-md flex items-center"
                     >
                       <PencilIcon className="mr-2 h-4 w-4" />
                       Manage Features
-                    </button>
+                    </button> */}
                   </div>
 
                   <ul className="space-y-3 mt-4">
@@ -319,7 +319,7 @@ export default function SubscriptionManagement() {
       )}
 
       {/* Feature Management Modal */}
-      {isFeatureModalOpen && (
+      {/* {isFeatureModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="mb-4">
@@ -395,7 +395,7 @@ export default function SubscriptionManagement() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
