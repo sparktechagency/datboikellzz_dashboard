@@ -1,7 +1,5 @@
 import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
 import toast from 'react-hot-toast';
 
 function CreateNewAdmin({ closeModal }) {
