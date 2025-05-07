@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import toast from 'react-hot-toast';
 
 function UpdateAdminInformatio({ id, closeModal }) {
   console.log(id);
@@ -10,8 +11,8 @@ function UpdateAdminInformatio({ id, closeModal }) {
     fullName: 'Hosain Ahmed',
     email: 'hosain@gmail.com',
     phoneNumber: '998877665544',
-    password: '',
-    confirmPassword: '',
+    password: '12112122',
+    confirmPassword: '12112122',
   };
   const onFinish = (values) => {
     console.log('Form values:', values);
@@ -26,7 +27,7 @@ function UpdateAdminInformatio({ id, closeModal }) {
     <div>
       <div className="text-center">
         <Divider>
-          <h1 className="text-3xl font-semibold">Update  Admin</h1>
+          <h1 className="text-3xl font-semibold">Update Admin</h1>
         </Divider>
 
         <p className="text-sm">
@@ -58,7 +59,7 @@ function UpdateAdminInformatio({ id, closeModal }) {
             { type: 'email', message: 'Please input a valid email!' },
           ]}
         >
-          <Input placeholder="Enter email" />
+          <Input className='cursor-not-allowed' readOnly disabled placeholder="Enter email" />
         </Form.Item>
 
         <Form.Item
@@ -117,6 +118,10 @@ function UpdateAdminInformatio({ id, closeModal }) {
             Cancel
           </Button>
           <Button
+            onClick={() => {
+              toast.success('Update successfully');
+              closeModal();
+            }}
             className="!w-full !h-10 !text-white !bg-[var(--bg-green-high)]"
             htmlType="submit"
           >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Table,
   Space,
@@ -9,12 +9,12 @@ import {
   Tabs,
   Form,
   Input,
-} from "antd";
-import { UserOutlined, PhoneOutlined } from "@ant-design/icons";
-import { CgBlock } from "react-icons/cg";
-import { IoIosWarning, IoIosMail } from "react-icons/io";
-import toast from "react-hot-toast";
-import "./alluserVanila.css";
+} from 'antd';
+import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
+import { CgBlock } from 'react-icons/cg';
+import { IoIosWarning, IoIosMail } from 'react-icons/io';
+import toast from 'react-hot-toast';
+import './alluserVanila.css';
 const AllUsers = ({ recentUser }) => {
   const [showModal, setShowModal] = useState(false);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
@@ -24,146 +24,146 @@ const AllUsers = ({ recentUser }) => {
 
   const users = [
     {
-      key: "1",
-      id: "1",
-      name: "Theodore Mosciski",
-      contactNumber: "901-474-6265",
-      email: "maka@yandex.ru",
-      joined: "2025-01-10",
+      key: '1',
+      id: '1',
+      name: 'Theodore Mosciski',
+      contactNumber: '901-474-6265',
+      email: 'maka@yandex.ru',
+      joined: '2025-01-10',
       status: true,
-      role: "Gold User",
+      role: 'Gold User',
       isBlocked: false,
       avatar: null,
     },
     {
-      key: "2",
-      id: "2",
-      name: "Russell Veum",
-      contactNumber: "983-842-7095",
-      email: "Nigell6@hotmail.com",
-      joined: "2025-01-10",
+      key: '2',
+      id: '2',
+      name: 'Russell Veum',
+      contactNumber: '983-842-7095',
+      email: 'Nigell6@hotmail.com',
+      joined: '2025-01-10',
       status: false,
-      role: "Bronze User",
+      role: 'Bronze User',
       isBlocked: true,
       avatar: null,
     },
     {
-      key: "3",
-      id: "3",
-      name: "Tracy Grady",
-      contactNumber: "564-667-5097",
-      email: "rrian@yandex.ru",
-      joined: "2025-01-10",
+      key: '3',
+      id: '3',
+      name: 'Tracy Grady',
+      contactNumber: '564-667-5097',
+      email: 'rrian@yandex.ru',
+      joined: '2025-01-10',
       status: true,
-      role: "Silver User",
+      role: 'Silver User',
       isBlocked: false,
       avatar: null,
     },
     {
-      key: "4",
-      id: "4",
-      name: "Dana Daniel",
-      contactNumber: "443-393-4346",
-      email: "rrian@yandex.ru",
-      joined: "2025-01-10",
+      key: '4',
+      id: '4',
+      name: 'Dana Daniel',
+      contactNumber: '443-393-4346',
+      email: 'rrian@yandex.ru',
+      joined: '2025-01-10',
       status: false,
-      role: "Gold User",
+      role: 'Gold User',
       isBlocked: true,
       avatar: null,
     },
     {
-      key: "5",
-      id: "5",
-      name: "Gerardo Barrows",
-      contactNumber: "344-223-4982",
-      email: "cido@gmail.com",
-      joined: "2025-01-10",
+      key: '5',
+      id: '5',
+      name: 'Gerardo Barrows',
+      contactNumber: '344-223-4982',
+      email: 'cido@gmail.com',
+      joined: '2025-01-10',
       status: true,
-      role: "Bronze User",
+      role: 'Bronze User',
       isBlocked: false,
       avatar: null,
     },
     {
-      key: "6",
-      id: "6",
-      name: "Sheryl Gusikowski",
-      contactNumber: "752-792-1071",
-      email: "cedennar@gmail.com",
-      joined: "2025-01-10",
+      key: '6',
+      id: '6',
+      name: 'Sheryl Gusikowski',
+      contactNumber: '752-792-1071',
+      email: 'cedennar@gmail.com',
+      joined: '2025-01-10',
       status: false,
-      role: "Silver User",
+      role: 'Silver User',
       isBlocked: true,
       avatar: null,
     },
     {
-      key: "7",
-      id: "7",
-      name: "Lana Kiehn",
-      contactNumber: "234-567-8901",
-      email: "lana.kiehn@example.com",
-      joined: "2025-01-11",
+      key: '7',
+      id: '7',
+      name: 'Lana Kiehn',
+      contactNumber: '234-567-8901',
+      email: 'lana.kiehn@example.com',
+      joined: '2025-01-11',
       status: true,
-      role: "Gold User",
+      role: 'Gold User',
       isBlocked: false,
       avatar: null,
     },
     {
-      key: "8",
-      id: "8",
-      name: "Sammy Bednar",
-      contactNumber: "345-678-9012",
-      email: "sammy.bednar@example.com",
-      joined: "2025-01-12",
+      key: '8',
+      id: '8',
+      name: 'Sammy Bednar',
+      contactNumber: '345-678-9012',
+      email: 'sammy.bednar@example.com',
+      joined: '2025-01-12',
       status: false,
-      role: "Bronze User",
+      role: 'Bronze User',
       isBlocked: true,
       avatar: null,
     },
     {
-      key: "9",
-      id: "9",
-      name: "Kory Spinka",
-      contactNumber: "456-789-0123",
-      email: "kory.spinka@example.com",
-      joined: "2025-01-13",
+      key: '9',
+      id: '9',
+      name: 'Kory Spinka',
+      contactNumber: '456-789-0123',
+      email: 'kory.spinka@example.com',
+      joined: '2025-01-13',
       status: true,
-      role: "Silver User",
+      role: 'Silver User',
       isBlocked: false,
       avatar: null,
     },
     {
-      key: "10",
-      id: "10",
-      name: "Rosa Kertzmann",
-      contactNumber: "567-890-1234",
-      email: "rosa.kertzmann@example.com",
-      joined: "2025-01-14",
+      key: '10',
+      id: '10',
+      name: 'Rosa Kertzmann',
+      contactNumber: '567-890-1234',
+      email: 'rosa.kertzmann@example.com',
+      joined: '2025-01-14',
       status: false,
-      role: "Gold User",
+      role: 'Gold User',
       isBlocked: true,
       avatar: null,
     },
     {
-      key: "11",
-      id: "11",
-      name: "Hollis Parisian",
-      contactNumber: "678-901-2345",
-      email: "hollis.parisian@example.com",
-      joined: "2025-01-15",
+      key: '11',
+      id: '11',
+      name: 'Hollis Parisian',
+      contactNumber: '678-901-2345',
+      email: 'hollis.parisian@example.com',
+      joined: '2025-01-15',
       status: true,
-      role: "Bronze User",
+      role: 'Bronze User',
       isBlocked: false,
       avatar: null,
     },
     {
-      key: "12",
-      id: "12",
-      name: "Kip Stark",
-      contactNumber: "789-012-3456",
-      email: "kip.stark@example.com",
-      joined: "2025-01-16",
+      key: '12',
+      id: '12',
+      name: 'Kip Stark',
+      contactNumber: '789-012-3456',
+      email: 'kip.stark@example.com',
+      joined: '2025-01-16',
       status: false,
-      role: "Silver User",
+      role: 'Silver User',
       isBlocked: true,
       avatar: null,
     },
@@ -171,26 +171,26 @@ const AllUsers = ({ recentUser }) => {
 
   const handleUnblockUser = async () => {
     if (!blockUserId) {
-      return toast.error("Please select a user to block");
+      return toast.error('Please select a user to block');
     }
-    toast.success("User successfully unblocked");
+    toast.success('User successfully unblocked');
     setShowModal(false);
   };
 
   const handleBlockUser = async () => {
     if (!blockUserId) {
-      return toast.error("Please select a user to block");
+      return toast.error('Please select a user to block');
     }
-    toast.success("User successfully blocked");
+    toast.success('User successfully blocked');
     setShowModal(false);
   };
   const [filteredUsers, setFilteredUsers] = useState(users);
 
   const columns = [
     {
-      title: "User Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'User Name',
+      dataIndex: 'name',
+      key: 'name',
       render: (text, record) => (
         <Space size="middle">
           <Avatar icon={<UserOutlined />} src={record.avatar} />
@@ -199,9 +199,9 @@ const AllUsers = ({ recentUser }) => {
       ),
     },
     {
-      title: "Contact Number",
-      dataIndex: "contactNumber",
-      key: "contactNumber",
+      title: 'Contact Number',
+      dataIndex: 'contactNumber',
+      key: 'contactNumber',
       render: (phone) => (
         <Space>
           <PhoneOutlined />
@@ -210,9 +210,9 @@ const AllUsers = ({ recentUser }) => {
       ),
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
       render: (email) => (
         <Space>
           <IoIosMail />
@@ -221,23 +221,23 @@ const AllUsers = ({ recentUser }) => {
       ),
     },
     {
-      title: "Joined",
-      dataIndex: "joined",
-      key: "joined",
+      title: 'Joined',
+      dataIndex: 'joined',
+      key: 'joined',
     },
     {
-      title: "User Type",
-      dataIndex: "role",
+      title: 'User Type',
+      dataIndex: 'role',
       width: 200,
-      key: "role",
+      key: 'role',
       render: (role) => (
         <span
           className={`${
-            role === "Gold User"
-              ? "gold px-3 rounded-md py-1  font-bold"
-              : role === "Silver User"
-              ? "silver px-5 rounded-md py-1"
-              : "bronze px-5 rounded-md py-1"
+            role === 'Gold User'
+              ? 'gold px-3 rounded-md py-1  font-bold'
+              : role === 'Silver User'
+              ? 'silver px-5 rounded-md py-1'
+              : 'bronze px-5 rounded-md py-1'
           } font-bold text-[var(--bg-green-high)] flex items-center justify-center`}
         >
           {role}
@@ -245,8 +245,8 @@ const AllUsers = ({ recentUser }) => {
       ),
     },
     {
-      title: "Action",
-      key: "action",
+      title: 'Action',
+      key: 'action',
       render: (_, record) => (
         <Space size="middle">
           <Button
@@ -265,7 +265,7 @@ const AllUsers = ({ recentUser }) => {
               setShowModal(true);
             }}
             className={`${
-              record?.isBlocked ? "bg-red-300" : "bg-green-200"
+              record?.isBlocked ? 'bg-red-300' : 'bg-green-200'
             } ant-btn ant-btn-default`}
           >
             <CgBlock />
@@ -277,19 +277,19 @@ const AllUsers = ({ recentUser }) => {
 
   const handleTabChange = (key) => {
     switch (key) {
-      case "1":
+      case '1':
         setFilteredUsers(users);
         break;
-      case "2":
-        setFilteredUsers(users.filter((user) => user.role === "Gold User"));
+      case '2':
+        setFilteredUsers(users.filter((user) => user.role === 'Gold User'));
         break;
-      case "3":
-        setFilteredUsers(users.filter((user) => user.role === "Silver User"));
+      case '3':
+        setFilteredUsers(users.filter((user) => user.role === 'Silver User'));
         break;
-      case "4":
-        setFilteredUsers(users.filter((user) => user.role === "Bronze User"));
+      case '4':
+        setFilteredUsers(users.filter((user) => user.role === 'Bronze User'));
         break;
-      case "5":
+      case '5':
         setFilteredUsers(users.filter((user) => user.isBlocked === true));
         break;
       default:
@@ -340,6 +340,7 @@ const AllUsers = ({ recentUser }) => {
 
       {/* Modal to confirm block/unblock */}
       <Modal
+        centered
         visible={showModal}
         onCancel={() => setShowModal(false)}
         footer={null}
@@ -348,7 +349,7 @@ const AllUsers = ({ recentUser }) => {
           <IoIosWarning size={60} color="#f6a112" />
           <h1 className="text-2xl font-bold text-black">Warning</h1>
           <p className="text-lg text-black">
-            Are you sure you want to {isUserBlock ? "unblock" : "block"} this
+            Are you sure you want to {isUserBlock ? 'unblock' : 'block'} this
             user?
           </p>
           <div className="flex justify-center gap-4 mt-4">
@@ -366,6 +367,7 @@ const AllUsers = ({ recentUser }) => {
 
       {/* Modal for user details */}
       <Modal
+        centered
         visible={userDetailsModal}
         onCancel={() => setUserDetailsModal(false)}
         footer={null}
@@ -396,7 +398,7 @@ const AllUsers = ({ recentUser }) => {
               type="primary"
               danger
               onClick={() => {
-                toast.success("User blocked");
+                toast.success('User blocked');
                 setUserDetailsModal(false);
               }}
               className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"

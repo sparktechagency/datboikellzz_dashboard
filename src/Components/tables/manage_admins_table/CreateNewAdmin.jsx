@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import toast from 'react-hot-toast';
 
 function CreateNewAdmin({ closeModal }) {
   const [form] = Form.useForm();
@@ -114,6 +115,10 @@ function CreateNewAdmin({ closeModal }) {
             Cancel
           </Button>
           <Button
+          onClick={()=>{
+            toast.success('Create New Admin succesfully.')
+            onCancel()
+          }}
             className="!w-full !h-10 !text-white !bg-[var(--bg-green-high)]"
             htmlType="submit"
           >

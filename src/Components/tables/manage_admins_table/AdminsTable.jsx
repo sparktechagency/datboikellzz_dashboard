@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Tag, Space, Avatar, Button, Modal } from 'antd';
+import { Table, Tag, Space, Avatar, Button, Modal, Form, Input } from 'antd';
 import {
   UserOutlined,
   EditOutlined,
@@ -21,6 +21,7 @@ const AdminsTable = () => {
   const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
   const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
   const [selectAdmin, setSelectAdmin] = useState(null);
+  const [userDetailsModal, setUserDetailsModal] = useState(false);
   const admins = [
     {
       key: '1',
@@ -118,6 +119,7 @@ const AdminsTable = () => {
       render: (_, record) => (
         <Space size="small">
           <Button
+            onClick={() => setUserDetailsModal(true)}
             className="!bg-[var(--bg-green-high)]"
             type="default"
             icon={<UserOutlined className="!text-white" />}
@@ -138,6 +140,7 @@ const AdminsTable = () => {
             type="default"
             icon={<DeleteOutlined />}
             size="small"
+            onClick={()=>toast.success('Admin delete successfully')}
           />
           <Button
             onClick={() => {
@@ -168,10 +171,22 @@ const AdminsTable = () => {
     toast.success('User successfully blocked');
     setShowModal(false);
   };
+  const handleSearch = () => {};
   return (
     <div className="admin-table">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Admins</h1>
+      <h1 className="text-2xl font-bold">Admins</h1>
+      <div className="flex !items-start justify-between">
+        <div className="max-w-[400px] min-w-[400px]">
+          <Form className="!w-full !h-fit">
+            <Form.Item>
+              <Input.Search
+                placeholder="Search by name"
+                onSearch={handleSearch}
+                allowClear
+              />
+            </Form.Item>
+          </Form>
+        </div>
         <Button
           onClick={() => setCreateNewAdminModal(true)}
           icon={<PlusOutlined />}
@@ -253,6 +268,64 @@ const AdminsTable = () => {
           id={selectAdmin}
           closeModal={setUpdateAdminInfo}
         />
+      </Modal>
+      <Modal
+        visible={userDetailsModal}
+        onCancel={() => setUserDetailsModal(false)}
+        footer={null}
+        className="user-details-modal"
+      >
+        <div className="flex flex-col items-center">
+          <Avatar
+            className="!w-24 !h-24"
+            src="https://xsgames.co/randomusers/avatar.php?g=male"
+          />
+          <h1 className="text-2xl font-bold">Admin no.1</h1>
+          <div className="!w-full p-1 border-1 border-[var(--vg-green-high)] rounded-md">
+            <div className="p-2 bg-[var(--bg-green-high)] !text-white flex items-center justify-center font-semibold text-base rounded-md">
+              Admin Profile
+            </div>
+          </div>
+          <div className="mt-4 !w-full">
+            <p className="font-semibold">Admin Full Name</p>
+            <p className="p-2 border border-[#64748B] rounded-md">Admin no.1</p>
+            <p className="font-semibold mt-2">Email</p>
+            <p className="p-2 border border-[#64748B] rounded-md">
+              admin@gmail.com
+            </p>
+            <p className="font-semibold mt-2">Phone Number</p>
+            <p className="p-2 border border-[#64748B] rounded-md">
+              1245412458454
+            </p>
+          </div>
+          <div className="mt-4 !w-full">
+            <div className="flex items-center justify-between gap-3">
+              <Button
+                type="primary"
+                danger
+                onClick={() => {
+                  toast.success('User blocked');
+                  setUserDetailsModal(false);
+                }}
+                className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
+              >
+                Block This User
+              </Button>
+              <Button
+                type="primary"
+                danger
+                onClick={() => {
+                  setSelectAdmin('as');
+                  setUserDetailsModal(false);
+                  setUpdateAdminInfo(true);
+                }}
+                className="!w-full !border !bg-[var(--bg-green-high)] !text-white"
+              >
+                Update
+              </Button>
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   );

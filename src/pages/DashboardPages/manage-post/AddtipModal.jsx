@@ -235,6 +235,7 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details }) => {
 
   return (
     <Modal
+      centered
       title={
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-2xl">Add New Tip</h1>

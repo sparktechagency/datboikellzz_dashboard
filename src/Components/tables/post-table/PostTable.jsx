@@ -210,6 +210,7 @@ function PostTable() {
         title={selectedPost?.postInfo}
         visible={isModalVisible}
         onCancel={handleCancel}
+        centered
         footer={
           <div className="w-full flex gap-3 items-center justify-end">
             <Button
