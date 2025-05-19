@@ -1,10 +1,10 @@
 import baseApis from '../baseApis/baseApis';
 
-export const profileApis = baseApis.injectEndpoints({
+export const superAdminProfileApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
-    getProfileData: builder.query({
+    getSuperAdminProfile: builder.query({
       query: () => ({
-        url: '/admin/get-profile-admin',
+        url: '/super-admin/profile',
         method: 'GET',
       }),
       providesTags: ['profile'],
@@ -12,7 +12,7 @@ export const profileApis = baseApis.injectEndpoints({
     updateProfileData: builder.mutation({
       query: (data) => {
         return {
-          url: '/admin/edit-profile',
+          url: '/super-admin/profile',
           method: 'PATCH',
           body: data,
           headers: {
@@ -25,5 +25,5 @@ export const profileApis = baseApis.injectEndpoints({
   }),
 });
 
-export const { useGetProfileDataQuery, useUpdateProfileDataMutation } =
-  profileApis;
+export const { useGetSuperAdminProfileQuery, useUpdateProfileDataMutation } =
+  superAdminProfileApis;

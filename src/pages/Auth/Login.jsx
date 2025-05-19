@@ -15,7 +15,6 @@ const Login = () => {
 
   const onFinish = async (values) => {
     const data = { email: values.email, password: values.password };
-    console.log(data);
     route('/');
     try {
       localStorage.removeItem('accessToken');
@@ -25,7 +24,7 @@ const Login = () => {
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
           toast.success(res.data.message);
-          route('/');
+          window.location.href = '/';
         } else {
           toast.error(res.data.message || 'Something went wrong');
         }

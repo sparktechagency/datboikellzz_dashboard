@@ -8,7 +8,7 @@ import Dashboard from '../Layout/Dashboard';
 import DashboardHome from '../pages/DashboardPages/DashboardHome/DashboardHome';
 import UsersManage from '../pages/DashboardPages/UsersManage/UsersManage';
 import TermsCondition from '../pages/DashboardPages/terms&condition/TermsCondition';
-import PrivateRoute from './PrivetRoute';
+import PrivateRoute from './PrivateRoute';
 import PrivacyPolicy from '../pages/DashboardPages/privacy&policy/PrivacyPolicy';
 import Profile from '../pages/DashboardPages/ProfilePages/Profile';
 import FrequentlyAskedQuestions from '../pages/DashboardPages/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
@@ -16,6 +16,7 @@ import ManagePost from '../pages/DashboardPages/manage-post/ManagePost';
 import EarningPage from '../pages/DashboardPages/EarningManage/EarningPage';
 import ManageAdmins from '../pages/DashboardPages/Manage_Admins/ManageAdmins';
 import Subscription from '../pages/DashboardPages/Subscription/Subscription';
+import Unauthorized from '../pages/Auth/Unauthorized.jsx'; // Create this component
 
 export const Routes = createBrowserRouter([
   {
@@ -43,20 +44,12 @@ export const Routes = createBrowserRouter([
         element: <Subscription />,
       },
       {
-        path: '/manage-admins',
-        element: <ManageAdmins />,
-      },
-      {
-        path: '/terms-condition',
-        element: <TermsCondition />,
-      },
-      {
-        path: '/privacy-policy',
-        element: <PrivacyPolicy />,
-      },
-      {
         path: '/earnings',
         element: <EarningPage />,
+      },
+      {
+        path: '/manage-admins',
+        element: <ManageAdmins />,
       },
       {
         path: '/profile-setting',
@@ -65,6 +58,14 @@ export const Routes = createBrowserRouter([
       {
         path: '/faq-management',
         element: <FrequentlyAskedQuestions />,
+      },
+      {
+        path: '/privacy-policy',
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: '/terms-condition',
+        element: <TermsCondition />,
       },
     ],
   },
@@ -83,5 +84,9 @@ export const Routes = createBrowserRouter([
   {
     path: '/reset-password',
     element: <ResetPassword />,
+  },
+  {
+    path: '/unauthorized',
+    element: <Unauthorized />,
   },
 ]);
