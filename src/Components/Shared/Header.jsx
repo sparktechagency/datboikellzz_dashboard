@@ -46,7 +46,7 @@ function Header() {
   };
 
   const handleSignOut = () => {
-    console.log('sign out');
+    localStorage.removeItem('accessToken');
     window.location.href = '/login';
   };
 

@@ -12,7 +12,7 @@ export const superAdminProfileApis = baseApis.injectEndpoints({
     updateProfileData: builder.mutation({
       query: (data) => {
         return {
-          url: '/super-admin/profile',
+          url: '/super-admin/edit-profile',
           method: 'PATCH',
           body: data,
           headers: {
