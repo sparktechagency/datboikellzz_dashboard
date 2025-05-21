@@ -2,16 +2,11 @@ import React from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 import Loader from '../Shared/Loaders/Loader';
 
-const ActivityStatisticsChart = () => {
-  const activity = {
-    onlineDriver: 12,
-    onlineUser: 45,
-  };
+const ActivityStatisticsChart = ({ activity }) => {
   const datas = [
-    { name: ' Active User', value: activity?.onlineUser },
-    { name: 'Active Post', value: activity?.onlineDriver },
+    { name: 'Subscriber', value: activity?.totalSubscribedUsers },
+    { name: 'Unsubscriber', value: activity?.totalUnsubscribedUsers },
   ];
-
   const totalValue = datas.reduce((sum, item) => sum + item.value, 0);
 
   const COLORS = ['#35564E', '#059669'];

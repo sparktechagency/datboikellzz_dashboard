@@ -6,9 +6,7 @@ import admin from '../../../assets/icons/admin.svg';
 import GrowthChart from '../../../Components/charts/UserGrowthChart';
 import ActivityChart from '../../../Components/charts/ActivityChart';
 import RecentlyJoinedUsers from '../../../Components/tables/User/RecentlyJoinedUsers';
-import {
-  useGetTotalOverviewQuery,
-} from '../../../Redux/services/dashboard apis/total-overview/totalOverviewApis';
+import { useGetTotalOverviewQuery } from '../../../Redux/services/dashboard apis/total-overview/totalOverviewApis';
 import Loader from '../../../Components/Shared/Loaders/Loader';
 import PageHeading from '../../../Components/Shared/PageHeading';
 function DashboardHome() {
@@ -29,7 +27,6 @@ function DashboardHome() {
       value: isLoading ? <Loader /> : Number(data?.data?.totalAdmin) || 0,
       icon: (
         <div className="w-24 h-24 overflow-hidden">
-          {' '}
           <img className="w-full h-full object-cover" src={admin} alt="" />
         </div>
       ),
