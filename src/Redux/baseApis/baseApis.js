@@ -8,7 +8,7 @@ const baseApis = createApi({
       Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     },
   }),
-  tagTypes: ['car', 'profile', 'privacyPolicy', 'termsAndConditions', 'dCoins'],
+  tagTypes: ['profile', 'privacyPolicy', 'termsAndConditions', 'faq'],
   endpoints: () => ({}),
 });
 

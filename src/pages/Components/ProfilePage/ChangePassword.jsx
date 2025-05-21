@@ -1,14 +1,12 @@
-import React, { useState } from "react";
-import { Button, Form, Input, message, Spin } from "antd";
-// import { usePatchNewPasswordMutation } from '../../Redux/services/authApis';
+import React from 'react';
+import { Button, Form, Input, Spin } from 'antd';
+import toast from 'react-hot-toast';
+import { useChangePasswordMutation } from '../../../Redux/services/AuthApis/authApis';
 
 const ChangePassword = () => {
   const [form] = Form.useForm();
-  // const [showOldPassword, setShowOldPassword] = useState(false);
-  // const [showNewPassword, setShowNewPassword] = useState(false);
-  // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const [setNewPassword, { isLoading: isNewPassChange }] =
-  //   usePatchNewPasswordMutation({});
+  const [setNewPassword, { isLoading: isNewPassChange }] =
+    useChangePasswordMutation({});
 
   const onFinish = async (values) => {
     const ChangePasswordDatas = {
@@ -17,11 +15,14 @@ const ChangePassword = () => {
       confirmPassword: values.confirmPassword,
     };
     try {
-      // await setNewPassword(ChangePasswordDatas).unwrap();
-      message.success("Password Changed successfully.");
+      const res = await setNewPassword(ChangePasswordDatas).unwrap();
+      if (res?.success) {
+        toast.success(res?.message || 'Password Changed successfully.');
+      }
     } catch (error) {
-      console.error("Failed to change password:", error);
-      message.error("Failed to change Password.");
+      if (!error?.data?.success) {
+        toast.error(error?.data?.message || 'Failed to change Password.');
+      }
     }
   };
   return (
@@ -32,26 +33,25 @@ const ChangePassword = () => {
       layout="vertical"
     >
       <Form.Item
-        // type={showOldPassword ? 'text' : 'password'}
         name="oldPassword"
         label={<span className="text-black">Old Password</span>}
         rules={[
           {
             required: true,
-            message: "name is required",
+            message: 'old password is requird ',
           },
         ]}
       >
         <Input.Password
           placeholder="*****************"
           style={{
-            width: "100%",
+            width: '100%',
             height: 40,
-            border: "1px solid #222",
-            borderRadius: "5px",
-            color: "#111",
-            backgroundColor: "#fff",
-            outline: "none",
+            border: '1px solid #222',
+            borderRadius: '5px',
+            color: '#111',
+            backgroundColor: '#fff',
+            outline: 'none',
           }}
           className=" p-2 w-full outline-none"
         />
@@ -63,20 +63,20 @@ const ChangePassword = () => {
         rules={[
           {
             required: true,
-            message: "name is required",
+            message: 'new password is requird',
           },
         ]}
       >
         <Input.Password
           placeholder="*****************"
           style={{
-            width: "100%",
+            width: '100%',
             height: 40,
-            border: "1px solid #222",
-            borderRadius: "5px",
-            color: "#111",
-            backgroundColor: "#fff",
-            outline: "none",
+            border: '1px solid #222',
+            borderRadius: '5px',
+            color: '#111',
+            backgroundColor: '#fff',
+            outline: 'none',
           }}
           className=" p-2 w-full outline-none"
         />
@@ -88,20 +88,20 @@ const ChangePassword = () => {
         rules={[
           {
             required: true,
-            message: "phone number is required",
+            message: 'confirm password is requird',
           },
         ]}
       >
         <Input.Password
           placeholder="*****************"
           style={{
-            width: "100%",
+            width: '100%',
             height: 40,
-            border: "1px solid #222",
-            borderRadius: "5px",
-            color: "#111",
-            backgroundColor: "#fff",
-            outline: "none",
+            border: '1px solid #222',
+            borderRadius: '5px',
+            color: '#111',
+            backgroundColor: '#fff',
+            outline: 'none',
           }}
           className=" p-2 w-full outline-none"
         />
@@ -110,16 +110,15 @@ const ChangePassword = () => {
       <Button
         type="primary"
         htmlType="submit"
-        // disabled={isNewPassChange}
+        disabled={isNewPassChange}
         style={{
-          backgroundColor: "var(--bg-green-high)",
-          color: "#fff",
+          backgroundColor: 'var(--bg-green-high)',
+          color: '#fff',
           height: 40,
         }}
         className=" w-full"
       >
-        {/* {isNewPassChange ? <Spin /> : "Update password"} */}
-        update password
+        {isNewPassChange ? <Spin /> : 'Update password'}
       </Button>
     </Form>
   );

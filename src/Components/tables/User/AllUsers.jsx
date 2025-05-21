@@ -1,190 +1,61 @@
-import React, { useState } from 'react';
-import {
-  Table,
-  Space,
-  Avatar,
-  Button,
-  Modal,
-  Select,
-  Tabs,
-  Form,
-  Input,
-} from 'antd';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from 'react';
+import { Table, Space, Avatar, Button, Modal, Tabs, Form, Input } from 'antd';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { CgBlock } from 'react-icons/cg';
 import { IoIosWarning, IoIosMail } from 'react-icons/io';
 import toast from 'react-hot-toast';
 import './alluserVanila.css';
+import { useGetAllUserQuery } from '../../../Redux/services/dashboard apis/userApis/userApis';
+import { imageUrl } from '../../../Utils/server';
+
 const AllUsers = ({ recentUser }) => {
+  const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [blockUserId, setBlockUserId] = useState(null);
   const [isUserBlock, setUserBlock] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  console.log(selectedUser);
+  const { data: userData, isLoading: userDataLoading } = useGetAllUserQuery();
 
-  const users = [
-    {
-      key: '1',
-      id: '1',
-      name: 'Theodore Mosciski',
-      contactNumber: '901-474-6265',
-      email: 'maka@yandex.ru',
-      joined: '2025-01-10',
-      status: true,
-      role: 'Gold User',
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '2',
-      id: '2',
-      name: 'Russell Veum',
-      contactNumber: '983-842-7095',
-      email: 'Nigell6@hotmail.com',
-      joined: '2025-01-10',
-      status: false,
-      role: 'Bronze User',
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '3',
-      id: '3',
-      name: 'Tracy Grady',
-      contactNumber: '564-667-5097',
-      email: 'rrian@yandex.ru',
-      joined: '2025-01-10',
-      status: true,
-      role: 'Silver User',
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '4',
-      id: '4',
-      name: 'Dana Daniel',
-      contactNumber: '443-393-4346',
-      email: 'rrian@yandex.ru',
-      joined: '2025-01-10',
-      status: false,
-      role: 'Gold User',
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '5',
-      id: '5',
-      name: 'Gerardo Barrows',
-      contactNumber: '344-223-4982',
-      email: 'cido@gmail.com',
-      joined: '2025-01-10',
-      status: true,
-      role: 'Bronze User',
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '6',
-      id: '6',
-      name: 'Sheryl Gusikowski',
-      contactNumber: '752-792-1071',
-      email: 'cedennar@gmail.com',
-      joined: '2025-01-10',
-      status: false,
-      role: 'Silver User',
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '7',
-      id: '7',
-      name: 'Lana Kiehn',
-      contactNumber: '234-567-8901',
-      email: 'lana.kiehn@example.com',
-      joined: '2025-01-11',
-      status: true,
-      role: 'Gold User',
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '8',
-      id: '8',
-      name: 'Sammy Bednar',
-      contactNumber: '345-678-9012',
-      email: 'sammy.bednar@example.com',
-      joined: '2025-01-12',
-      status: false,
-      role: 'Bronze User',
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '9',
-      id: '9',
-      name: 'Kory Spinka',
-      contactNumber: '456-789-0123',
-      email: 'kory.spinka@example.com',
-      joined: '2025-01-13',
-      status: true,
-      role: 'Silver User',
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '10',
-      id: '10',
-      name: 'Rosa Kertzmann',
-      contactNumber: '567-890-1234',
-      email: 'rosa.kertzmann@example.com',
-      joined: '2025-01-14',
-      status: false,
-      role: 'Gold User',
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '11',
-      id: '11',
-      name: 'Hollis Parisian',
-      contactNumber: '678-901-2345',
-      email: 'hollis.parisian@example.com',
-      joined: '2025-01-15',
-      status: true,
-      role: 'Bronze User',
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '12',
-      id: '12',
-      name: 'Kip Stark',
-      contactNumber: '789-012-3456',
-      email: 'kip.stark@example.com',
-      joined: '2025-01-16',
-      status: false,
-      role: 'Silver User',
-      isBlocked: true,
-      avatar: null,
-    },
-  ];
-
-  const handleUnblockUser = async () => {
-    if (!blockUserId) {
-      return toast.error('Please select a user to block');
-    }
-    toast.success('User successfully unblocked');
-    setShowModal(false);
+  const transformUserData = (apiUsers) => {
+    console.log(apiUsers);
+    if (!apiUsers) return [];
+    return apiUsers.map((user) => ({
+      id: user._id,
+      name: user.name || user.authId?.name || 'N/A',
+      contactNumber: user.phoneNumber || 'N/A',
+      email: user.email || user.authId?.email || 'N/A',
+      joined: new Date(user.createdAt).toLocaleDateString(),
+      role: mapRole(user.authId?.role),
+      isBlocked: user.authId?.isBlocked || false,
+      profile_image: null,
+    }));
   };
 
-  const handleBlockUser = async () => {
-    if (!blockUserId) {
-      return toast.error('Please select a user to block');
+  const mapRole = (role) => {
+    switch (role) {
+      case 'USER':
+        return 'Gold User';
+      case 'ADMIN':
+        return 'Silver User';
+      case 'MODERATOR':
+        return 'Bronze User';
+      default:
+        return role || 'User';
     }
-    toast.success('User successfully blocked');
-    setShowModal(false);
   };
-  const [filteredUsers, setFilteredUsers] = useState(users);
+
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
+  const users = transformUserData(userData?.data?.users);
+
+  useEffect(() => {
+    setFilteredUsers(users);
+  }, [userData]);
 
   const columns = [
     {
@@ -193,7 +64,7 @@ const AllUsers = ({ recentUser }) => {
       key: 'name',
       render: (text, record) => (
         <Space size="middle">
-          <Avatar icon={<UserOutlined />} src={record.avatar} />
+          <Avatar icon={<UserOutlined />} src={imageUrl(record.profile_image)} />
           {text}
         </Space>
       ),
@@ -297,14 +168,25 @@ const AllUsers = ({ recentUser }) => {
     }
   };
 
-  const handleSearch = (value) => {
-    const filtered = users.filter(
-      (user) =>
-        user.name.toLowerCase().includes(value.toLowerCase()) ||
-        user.email.toLowerCase().includes(value.toLowerCase()) ||
-        user.contactNumber.includes(value)
-    );
-    setFilteredUsers(filtered);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setFilteredUsers(e.target.value);
+  };
+
+  const handleUnblockUser = async () => {
+    if (!blockUserId) {
+      return toast.error('Please select a user to unblock');
+    }
+    toast.success('User successfully unblocked');
+    setShowModal(false);
+  };
+
+  const handleBlockUser = async () => {
+    if (!blockUserId) {
+      return toast.error('Please select a user to block');
+    }
+    toast.success('User successfully blocked');
+    setShowModal(false);
   };
 
   return (
@@ -314,12 +196,13 @@ const AllUsers = ({ recentUser }) => {
           <Form.Item>
             <Input.Search
               placeholder="Search by name, email, or contact number"
-              onSearch={handleSearch}
+              onChange={(value) => handleSearch(value)}
               allowClear
             />
           </Form.Item>
         </Form>
       </div>
+
       {recentUser !== true && (
         <Tabs defaultActiveKey="1" type="card" onChange={handleTabChange}>
           <Tabs.TabPane tab="All Users" key="1" />
@@ -334,8 +217,14 @@ const AllUsers = ({ recentUser }) => {
         columns={columns}
         dataSource={filteredUsers}
         rowKey="id"
-        pagination={true}
+        scroll={{ x: 1500 }}
+        pagination={{
+          pageSize: 4,
+          defaultCurrent: parseInt(page),
+          onChange: (page) => handlePageChange(page),
+        }}
         bordered
+        loading={userDataLoading}
       />
 
       {/* Modal to confirm block/unblock */}
@@ -376,7 +265,7 @@ const AllUsers = ({ recentUser }) => {
         <div className="flex flex-col items-center">
           <Avatar
             className="!w-24 !h-24"
-            src="https://xsgames.co/randomusers/avatar.php?g=male"
+            src={imageUrl(selectedUser?.profile_image)}
           />
           <h1 className="text-2xl font-semibold">{selectedUser?.name}</h1>
           <div className="mt-4 !w-full">

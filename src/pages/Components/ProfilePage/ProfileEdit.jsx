@@ -3,10 +3,7 @@ import { Button, Form, Spin } from 'antd';
 import toast from 'react-hot-toast';
 import { useUpdateProfileDataMutation } from '../../../Redux/services/superAdminProfileApis';
 
-const ProfileEdit = ({
-  image = 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Wikipe-tan_full_length.png',
-  data,
-}) => {
+const ProfileEdit = ({ image, data }) => {
   const [form] = Form.useForm();
   const [setProfileUpdate, { isLoading: isProfileUpdate }] =
     useUpdateProfileDataMutation();
@@ -36,7 +33,6 @@ const ProfileEdit = ({
       console.error('Failed to update profile:', error);
     }
   };
-  console.log(data)
   return (
     <div>
       <p className="text-[var(--bg-green-high)] text-3xl text-center">
