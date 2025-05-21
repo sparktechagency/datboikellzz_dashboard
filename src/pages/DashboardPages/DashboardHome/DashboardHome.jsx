@@ -14,7 +14,7 @@ function DashboardHome() {
   const cardData = [
     {
       title: 'Total User',
-      value: isLoading ? <Loader /> : Number(data?.data?.totalDriver) || 0,
+      value: isLoading ? <Loader /> : Number(data?.data?.totalUser) || 0,
       icon: (
         <div className="w-32 h-32 overflow-hidden">
           <img className="w-full h-full object-cover" src={user} alt="" />
@@ -23,7 +23,7 @@ function DashboardHome() {
     },
     {
       title: 'Total Admin',
-      value: isLoading ? <Loader /> : Number(data?.data?.totalUser) || 0,
+      value: isLoading ? <Loader /> : Number(data?.data?.totalAdmin) || 0,
       icon: (
         <div className="w-24 h-24 overflow-hidden">
           {' '}
@@ -33,7 +33,7 @@ function DashboardHome() {
     },
     {
       title: 'Total Post',
-      value: isLoading ? <Loader /> : Number(data?.data?.totalCars) || 0,
+      value: isLoading ? <Loader /> : Number(data?.data?.totalPosts) || 0,
       icon: (
         <div className="w-24 h-24 overflow-hidden">
           <img className="w-full h-full object-cover" src={post} alt="" />
