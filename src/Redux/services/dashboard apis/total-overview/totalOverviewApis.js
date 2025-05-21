@@ -10,7 +10,7 @@ const totalOverviewApis = baseApis.injectEndpoints({
     }),
     growthOverview: builder.query({
       query: ({ role, year }) => ({
-        url: '/dashboard/growth',
+        url: '/dashboard/get-growth',
         method: 'GET',
         params: {
           role,
