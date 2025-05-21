@@ -1,107 +1,27 @@
 import React, { useState } from 'react';
-import { Table, Tag, Space, Avatar, Button, Modal, Select } from 'antd';
-import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
-import { CgBlock } from 'react-icons/cg';
+import { Table, Space, Avatar, Button, Modal } from 'antd';
 import { IoIosMail, IoIosWarning } from 'react-icons/io';
-import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useGetPaymentQuery } from '../../../Redux/services/dashboard apis/total-overview/payment/paymentApis';
+import { imageUrl } from '../../../Utils/server';
 
 const TransactionTable = () => {
   const [showModal, setShowModal] = useState(false);
-  const [blockUserId, setBlockUserId] = useState(null);
-  console.log(blockUserId);
-  const users = [
-    {
-      id: 1,
-      name: 'Theodore Mosciski',
-      trId: 'TRX-84921A',
-      date: '901-474-6265',
-      email: 'maka@yandex.ru',
-      paOn: 'Online',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 2,
-      name: 'Russell Veum',
-      date: '983-842-7095',
-      trId: 'TRX-84921A',
-      email: 'Nigel16@hotmail.com',
-      paOn: 'D coin',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 3,
-      name: 'Tracy Grady',
-      date: '564-667-5097',
-      trId: 'TRX-84921A',
-      email: 'rrian@yandex.ru',
-      paOn: 'Handcash',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 44444444444444,
-      name: 'Dana Daniel',
-      date: '443-393-4346',
-      trId: 'TRX-84921A',
-      email: 'rrian@yandex.ru',
-      paOn: 'Online',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 43333333333,
-      name: 'Dana Daniel',
-      date: '443-393-4346',
-      trId: 'TRX-84921A',
-      email: 'rrian@yandex.ru',
-      paOn: 'Online',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 4333333,
-      name: 'Dana Daniel',
-      date: '443-393-4346',
-      trId: 'TRX-84921A',
-      email: 'rrian@yandex.ru',
-      paOn: 'Online',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 4333,
-      name: 'Dana Daniel',
-      date: '443-393-4346',
-      trId: 'TRX-84921A',
-      email: 'rrian@yandex.ru',
-      paOn: 'Online',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 433,
-      name: 'Dana Daniel',
-      date: '443-393-4346',
-      trId: 'TRX-84921A',
-      email: 'rrian@yandex.ru',
-      paOn: 'Online',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-    {
-      id: 43,
-      name: 'Dana Daniel',
-      date: '443-393-4346',
-      trId: 'TRX-84921A',
-      email: 'rrian@yandex.ru',
-      paOn: 'Online',
-      amount: 'MR 29',
-      avatar: `https://tinypng.com/images/social/website.jpg`,
-    },
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading } = useGetPaymentQuery({ page: currentPage });
+  const payments = data?.data?.result || [];
+  const meta = data?.data?.meta || {};
+
+  const tableData = payments.map((item) => ({
+    id: item?._id,
+    name: item?.user?.name || 'N/A',
+    email: item?.user?.email || 'N/A',
+    date: new Date(item.createdAt).toLocaleDateString(),
+    time: item?.createdAt,
+    trId: item?.payment_intent_id || 'N/A',
+    amount: `$ ${item?.amount?.toFixed(2) || '0.00'}`,
+    avatar: imageUrl(item?.user?.profile_image),
+  }));
 
   const columns = [
     {
@@ -110,7 +30,7 @@ const TransactionTable = () => {
       key: 'name',
       render: (text, record) => (
         <Space size="middle">
-          <Avatar src={record.avatar} />
+          <Avatar src={record.avatar} icon={!record.avatar && undefined} />
           {text}
         </Space>
       ),
@@ -127,58 +47,55 @@ const TransactionTable = () => {
       ),
     },
     {
-      title: 'Date',
-      dataIndex: 'date',
+      title: 'Date & Time',
       key: 'date',
-    },
-    {
-      title: 'Pay On',
-      dataIndex: 'paOn',
-      key: 'paOn',
+      render: (_, record) => {
+        const date = record.date;
+        const time = new Date(record.time).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        });
+        return (
+          <div className="flex items-center justify-center gap-3">
+            <p className="leading-none">{date}</p> <p>/</p>
+            <p className="leading-none">{time}</p>
+          </div>
+        );
+      },
     },
     {
       title: 'TR ID',
       dataIndex: 'trId',
       key: 'trId',
+      ellipsis: true,
     },
     {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
     },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button className="!bg-[var(--bg-green-high)]">
-            <UserOutlined className="!text-white" />
-          </Button>
-
-          <Button
-            onClick={() => {
-              setBlockUserId(record.id);
-              setShowModal(true);
-            }}
-            className="ant-btn ant-btn-default"
-          >
-            <CgBlock />
-          </Button>
-        </Space>
-      ),
-    },
   ];
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="w-full overflow-x-auto">
       <Table
+        scroll={{ x: 1500 }}
         columns={columns}
-        dataSource={users}
+        dataSource={tableData}
         rowKey="id"
+        loading={isLoading}
         pagination={
-          users.length > 5
+          meta.total > meta.limit
             ? {
-                defaultPageSize: 5,
+                current: meta?.page,
+                pageSize: meta?.limit,
+                total: meta?.total,
+                onChange: handlePageChange,
                 showSizeChanger: false,
               }
             : false

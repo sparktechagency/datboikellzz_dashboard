@@ -2,7 +2,7 @@ import React from 'react';
 import earningImage from '../../assets/icons/earning.svg';
 import { FaDollarSign } from 'react-icons/fa6';
 
-function EarningManage() {
+function EarningManage({total}) {
   return (
     <div>
       <div className="relative w-full flex z-[999] overflow-hidden h-[250px] items-center justify-between bg-gradient-to-tr from-[#F6F6F6] via-white to-[var(--bg-green-low)]/70 p-12 rounded-xl">
@@ -31,7 +31,7 @@ function EarningManage() {
           <h2 className="text-xl font-semibold !mt-6 leading-none">
             Total Earnings
           </h2>
-          <h1 className="text-3xl leading-none">$23,0900</h1>
+          <h1 className="text-3xl leading-none">${total}</h1>
         </div>
       </div>
     </div>

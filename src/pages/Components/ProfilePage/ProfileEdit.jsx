@@ -53,7 +53,6 @@ const ProfileEdit = ({ image, data }) => {
         <Form.Item
           name="name"
           label={<span className="text-black">Name</span>}
-          rules={[{ required: true, message: 'Name is required' }]}
         >
           <input
             style={{
@@ -94,7 +93,6 @@ const ProfileEdit = ({ image, data }) => {
         <Form.Item
           name="phoneNumber"
           label={<span className="text-black">Phone Number</span>}
-          rules={[{ required: true, message: 'Phone number is required' }]}
         >
           <input
             style={{

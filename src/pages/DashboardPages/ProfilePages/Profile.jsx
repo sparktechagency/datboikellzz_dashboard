@@ -13,16 +13,9 @@ const Tabs = ['Edit Profile', 'Change Password'];
 
 const Profile = () => {
   const [tab, setTab] = useState(Tabs[0]);
-
   const [adminRole, setAdminRole] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    const decoded = jwtDecode(token);
-    setAdminRole(decoded.role);
-  }, []);
-  const adminSkip = adminRole === null || adminRole === 'ADMIN';
-  const superAdminSkip = adminRole === null || adminRole === 'SUPER_ADMIN';
+  const adminSkip = adminRole === 'ADMIN';
+  const superAdminSkip = adminRole === 'SUPER_ADMIN';
   const { data: adminData, isLoading: adminDataLoading } =
     useGetProfileDataQuery(undefined, {
       skip: superAdminSkip,
@@ -31,6 +24,12 @@ const Profile = () => {
   const { data, isLoading } = useGetSuperAdminProfileQuery(undefined, {
     skip: adminSkip,
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    const decoded = jwtDecode(token);
+    setAdminRole(decoded.role);
+  }, []);
 
   const [image, setImage] = useState(null);
   const handleImageUpload = (e) => {
