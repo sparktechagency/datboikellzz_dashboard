@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Dropdown, Image, Menu } from 'antd';
+import { Avatar, Badge, Button, Dropdown, Image, Menu, Typography } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
 import logo from '../../assets/icons/DUDU.svg';
@@ -9,16 +9,19 @@ import { useGetSuperAdminProfileQuery } from '../../Redux/services/superAdminPro
 import { imageUrl } from '../../Utils/server';
 import { jwtDecode } from 'jwt-decode';
 import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
+import {
+  useGetNotificationQuery,
+  useUpdateStatusMutation,
+} from '../../Redux/services/dashboard apis/notification/notificationApis';
+import toast from 'react-hot-toast';
+const { Title } = Typography;
 
 function Header() {
   const [adminRole, setAdminRole] = useState(null);
-  const [notifications, setNotifications] = useState(
-    Array.from({ length: 5 }).map((_, i) => ({
-      id: i,
-      message: `Notification ${i + 1}`,
-      date: '2025-04-24 • 09:20 AM',
-    }))
-  );
+  const { data: notificationsData, isLoading: notificationLoading } =
+    useGetNotificationQuery({ limit: 999 });
+  const [updateMark, { isLoading: markLoading }] = useUpdateStatusMutation();
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     const decoded = jwtDecode(token);
@@ -27,12 +30,11 @@ function Header() {
 
   const adminSkip = adminRole === null || adminRole === 'ADMIN';
   const superAdminSkip = adminRole === null || adminRole === 'SUPER_ADMIN';
-  const { data: adminData, isLoading: adminDataLoading } =
-    useGetProfileDataQuery(undefined, {
-      skip: superAdminSkip,
-    });
+  const { data: adminData } = useGetProfileDataQuery(undefined, {
+    skip: superAdminSkip,
+  });
 
-  const { data, isLoading } = useGetSuperAdminProfileQuery(undefined, {
+  const { data } = useGetSuperAdminProfileQuery(undefined, {
     skip: adminSkip,
   });
 
@@ -50,12 +52,9 @@ function Header() {
     window.location.href = '/login';
   };
 
-  const handleRemoveNotification = (index) => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter((_, i) => i !== index)
-    );
+  const handleRemoveNotification = (id) => {
+    toast.success(id);
   };
-
   const menu = (
     <Menu className="w-fit rounded-xl shadow-lg">
       <div className="p-4 flex items-center gap-3">
@@ -79,13 +78,34 @@ function Header() {
     </Menu>
   );
 
+  const handleMark = async () => {
+    try {
+      const res = await updateMark();
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unreadCount =
+    notificationsData?.data?.notification?.filter((notif) => !notif.isRead)
+      .length || 0;
+
   const notification = (
     <Menu className="!w-[500px]">
-      {notifications.map((notif, i) => (
+      {unreadCount > 0 && (
+        <div className="flex items-center justify-between mx-2 my-3">
+          <Title level={4}>You got new notification</Title>
+          <Button type="default" onClick={() => handleMark()}>
+            Mark as read
+          </Button>
+        </div>
+      )}
+      {notificationsData?.data?.notification.map((notif, i) => (
         <Notify
-          key={notif.id}
+          key={notif._id}
           i={i}
-          user={user}
+          notify={notif}
           onRemove={handleRemoveNotification}
         />
       ))}
@@ -98,10 +118,11 @@ function Header() {
       <div className="flex items-center gap-4 text-2xl">
         <Dropdown
           overlay={notification}
+          disabled={notificationLoading}
           trigger={['click']}
           placement="bottomRight"
         >
-          <Badge count={notifications.length}>
+          <Badge count={unreadCount}>
             <Button shape="circle" icon={<IoMdNotificationsOutline />} />
           </Badge>
         </Dropdown>

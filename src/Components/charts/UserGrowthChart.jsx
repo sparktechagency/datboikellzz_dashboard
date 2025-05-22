@@ -17,7 +17,7 @@ const UserGrowthChart = () => {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
   const [years, setYears] = useState([currentYear]);
-  const [role] = useState('ADMIN');
+  const [role] = useState('USER');
 
   const { data: growthdata, isLoading: growthDataLoading } =
     useGrowthOverviewQuery({ role, year });
@@ -92,7 +92,7 @@ const UserGrowthChart = () => {
             >
               <defs>
                 <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#022C22" stopOpacity={0.8} />
+                  <stop offset="5%" stopColor="#022C22" stopOpacity={0.5} />
                   <stop offset="95%" stopColor="#022C22" stopOpacity={0.8} />
                 </linearGradient>
               </defs>
@@ -104,6 +104,7 @@ const UserGrowthChart = () => {
               />
               <YAxis
                 stroke="#333"
+                tickCount={6}
                 domain={[0, maxUsers]}
                 tick={{ fontSize: 12, fontWeight: 500 }}
               />

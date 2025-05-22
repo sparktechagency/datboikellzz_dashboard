@@ -17,11 +17,9 @@ const AllUsers = ({ recentUser }) => {
   const [blockUserId, setBlockUserId] = useState(null);
   const [isUserBlock, setUserBlock] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  console.log(selectedUser);
   const { data: userData, isLoading: userDataLoading } = useGetAllUserQuery();
 
   const transformUserData = (apiUsers) => {
-    console.log(apiUsers);
     if (!apiUsers) return [];
     return apiUsers.map((user) => ({
       id: user._id,
@@ -64,7 +62,10 @@ const AllUsers = ({ recentUser }) => {
       key: 'name',
       render: (text, record) => (
         <Space size="middle">
-          <Avatar icon={<UserOutlined />} src={imageUrl(record.profile_image)} />
+          <Avatar
+            icon={<UserOutlined />}
+            src={imageUrl(record.profile_image)}
+          />
           {text}
         </Space>
       ),

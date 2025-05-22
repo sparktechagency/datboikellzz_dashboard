@@ -1,31 +1,52 @@
-import { Avatar, Card, Button } from 'antd';
 import React from 'react';
+import { Card, Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
-function Notify({ i, user, onRemove }) {
+function Notify({ notify, onRemove }) {
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${year}-${month}-${day} • ${String(hours).padStart(
+      2,
+      '0'
+    )}:${minutes} ${ampm}`;
+  };
+
   return (
-    <div className='mb-2'>
-      <Card>
-        <div className="flex  items-start gap-2">
-          <Avatar
-            size={40}
-            src={user?.photoURL}
-            className="cursor-pointer !min-w-12 !min-h-12"
-          />
-          <div className="relative">
-            <h2>New User Joined</h2>
-            <h3>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero
-              voluptatem porro aperiam odit fugiat? Quod?
+    <div className="mb-2 w-full">
+      <Card
+        style={{
+          width: '100%',
+          backgroundColor: !notify.isRead ? '#f6faff' : 'white',
+          borderLeft: !notify.isRead ? '3px solid #1890ff' : 'none',
+        }}
+        className={!notify.isRead ? 'unread-notification' : ''}
+      >
+        <div className="flex relative items-start gap-2">
+          <div>
+            <h2 style={{ fontWeight: !notify.isRead ? '600' : 'normal' }}>
+              {notify?.title}
+            </h2>
+            <h3 style={{ fontWeight: !notify.isRead ? '500' : 'normal' }}>
+              {notify?.message}
             </h3>
-            <p className="text-xs opacity-75">2025-04-24 • 09:20 AM</p>
+            <p className="text-xs opacity-75">
+              {formatDate(notify?.createdAt)}
+            </p>
             <Button
               className="!absolute !top-0 !right-0"
               shape="circle"
               icon={<DeleteOutlined />}
               size="small"
               type="link"
-              onClick={() => onRemove(i)}
+              onClick={() => onRemove(notify?._id)}
             />
           </div>
         </div>
