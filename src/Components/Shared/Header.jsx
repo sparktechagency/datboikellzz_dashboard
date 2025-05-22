@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Badge, Button, Dropdown, Image, Menu, Typography } from 'antd';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Dropdown,
+  Empty,
+  Image,
+  Menu,
+  Spin,
+  Typography,
+} from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
 import logo from '../../assets/icons/DUDU.svg';
@@ -10,6 +20,7 @@ import { imageUrl } from '../../Utils/server';
 import { jwtDecode } from 'jwt-decode';
 import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
 import {
+  useDeleteNotificationMutation,
   useGetNotificationQuery,
   useUpdateStatusMutation,
 } from '../../Redux/services/dashboard apis/notification/notificationApis';
@@ -21,6 +32,7 @@ function Header() {
   const { data: notificationsData, isLoading: notificationLoading } =
     useGetNotificationQuery({ limit: 999 });
   const [updateMark, { isLoading: markLoading }] = useUpdateStatusMutation();
+  const [deleteNotification] = useDeleteNotificationMutation();
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -52,8 +64,18 @@ function Header() {
     window.location.href = '/login';
   };
 
-  const handleRemoveNotification = (id) => {
-    toast.success(id);
+  const handleRemoveNotification = async (id) => {
+    try {
+      const data = {
+        notificationId: id,
+      };
+      const res = await deleteNotification({ data });
+      if (res?.data?.success) {
+        toast.success(res?.data?.message || 'Notification deleted');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   const menu = (
     <Menu className="w-fit rounded-xl shadow-lg">
@@ -81,7 +103,9 @@ function Header() {
   const handleMark = async () => {
     try {
       const res = await updateMark();
-      console.log(res);
+      if (res?.success) {
+        toast.success(res?.message || '');
+      }
     } catch (error) {
       console.log(error);
     }
@@ -93,22 +117,27 @@ function Header() {
 
   const notification = (
     <Menu className="!w-[500px]">
-      {unreadCount > 0 && (
-        <div className="flex items-center justify-between mx-2 my-3">
-          <Title level={4}>You got new notification</Title>
-          <Button type="default" onClick={() => handleMark()}>
-            Mark as read
-          </Button>
-        </div>
+      {unreadCount > 0 &&
+        notificationsData?.data?.notification?.length !== 0 && (
+          <div className="flex items-center justify-between mx-2 my-3">
+            <Title level={4}>You got new notification</Title>
+            <Button type="default" onClick={() => handleMark()}>
+              {markLoading ? <Spin size="small"></Spin> : 'Mark as read'}
+            </Button>
+          </div>
+        )}
+      {notificationsData?.data?.notification?.length <= 0 ? (
+        <Empty description="No new notification available" />
+      ) : (
+        notificationsData?.data?.notification.map((notif, i) => (
+          <Notify
+            key={notif._id}
+            i={i}
+            notify={notif}
+            onRemove={handleRemoveNotification}
+          />
+        ))
       )}
-      {notificationsData?.data?.notification.map((notif, i) => (
-        <Notify
-          key={notif._id}
-          i={i}
-          notify={notif}
-          onRemove={handleRemoveNotification}
-        />
-      ))}
     </Menu>
   );
 

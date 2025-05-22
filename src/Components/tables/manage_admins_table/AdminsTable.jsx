@@ -12,6 +12,8 @@ import toast from 'react-hot-toast';
 import Success from '../../Shared/Success';
 import CreateNewAdmin from './CreateNewAdmin';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
+import { useGetAllAdminsQuery } from '../../../Redux/services/dashboard apis/createAdmin/adminApis';
+import { imageUrl } from '../../../Utils/server';
 
 const AdminsTable = () => {
   const [showModal, setShowModal] = useState();
@@ -22,68 +24,36 @@ const AdminsTable = () => {
   const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
   const [selectAdmin, setSelectAdmin] = useState(null);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
-  const admins = [
-    {
-      key: '1',
-      name: 'Theodore Mosciski',
-      contactNumber: '901-474-6265',
-      email: 'maka@yandex.ru',
-      joined: '2025-01-10',
-      status: 'Active',
-    },
-    {
-      key: '2',
-      name: 'Russell Veum',
-      contactNumber: '983-842-7095',
-      email: 'Nigel16@hotmail.com',
-      joined: '2025-01-10',
-      status: 'Active',
-    },
-    {
-      key: '3',
-      name: 'Tracy Grady',
-      contactNumber: '564-667-5097',
-      email: 'rrian@yandex.ru',
-      joined: '2025-01-10',
-      status: 'Active',
-    },
-    {
-      key: '4',
-      name: 'Dana Daniel',
-      contactNumber: '443-393-4346',
-      email: 'rrian@yandex.ru',
-      joined: '2025-01-10',
-      status: 'Inactive',
-    },
-    {
-      key: '5',
-      name: 'Gerardo Barrows',
-      contactNumber: '344-223-4982',
-      email: 'cido@gmail.com',
-      joined: '2025-01-10',
-      status: 'Inactive',
-    },
-    {
-      key: '6',
-      name: 'Sheryl Gusikowski',
-      contactNumber: '752-792-1071',
-      email: 'cedennar@gmail.com',
-      joined: '2025-01-10',
-      status: 'Active',
-    },
-  ];
+  const { data: adminData, isLoading: dataLoading } = useGetAllAdminsQuery();
 
+  const adminsData = adminData?.data?.admins?.map((admin) => ({
+    _id: admin?._id,
+    auth_name: admin?.authId?.name || 'N/A',
+    auth_email: admin?.authId?.email || 'N/A',
+    auth_role: admin?.authId?.role || 'N/A',
+    auth_isBlocked: admin?.authId?.isBlocked || 'N/A',
+    auth_isActive: admin?.authId?.isActive || 'N/A',
+    auth_createdAt: admin?.authId?.createdAt || 'N/A',
+    name: admin?.name || 'N/A',
+    email: admin?.email || 'N/A',
+    profile_image: admin?.profile_image || 'N/A',
+    phoneNumber: admin?.phoneNumber || 'N/A',
+    joined: admin?.createdAt,
+  }));
+
+  const metaData = adminData?.data?.meta;
+  console.log(metaData);
   const columns = [
     {
       title: 'Admin Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => (
+      render: (text, record) => (
         <div className="flex items-center">
           <Avatar
             size="small"
             style={{ marginRight: 8 }}
-            src={`https://avatarfiles.alphacoders.com/364/364731.png`}
+            src={imageUrl(record.profile_image)}
           />
           <span>{text}</span>
         </div>
@@ -91,8 +61,8 @@ const AdminsTable = () => {
     },
     {
       title: 'Contact Number',
-      dataIndex: 'contactNumber',
-      key: 'contactNumber',
+      dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
     },
     {
       title: 'Email',
@@ -106,10 +76,12 @@ const AdminsTable = () => {
     },
     {
       title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <Tag color={status === 'Active' ? 'success' : 'error'}>{status}</Tag>
+      dataIndex: 'auth_isActive',
+      key: 'auth_isActive',
+      render: (_, record) => (
+        <Tag color={record.auth_isActive ? 'green' : 'red'}>
+          {record.auth_isActive ? 'Active' : 'Inactive'}
+        </Tag>
       ),
     },
     {
@@ -119,7 +91,10 @@ const AdminsTable = () => {
       render: (_, record) => (
         <Space size="small">
           <Button
-            onClick={() => setUserDetailsModal(true)}
+            onClick={() => {
+              setSelectAdmin(record);
+              setUserDetailsModal(true);
+            }}
             className="!bg-[var(--bg-green-high)]"
             type="default"
             icon={<UserOutlined className="!text-white" />}
@@ -127,7 +102,7 @@ const AdminsTable = () => {
           />
           <Button
             onClick={() => {
-              setSelectAdmin(record.key);
+              setSelectAdmin(record);
               setUpdateAdminInfo(true);
             }}
             className="!bg-[var(--bg-green-high)]"
@@ -140,7 +115,7 @@ const AdminsTable = () => {
             type="default"
             icon={<DeleteOutlined />}
             size="small"
-            onClick={()=>toast.success('Admin delete successfully')}
+            onClick={() => toast.success('Admin delete successfully')}
           />
           <Button
             onClick={() => {
@@ -197,7 +172,8 @@ const AdminsTable = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={admins}
+        dataSource={adminsData}
+        loading={dataLoading}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: false,
@@ -265,7 +241,7 @@ const AdminsTable = () => {
       </Modal>
       <Modal centered open={updateAdminInfo} footer={null} closeIcon={false}>
         <UpdateAdminInformatio
-          id={selectAdmin}
+          data={selectAdmin}
           closeModal={setUpdateAdminInfo}
         />
       </Modal>
@@ -275,57 +251,71 @@ const AdminsTable = () => {
         footer={null}
         className="user-details-modal"
       >
-        <div className="flex flex-col items-center">
-          <Avatar
-            className="!w-24 !h-24"
-            src="https://xsgames.co/randomusers/avatar.php?g=male"
-          />
-          <h1 className="text-2xl font-bold">Admin no.1</h1>
-          <div className="!w-full p-1 border-1 border-[var(--vg-green-high)] rounded-md">
-            <div className="p-2 bg-[var(--bg-green-high)] !text-white flex items-center justify-center font-semibold text-base rounded-md">
-              Admin Profile
+        {selectAdmin && (
+          <div className="flex flex-col items-center">
+            <Avatar
+              className="!w-24 !h-24"
+              src={imageUrl(selectAdmin.profile_image)}
+            />
+            <h1 className="text-2xl font-bold">{selectAdmin.name}</h1>
+            <div className="!w-full p-1 border-1 border-[var(--vg-green-high)] rounded-md">
+              <div className="p-2 bg-[var(--bg-green-high)] !text-white flex items-center justify-center font-semibold text-base rounded-md">
+                Admin Profile
+              </div>
+            </div>
+            <div className="mt-4 !w-full">
+              <p className="font-semibold">Admin Full Name</p>
+              <p className="p-2 border border-[#64748B] rounded-md">
+                {selectAdmin.name}
+              </p>
+              <p className="font-semibold mt-2">Email</p>
+              <p className="p-2 border border-[#64748B] rounded-md">
+                {selectAdmin.email}
+              </p>
+              <p className="font-semibold mt-2">Phone Number</p>
+              <p className="p-2 border border-[#64748B] rounded-md">
+                {selectAdmin.phoneNumber}
+              </p>
+              <p className="font-semibold mt-2">Status</p>
+              <p className="p-2 border border-[#64748B] rounded-md">
+                {selectAdmin.auth_isActive ? 'Active' : 'Inactive'}
+              </p>
+              <p className="font-semibold mt-2">Joined Date</p>
+              <p className="p-2 border border-[#64748B] rounded-md">
+                {new Date(selectAdmin.joined).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="mt-4 !w-full">
+              <div className="flex items-center justify-between gap-3">
+                <Button
+                  type="primary"
+                  danger
+                  onClick={() => {
+                    setUserBlock(selectAdmin.auth_isActive);
+                    setBlockUserId(selectAdmin._id);
+                    setUserDetailsModal(false);
+                    setShowModal(true);
+                  }}
+                  className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
+                >
+                  {selectAdmin.auth_isActive
+                    ? 'Block This User'
+                    : 'Unblock This User'}
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setUserDetailsModal(false);
+                    setUpdateAdminInfo(true);
+                  }}
+                  className="!w-full !border !bg-[var(--bg-green-high)] !text-white"
+                >
+                  Update
+                </Button>
+              </div>
             </div>
           </div>
-          <div className="mt-4 !w-full">
-            <p className="font-semibold">Admin Full Name</p>
-            <p className="p-2 border border-[#64748B] rounded-md">Admin no.1</p>
-            <p className="font-semibold mt-2">Email</p>
-            <p className="p-2 border border-[#64748B] rounded-md">
-              admin@gmail.com
-            </p>
-            <p className="font-semibold mt-2">Phone Number</p>
-            <p className="p-2 border border-[#64748B] rounded-md">
-              1245412458454
-            </p>
-          </div>
-          <div className="mt-4 !w-full">
-            <div className="flex items-center justify-between gap-3">
-              <Button
-                type="primary"
-                danger
-                onClick={() => {
-                  toast.success('User blocked');
-                  setUserDetailsModal(false);
-                }}
-                className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
-              >
-                Block This User
-              </Button>
-              <Button
-                type="primary"
-                danger
-                onClick={() => {
-                  setSelectAdmin('as');
-                  setUserDetailsModal(false);
-                  setUpdateAdminInfo(true);
-                }}
-                className="!w-full !border !bg-[var(--bg-green-high)] !text-white"
-              >
-                Update
-              </Button>
-            </div>
-          </div>
-        </div>
+        )}
       </Modal>
     </div>
   );

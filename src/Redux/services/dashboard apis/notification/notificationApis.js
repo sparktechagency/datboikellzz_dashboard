@@ -18,22 +18,21 @@ export const notificationApis = baseApis.injectEndpoints({
           isRead: true,
         },
       }),
+      invalidatesTags: ['notification'],
     }),
-    // updateProfileData: builder.mutation({
-    //   query: (data) => {
-    //     return {
-    //       url: '/admin/edit-profile',
-    //       method: 'PATCH',
-    //       body: data,
-    //       headers: {
-    //         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-    //       },
-    //     };
-    //   },
-    //   invalidatesTags: ['profile'],
-    // }),
+    deleteNotification: builder.mutation({
+      query: ({ data }) => ({
+        url: '/notification/delete-notification',
+        method: 'DELETE',
+        body: data,
+      }),
+      invalidatesTags: ['notification'],
+    }),
   }),
 });
 
-export const { useGetNotificationQuery, useUpdateStatusMutation } =
-  notificationApis;
+export const {
+  useGetNotificationQuery,
+  useUpdateStatusMutation,
+  useDeleteNotificationMutation,
+} = notificationApis;

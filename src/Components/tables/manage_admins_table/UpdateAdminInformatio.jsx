@@ -2,15 +2,12 @@ import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
 
-function UpdateAdminInformatio({ id, closeModal }) {
-  console.log(id);
+function UpdateAdminInformatio({ data, closeModal }) {
   const [form] = Form.useForm();
   const initialData = {
-    fullName: 'Hosain Ahmed',
-    email: 'hosain@gmail.com',
-    phoneNumber: '998877665544',
-    password: '12112122',
-    confirmPassword: '12112122',
+    fullName: data?.name || '',
+    email: data?.email || '',
+    phoneNumber: data?.phoneNumber || '',
   };
   const onFinish = (values) => {
     console.log('Form values:', values);
@@ -57,7 +54,12 @@ function UpdateAdminInformatio({ id, closeModal }) {
             { type: 'email', message: 'Please input a valid email!' },
           ]}
         >
-          <Input className='cursor-not-allowed' readOnly disabled placeholder="Enter email" />
+          <Input
+            className="cursor-not-allowed"
+            readOnly
+            disabled
+            placeholder="Enter email"
+          />
         </Form.Item>
 
         <Form.Item

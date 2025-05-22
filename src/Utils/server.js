@@ -9,3 +9,4 @@ export const imageUrl = (image) => {
       : `${url}/${image}`
     : 'https://placehold.co/400';
 };
+
