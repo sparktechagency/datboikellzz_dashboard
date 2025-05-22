@@ -7,6 +7,7 @@ export const adminApis = baseApis.injectEndpoints({
         url: '/admin/get-all-admins',
         method: 'GET',
       }),
+      providesTags: ['admin'],
     }),
     createNewAdmin: builder.mutation({
       query: (data) => ({
@@ -14,8 +15,21 @@ export const adminApis = baseApis.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['admin'],
+    }),
+    updateAdmin: builder.mutation({
+      query: ({ data }) => ({
+        url: '/admin/update-admin',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['admin'],
     }),
   }),
 });
 
-export const { useCreateNewAdminMutation, useGetAllAdminsQuery } = adminApis;
+export const {
+  useCreateNewAdminMutation,
+  useGetAllAdminsQuery,
+  useUpdateAdminMutation,
+} = adminApis;

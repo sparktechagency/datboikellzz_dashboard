@@ -18,7 +18,6 @@ const AllUsers = ({ recentUser }) => {
     searchTerm: searchQuery,
   });
 
-
   const mapSubscriptionToRole = (subscriptionType) => {
     switch (subscriptionType) {
       case 'gold':
@@ -211,7 +210,7 @@ const AllUsers = ({ recentUser }) => {
         rowKey="id"
         scroll={{ x: 1500 }}
         pagination={{
-          pageSize: 12,
+          pageSize: userData?.data?.meta?.limit || 10,
           current: page,
           onChange: handlePageChange,
         }}

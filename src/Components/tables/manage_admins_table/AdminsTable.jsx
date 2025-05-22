@@ -42,7 +42,7 @@ const AdminsTable = () => {
   }));
 
   const metaData = adminData?.data?.meta;
-  console.log(metaData);
+  // console.log(metaData);
   const columns = [
     {
       title: 'Admin Name',

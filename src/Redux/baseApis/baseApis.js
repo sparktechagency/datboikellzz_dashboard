@@ -16,6 +16,7 @@ const baseApis = createApi({
     'payment',
     'notification',
     'subscription',
+    'admin',
   ],
   endpoints: () => ({}),
 });

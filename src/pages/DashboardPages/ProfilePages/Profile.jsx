@@ -41,7 +41,7 @@ const Profile = () => {
   const profileImage = image
     ? URL.createObjectURL(image)
     : data?.data?.profile_image || adminData?.data?.profile_image
-    ? imageUrl(data?.data?.profile_image || adminData.data.profile_image)
+    ? imageUrl(data?.data?.profile_image || adminData?.data?.profile_image)
     : 'https://placehold.co/400';
 
   return (

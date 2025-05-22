@@ -1,16 +1,54 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
+import { imageUrl } from '../../../Utils/server';
+import { FaCameraRetro } from 'react-icons/fa6';
+import { useUpdateAdminMutation } from '../../../Redux/services/dashboard apis/createAdmin/adminApis';
 
 function UpdateAdminInformatio({ data, closeModal }) {
+  const [image, setImage] = useState(null);
+  const [upadteAdmin, { isLoading }] = useUpdateAdminMutation();
   const [form] = Form.useForm();
+
   const initialData = {
     fullName: data?.name || '',
     email: data?.email || '',
     phoneNumber: data?.phoneNumber || '',
   };
-  const onFinish = (values) => {
-    console.log('Form values:', values);
+
+  const profileImage = useMemo(() => {
+    if (image) return URL.createObjectURL(image);
+    if (data?.data?.profile_image || data?.profile_image)
+      return imageUrl(data?.data?.profile_image || data.profile_image);
+    return 'https://placehold.co/400';
+  }, [image, data]);
+
+  const handleImageUpload = (e) => {
+    if (e.target.files?.[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    formData.append('fullName', values.fullName);
+    formData.append('email', values.email);
+    formData.append('phoneNumber', values.phoneNumber);
+    if (image) {
+      formData.append('profile_image', image);
+    }
+
+    // Debug log - replace this with actual API call
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
+
+    const res = await upadteAdmin(formData);
+  
+    if (res?.success) {
+      toast.success(res?.message || 'Update successfully');
+      closeModal();
+    }
   };
 
   const onCancel = () => {
@@ -24,13 +62,13 @@ function UpdateAdminInformatio({ data, closeModal }) {
         <Divider>
           <h1 className="text-3xl font-semibold">Update Admin</h1>
         </Divider>
-
         <p className="text-sm">
           Create a new admin account by filling in the required information. The
           new admin will receive access based on the assigned role.
         </p>
         <Divider />
       </div>
+
       <Form
         form={form}
         layout="vertical"
@@ -38,6 +76,27 @@ function UpdateAdminInformatio({ data, closeModal }) {
         requiredMark={false}
         onFinish={onFinish}
       >
+        <div className="w-24 h-24 border-2 border-black p-1 cursor-pointer rounded-full relative mx-auto my-4">
+          <img
+            className="w-full h-full object-cover rounded-full"
+            src={profileImage}
+            alt="Profile"
+          />
+
+          <label
+            htmlFor="fileInput"
+            className="absolute right-0 bottom-2 rounded-full bg-[var(--bg-green-high)] p-2 cursor-pointer"
+          >
+            <FaCameraRetro size={12} className="text-white" />
+          </label>
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: 'none' }}
+          />
+        </div>
         <Form.Item
           name="fullName"
           label="Full Name"
@@ -71,38 +130,8 @@ function UpdateAdminInformatio({ data, closeModal }) {
         >
           <Input placeholder="Please Input the Number" />
         </Form.Item>
-        <Divider />
-        <Form.Item
-          name="password"
-          label="Set Admin New Password"
-          rules={[
-            { required: true, message: 'Please input the password!' },
-            { min: 6, message: 'Password must be at least 6 characters' },
-          ]}
-        >
-          <Input.Password placeholder="Enter password" />
-        </Form.Item>
 
-        <Form.Item
-          name="confirmPassword"
-          label="Confirm Admin New Password"
-          dependencies={['password']}
-          rules={[
-            { required: true, message: 'Please confirm the password!' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error('The two passwords do not match!')
-                );
-              },
-            }),
-          ]}
-        >
-          <Input.Password placeholder="Confirm password" />
-        </Form.Item>
+        <Divider />
 
         <div
           style={{
@@ -118,10 +147,6 @@ function UpdateAdminInformatio({ data, closeModal }) {
             Cancel
           </Button>
           <Button
-            onClick={() => {
-              toast.success('Update successfully');
-              closeModal();
-            }}
             className="!w-full !h-10 !text-white !bg-[var(--bg-green-high)]"
             htmlType="submit"
           >
