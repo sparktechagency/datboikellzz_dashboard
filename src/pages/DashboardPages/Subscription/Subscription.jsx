@@ -2,63 +2,76 @@ import React, { useState, useEffect } from 'react';
 import { CheckIcon, PlusIcon, XMarkIcon, PencilIcon } from './icons.jsx';
 import toast from 'react-hot-toast';
 import { CiWarning } from 'react-icons/ci';
+import {
+  useGetAllSubscriptionQuery,
+  useUpdateSubscriptionMutation,
+} from '../../../Redux/services/dashboard apis/subscription/subscriptionApis.js';
+import { Button } from 'antd';
+import { FaTrashAlt } from 'react-icons/fa';
+
 export default function SubscriptionManagement() {
-  const initialPlans = {
-    bronze: {
-      id: 'bronze',
-      name: 'bronze',
-      displayName: 'Bronze Plan',
-      price: '2.99',
-      period: 'month',
-      features: [
-        { id: 1, text: 'Priority listing' },
-        { id: 2, text: 'Customer messaging' },
-        { id: 3, text: 'Basic analytics' },
-        { id: 4, text: 'Email support' },
-      ],
-    },
-    silver: {
-      id: 'silver',
-      name: 'silver',
-      displayName: 'Silver Plan',
-      price: '24.99',
-      period: 'month',
-      features: [
-        { id: 1, text: 'Priority listing' },
-        { id: 2, text: 'Customer messaging' },
-        { id: 3, text: 'Advanced analytics' },
-        { id: 4, text: 'Premium support' },
-        { id: 5, text: 'Unlimited listings' },
-      ],
-    },
-    gold: {
-      id: 'gold',
-      name: 'gold',
-      displayName: 'Gold Plan',
-      price: '232.99',
-      period: 'year',
-      features: [
-        { id: 1, text: 'Priority listing' },
-        { id: 2, text: 'Customer messaging' },
-        { id: 3, text: 'Advanced analytics' },
-        { id: 4, text: 'Premium support' },
-        { id: 5, text: 'Unlimited listings' },
-        { id: 6, text: 'Dedicated account manager' },
-      ],
-    },
-  };
+  const { data: subscriptionData, isLoading: subscriptionDataLoading } =
+    useGetAllSubscriptionQuery();
+
+  const [updateSubscription, { isLoading: isUpdating }] =
+    useUpdateSubscriptionMutation();
 
   const [selectedPlan, setSelectedPlan] = useState('bronze');
-  const [plans, setPlans] = useState(initialPlans);
+  const [plans, setPlans] = useState({});
+  const [availablePlanTypes, setAvailablePlanTypes] = useState([]);
 
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
 
-  // Form states
   const [newPrice, setNewPrice] = useState('');
   const [newPeriod, setNewPeriod] = useState('');
   const [newFeature, setNewFeature] = useState('');
   const [tempFeatures, setTempFeatures] = useState([]);
+
+  useEffect(() => {
+    if (subscriptionData?.data?.subscriptionPlans) {
+      const apiPlans = subscriptionData.data.subscriptionPlans;
+
+      const plansByType = {};
+
+      apiPlans.forEach((plan) => {
+        const type = plan.subscriptionType.toLowerCase();
+        if (
+          !plansByType[type] ||
+          new Date(plan.updatedAt) > new Date(plansByType[type].updatedAt)
+        ) {
+          plansByType[type] = plan;
+        }
+      });
+
+      const transformedPlans = {};
+      const planTypes = [];
+
+      Object.entries(plansByType).forEach(([type, plan]) => {
+        planTypes.push(type);
+        transformedPlans[type] = {
+          id: plan._id,
+          name: type,
+          displayName: `${type.charAt(0).toUpperCase() + type.slice(1)} Plan`,
+          price: plan.price.toString(),
+          period: plan.duration === 'monthly' ? 'month' : plan.duration,
+          features: plan.features.map((feature, index) => ({
+            id: index + 1,
+            text: feature,
+          })),
+          createdAt: plan.createdAt,
+          updatedAt: plan.updatedAt,
+        };
+      });
+
+      setPlans(transformedPlans);
+      setAvailablePlanTypes(planTypes.sort());
+
+      if (!transformedPlans[selectedPlan] && planTypes.length > 0) {
+        setSelectedPlan(planTypes[0]);
+      }
+    }
+  }, [subscriptionData, selectedPlan]);
 
   useEffect(() => {
     if (plans[selectedPlan]) {
@@ -67,39 +80,51 @@ export default function SubscriptionManagement() {
     }
   }, [selectedPlan, plans]);
 
-  // Open price update modal
   const handleOpenPriceModal = () => {
-    setNewPrice(plans[selectedPlan].price);
-    setNewPeriod(plans[selectedPlan].period);
-    setIsPriceModalOpen(true);
+    if (plans[selectedPlan]) {
+      setNewPrice(plans[selectedPlan].price);
+      setNewPeriod(plans[selectedPlan].period);
+      setIsPriceModalOpen(true);
+    }
   };
 
-  // Save updated price
-  const handleSavePrice = () => {
-    const updatedPlans = {
-      ...plans,
-      [selectedPlan]: {
-        ...plans[selectedPlan],
-        price: newPrice,
-        period: newPeriod,
-      },
-    };
+  const handleSavePrice = async () => {
+    try {
+      const updateData = {
+        subscriptionPlanId: plans[selectedPlan].id,
+        price: parseFloat(newPrice),
+        features: plans[selectedPlan].features.map((f) => f.text),
+      };
 
-    setPlans(updatedPlans);
-    setIsPriceModalOpen(false);
+      const res = await updateSubscription({ data: updateData }).unwrap();
+      console.log(res);
+      if (res.success) {
+        toast.success(
+          res.message || 'Subscription price updated successfully!'
+        );
+        const updatedPlans = {
+          ...plans,
+          [selectedPlan]: {
+            ...plans[selectedPlan],
+            price: newPrice,
+            period: newPeriod,
+          },
+        };
 
-    // Log data for backend integration
-    console.log('Updated price data:', {
-      planId: selectedPlan,
-      price: newPrice,
-      period: newPeriod,
-    });
+        setPlans(updatedPlans);
+        setIsPriceModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error updating subscription price:', error);
+      toast.error('Failed to update subscription price. Please try again.');
+    }
   };
 
-  // Open feature management modal
   const handleOpenFeatureModal = () => {
-    setTempFeatures([...plans[selectedPlan].features]);
-    setIsFeatureModalOpen(true);
+    if (plans[selectedPlan]) {
+      setTempFeatures([...plans[selectedPlan].features]);
+      setIsFeatureModalOpen(true);
+    }
   };
 
   const handleAddFeature = () => {
@@ -117,29 +142,70 @@ export default function SubscriptionManagement() {
     setNewFeature('');
   };
 
-
   const handleRemoveFeature = (id) => {
     setTempFeatures(tempFeatures.filter((feature) => feature.id !== id));
   };
 
-  // Save updated features
-  function handleSaveFeatures() {
-    const updatedPlans = {
-      ...plans,
-      [selectedPlan]: {
-        ...plans[selectedPlan],
-        features: [...tempFeatures],
-      },
-    };
+  async function handleSaveFeatures() {
+    try {
+      const updateData = {
+        subscriptionPlanId: plans[selectedPlan].id,
+        features: tempFeatures.map((f) => f.text),
+        price: parseFloat(plans[selectedPlan].price),
+      };
 
-    setPlans(updatedPlans);
-    setIsFeatureModalOpen(false);
+      await updateSubscription({ data: updateData }).unwrap();
 
-    // Log data for backend integration
-    console.log('Updated features data:', {
-      planId: selectedPlan,
-      features: tempFeatures,
-    });
+      const updatedPlans = {
+        ...plans,
+        [selectedPlan]: {
+          ...plans[selectedPlan],
+          features: [...tempFeatures],
+        },
+      };
+
+      setPlans(updatedPlans);
+      setIsFeatureModalOpen(false);
+      toast.success('Subscription features updated successfully!');
+
+      console.log('Updated features data:', updateData);
+    } catch (error) {
+      console.error('Error updating subscription features:', error);
+      toast.error('Failed to update subscription features. Please try again.');
+    }
+  }
+
+  if (subscriptionDataLoading) {
+    return (
+      <div className="container mx-auto p-4 max-w-4xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Subscription Management</h1>
+          <p className="text-gray-500 mt-2">Loading subscription plans...</p>
+        </div>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#022C22]"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (
+    !subscriptionData?.data?.subscriptionPlans ||
+    availablePlanTypes.length === 0
+  ) {
+    return (
+      <div className="container mx-auto p-4 max-w-4xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Subscription Management</h1>
+          <p className="text-gray-500 mt-2">No subscription plans found</p>
+        </div>
+        <div className="text-center py-8">
+          <p className="text-gray-500">
+            No subscription plans available to manage.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -153,8 +219,10 @@ export default function SubscriptionManagement() {
 
       {/* Plan Tabs */}
       <div className="w-full">
-        <div className="grid grid-cols-3 mb-8 border rounded-md overflow-hidden">
-          {Object.keys(plans).map((planKey) => (
+        <div
+          className={`grid grid-cols-${availablePlanTypes.length} mb-8 border rounded-md overflow-hidden`}
+        >
+          {availablePlanTypes.map((planKey) => (
             <button
               key={planKey}
               onClick={() => setSelectedPlan(planKey)}
@@ -170,67 +238,81 @@ export default function SubscriptionManagement() {
         </div>
 
         {/* Plan Content */}
-        {Object.keys(plans).map((planKey) => (
+        {availablePlanTypes.map((planKey) => (
           <div
             key={planKey}
             className={`mt-0 ${selectedPlan !== planKey ? 'hidden' : ''}`}
           >
-            <div className="border-2 rounded-lg shadow-sm">
-              <div className="p-6 border-b">
-                <div>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-2xl font-bold">
-                        {plans[planKey].displayName}
-                      </h2>
-                      <p className="text-gray-500">
-                        Subscription details and features
-                      </p>
+            {plans[planKey] && (
+              <div className="border-2 rounded-lg shadow-sm">
+                <div className="p-6 border-b">
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h2 className="text-2xl font-bold">
+                          {plans[planKey].displayName}
+                        </h2>
+                        <p className="text-gray-500">
+                          Subscription details and features
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Last updated:{' '}
+                          {new Date(
+                            plans[planKey].updatedAt
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleOpenPriceModal}
+                          className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
+                        >
+                          <PencilIcon className="mr-2 h-4 w-4" />
+                          Update Price
+                        </button>
+                        <Button danger icon={<FaTrashAlt />}></Button>
+                      </div>
                     </div>
-                    <button
-                      onClick={handleOpenPriceModal}
-                      className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
-                    >
-                      <PencilIcon className="mr-2 h-4 w-4" />
-                      Update Price
-                    </button>
-                  </div>
-                  <div className="mb-6">
-                    <span className="text-[#022C22] text-4xl font-bold">
-                      $ {plans[planKey].price}
-                    </span>
-                    <span className="text-gray-500 ml-1">
-                      /{plans[planKey].period}
-                    </span>
+                    <div className="mb-6">
+                      <span className="text-[#022C22] text-4xl font-bold">
+                        $ {plans[planKey].price}
+                      </span>
+                      <span className="text-gray-500 ml-1">
+                        /{plans[planKey].period}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="p-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-2xl font-bold">Features</h3>
-                    <button
-                      onClick={handleOpenFeatureModal}
-                      className="border border-[#022C22] text-[#022C22]  cursor-pointer hover:bg-[#022C22] hover:!text-white px-4 py-2 rounded-md flex items-center"
-                    >
-                      <PencilIcon className="mr-2 h-4 w-4" />
-                      Manage Features
-                    </button>
-                  </div>
+                <div className="p-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-2xl font-bold">Features</h3>
+                      <button
+                        onClick={handleOpenFeatureModal}
+                        className="border border-[#022C22] text-[#022C22] cursor-pointer hover:bg-[#022C22] hover:!text-white px-4 py-2 rounded-md flex items-center"
+                      >
+                        <PencilIcon className="mr-2 h-4 w-4" />
+                        Manage Features
+                      </button>
+                    </div>
 
-                  <ul className="space-y-3 mt-4">
-                    {plans[planKey].features.map((feature) => (
-                      <li key={feature.id} className="flex items-center gap-2">
-                        <div className="flex-shrink-0 h-5 w-5 rounded-full bg-transparent border-1 bortder-[#022C22] flex items-center justify-center">
-                          <CheckIcon className="h-3 w-3 text-[#022C22]" />
-                        </div>
-                        <span>{feature.text}</span>
-                      </li>
-                    ))}
-                  </ul>
+                    <ul className="space-y-3 mt-4">
+                      {plans[planKey].features.map((feature) => (
+                        <li
+                          key={feature.id}
+                          className="flex items-center gap-2"
+                        >
+                          <div className="flex-shrink-0 h-5 w-5 rounded-full bg-transparent border-1 border-[#022C22] flex items-center justify-center">
+                            <CheckIcon className="h-3 w-3 text-[#022C22]" />
+                          </div>
+                          <span>{feature.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         ))}
       </div>
@@ -261,9 +343,11 @@ export default function SubscriptionManagement() {
                   onChange={(e) => setSelectedPlan(e.target.value)}
                   className="w-full border rounded-md p-2"
                 >
-                  <option value="bronze">Bronze Plan</option>
-                  <option value="silver">Silver Plan</option>
-                  <option value="gold">Gold Plan</option>
+                  {availablePlanTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)} Plan
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -281,7 +365,7 @@ export default function SubscriptionManagement() {
                 />
               </div>
 
-              {/* <div className="space-y-2">
+              <div className="space-y-2">
                 <label htmlFor="period" className="block text-sm font-medium">
                   Billing Period
                 </label>
@@ -294,7 +378,7 @@ export default function SubscriptionManagement() {
                   <option value="month">Monthly</option>
                   <option value="year">Yearly</option>
                 </select>
-              </div> */}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -306,9 +390,17 @@ export default function SubscriptionManagement() {
               </button>
               <button
                 onClick={handleSavePrice}
-                className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white py-2 rounded-md"
+                disabled={isUpdating}
+                className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                Save Changes
+                {isUpdating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
               </button>
             </div>
           </div>
@@ -348,11 +440,11 @@ export default function SubscriptionManagement() {
               </div>
 
               <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                {tempFeatures.map((feature, index) => (
+                {tempFeatures.map((feature) => (
                   <div
                     key={feature.id}
                     className={`flex items-center justify-between p-3 border rounded-md ${
-                      !plans[selectedPlan].features.some(
+                      !plans[selectedPlan]?.features.some(
                         (f) => f.id === feature.id
                       )
                         ? 'bg-green-50 border-green-200'
@@ -385,9 +477,17 @@ export default function SubscriptionManagement() {
               </button>
               <button
                 onClick={handleSaveFeatures}
-                className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white py-2 rounded-md"
+                disabled={isUpdating}
+                className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                Save Features
+                {isUpdating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Saving...
+                  </>
+                ) : (
+                  'Save Features'
+                )}
               </button>
             </div>
           </div>
