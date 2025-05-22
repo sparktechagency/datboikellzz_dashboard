@@ -3,9 +3,10 @@ import baseApis from '../../../baseApis/baseApis';
 export const userApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getAllUser: builder.query({
-      query: () => ({
+      query: ({ searchTerm }) => ({
         url: '/user/get-all-users',
         method: 'GET',
+        params: { searchTerm },
       }),
     }),
     updateUserStatus: builder.mutation({
