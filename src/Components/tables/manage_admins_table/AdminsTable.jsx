@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Table, Tag, Space, Avatar, Button, Modal, Form, Input } from 'antd';
+import {
+  Table,
+  Tag,
+  Space,
+  Avatar,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Popconfirm,
+} from 'antd';
 import {
   UserOutlined,
   EditOutlined,
@@ -12,20 +22,20 @@ import toast from 'react-hot-toast';
 import Success from '../../Shared/Success';
 import CreateNewAdmin from './CreateNewAdmin';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
-import { useGetAllAdminsQuery } from '../../../Redux/services/dashboard apis/createAdmin/adminApis';
+import {
+  useAdminBlockMutation,
+  useGetAllAdminsQuery,
+} from '../../../Redux/services/dashboard apis/createAdmin/adminApis';
 import { imageUrl } from '../../../Utils/server';
 import AdminPasswordChange from './AdminPasswordChange';
 import debounce from 'debounce';
 const AdminsTable = () => {
-  const [showModal, setShowModal] = useState();
-  const [isUserBlock, setUserBlock] = useState(false);
-  const [blockUserId, setBlockUserId] = useState(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
   const [selectAdmin, setSelectAdmin] = useState(null);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
+
   const [paramsData, setParamsData] = useState({
     searchTerm: '',
   });
@@ -33,6 +43,7 @@ const AdminsTable = () => {
     searchTerm: paramsData.searchTerm,
     page: currentPage,
   });
+  const [updateAdminStatus] = useAdminBlockMutation();
   const [passwordModal, setPasswordModal] = useState(false);
   const adminsData = adminData?.data?.admins?.map((admin) => ({
     _id: admin?._id,
@@ -88,8 +99,8 @@ const AdminsTable = () => {
       dataIndex: 'auth_isActive',
       key: 'auth_isActive',
       render: (_, record) => (
-        <Tag color={record.auth_isActive ? 'green' : 'red'}>
-          {record.auth_isActive ? 'Active' : 'Inactive'}
+        <Tag color={record.auth_isBlocked === true ? 'red' : 'green'}>
+          {record.auth_isBlocked === true ? 'Blocked' : 'unblocked'}
         </Tag>
       ),
     },
@@ -129,48 +140,83 @@ const AdminsTable = () => {
             icon={<FaLock className="!text-white" />}
             size="small"
           />
-          <Button
-            danger
-            type="default"
-            icon={<DeleteOutlined />}
-            size="small"
-            onClick={() => toast.success('Admin delete successfully')}
-          />
-          <Button
-            onClick={() => {
-              setShowModal(true);
-              setUserBlock(record.status === 'Active');
-              setBlockUserId(record.auth_id);
-            }}
-            type="default"
-            icon={<FaRegCircle />}
-            size="small"
-          />
+          {/* <Popconfirm
+            placement="bottomRight"
+            title="Are you sure you want to delete this user?"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteUser(record?._id)}
+          >
+            <Button
+              danger
+              type="default"
+              icon={<DeleteOutlined />}
+              size="small"
+            />
+          </Popconfirm> */}
+          <Popconfirm
+            placement="bottomRight"
+            title={`Are you sure you want to ${
+              record.auth_isBlocked === true ? 'unblock' : 'block'
+            } this user?`}
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => blockUser(record?.auth_id, record?.auth_isBlocked)}
+          >
+            <Button
+              className={`${
+                record?.auth_isBlocked === true
+                  ? '!text-red-500'
+                  : '!text-green-500'
+              }`}
+              type="default"
+              icon={<FaRegCircle />}
+              size="small"
+            />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
 
+  // const deleteUser = async (id) => {
+  //   try {
+  //     if (!id) {
+  //       return;
+  //     }
+  //     const res = await deleteAdmin({ id });
+  //     if (res?.data?.success) {
+  //       toast.success(res?.data?.message || 'User deleted successfully');
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  const blockUser = async (id, status) => {
+    try {
+      if (!id && !status) {
+        return;
+      }
+
+      const data = {
+        authId: id,
+        isBlocked: `${status === true ? 'no' : 'yes'}`,
+      };
+      const res = await updateAdminStatus({ data });
+      if (res?.data?.success) {
+        toast.success(res?.data?.message || 'User updated successfully');
+      } else {
+        toast.error('something went wrong!');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleUnblockUser = async () => {
-    if (!blockUserId) {
-      return toast.error('Please select a user to block');
-    }
-    setShowSuccessModal(true);
-    // setShowModal(false);
-  };
-
-  const handleBlockUser = async () => {
-    if (!blockUserId) {
-      return toast.error('Please select a user to block');
-    }
-    toast.success('User successfully blocked');
-    setShowSuccessModal(true);
-    setShowModal(false);
-  };
   const debouncedSearch = debounce((searchTerm) => {
     setCurrentPage(1);
     setParamsData({ searchTerm });
@@ -214,60 +260,7 @@ const AdminsTable = () => {
           onChange: handlePageChange,
         }}
       />
-      <Modal
-        open={showModal}
-        centered
-        onCancel={() => setShowModal(false)}
-        footer={null}
-      >
-        <div className="flex flex-col items-center">
-          <IoIosWarning size={60} color="#f6a112" />
-          <h1 className="text-2xl font-bold text-black">Warning</h1>
-          <p className="text-sm text-black">
-            Are you sure you want to {isUserBlock ? 'unblock' : 'block'} this
-            Admin?
-          </p>
-          <div className="flex justify-center gap-4 mt-4">
-            <Button
-              type="primary"
-              className="!bg-[var(--bg-green-high)] !text-white"
-              onClick={isUserBlock ? handleUnblockUser : handleBlockUser}
-            >
-              Yes
-            </Button>
-            <Button onClick={() => setShowModal(false)}>Cancel</Button>
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        open={showSuccessModal}
-        centered
-        closeIcon={false}
-        okButtonProps={{
-          style: {
-            backgroundColor: 'var(--bg-green-high)',
-          },
-        }}
-        footer={null}
-      >
-        <Success
-          title={isUserBlock ? 'Unblocked' : 'Blocked'}
-          description={
-            isUserBlock
-              ? 'User successfully unblocked'
-              : 'User successfully blocked'
-          }
-        />
-        <div className="flex items-center justify-center w-full">
-          <Button
-            type="primary"
-            className="!bg-[var(--bg-green-high)] !text-white"
-            onClick={() => setShowSuccessModal(false)}
-          >
-            Ok
-          </Button>
-        </div>
-      </Modal>
+
       <Modal open={createNewAdminModal} footer={null} closeIcon={false}>
         <CreateNewAdmin closeModal={setCreateNewAdminModal} />
       </Modal>

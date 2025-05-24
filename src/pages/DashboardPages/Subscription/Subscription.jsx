@@ -270,7 +270,6 @@ export default function SubscriptionManagement() {
                           <PencilIcon className="mr-2 h-4 w-4" />
                           Update Price
                         </button>
-                        <Button danger icon={<FaTrashAlt />}></Button>
                       </div>
                     </div>
                     <div className="mb-6">

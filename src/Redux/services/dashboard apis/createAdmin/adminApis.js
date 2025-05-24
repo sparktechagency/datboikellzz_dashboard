@@ -38,6 +38,15 @@ export const adminApis = baseApis.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
+      invalidatesTags: ['admin'],
+    }),
+    adminBlock: builder.mutation({
+      query: ({ data }) => ({
+        url: '/admin/block-unblock-admin',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['admin'],
     }),
   }),
 });
@@ -47,4 +56,5 @@ export const {
   useGetAllAdminsQuery,
   useUpdateAdminMutation,
   usePasswordChangeMutation,
+  useAdminBlockMutation,
 } = adminApis;
