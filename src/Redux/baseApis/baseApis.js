@@ -18,6 +18,7 @@ const baseApis = createApi({
     'subscription',
     'admin',
     'user',
+    'post',
   ],
   endpoints: () => ({}),
 });

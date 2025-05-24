@@ -4,113 +4,56 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { FaEye } from 'react-icons/fa';
 import AddTipModal from '../../../pages/DashboardPages/manage-post/AddtipModal';
 import toast from 'react-hot-toast';
+import { useGetPostQuery } from '../../../Redux/services/post-admin-service/postApis';
+import { imageUrl } from '../../../Utils/server';
 
 function PostTable() {
-  const posts = [
-    {
-      key: '1',
-      postInfo: 'Los Angeles Lakers —vs— Golden State Warriors',
-      img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
-      postedBy: {
-        name: 'Floyd Miles',
-        img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
-        email: 'danten@mail.ru',
-      },
-      inoformation: {
-        sprtType: 'Basketball',
-        pradictionType: 'Team',
-      },
-      prediction: {
-        win_rate: '50%',
-        odds_range: '1.5',
-      },
-      email: 'danten@mail.ru',
-      postedOn: '2025-04-10',
-      targetUser: 'Gold User',
-      role: 'Gold User',
-    },
-    {
-      key: '2',
-      postInfo: 'Chicago Bulls —vs— Brooklyn Nets',
-      img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
-      postedBy: {
-        name: 'Marvin McKinney',
-        img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
-        email: 'redaniel@gmail.com',
-      },
-      inoformation: {
-        sprtType: 'Basketball',
-        pradictionType: 'Team',
-      },
-      prediction: {
-        win_rate: '50%',
-        odds_range: '1.5',
-      },
-      email: 'redaniel@gmail.com',
-      postedOn: '2025-04-10',
-      targetUser: 'Bronze User',
-      role: 'Bronze User',
-    },
-    {
-      key: '3',
-      postInfo: 'Real Madrid —vs— FC Barcelona',
-      img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
-      postedBy: {
-        name: 'Floyd Miles',
-        img: 'https://media.newyorker.com/photos/65badc73c17031f273a94a9c/16:9/w_2560,h_1440,c_limit/240212_r43718.jpg',
-        email: 'danten@mail.ru',
-      },
-      inoformation: {
-        sprtType: 'Basketball',
-        pradictionType: 'Team',
-      },
-      prediction: {
-        win_rate: '50%',
-        odds_range: '1.5',
-      },
-      email: 'danten@mail.ru',
-      postedOn: '2025-04-10',
-      targetUser: 'Silver User',
-      role: 'Silver User',
-    },
-  ];
+  // Controlled params for query
+  const [targetUser, setTargetUser] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
-  const [detils, setDetails] = useState(false);
-  const [filteredPosts, setFilteredPosts] = useState(posts);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // Modal and edit states
+  const [detailsVisible, setDetailsVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleTabChange = (key) => {
-    switch (key) {
-      case '1':
-        setFilteredPosts(posts);
-        break;
-      case '2':
-        setFilteredPosts(posts.filter((post) => post.role === 'Gold User'));
-        break;
-      case '3':
-        setFilteredPosts(posts.filter((post) => post.role === 'Silver User'));
-        break;
-      case '4':
-        setFilteredPosts(posts.filter((post) => post.role === 'Bronze User'));
-        break;
-      default:
-        setFilteredPosts(posts);
-    }
-  };
-  const handleCanceldetails = () => {
-    setDetails(false);
-  };
+  // Fetch posts from API with query params
+  const { data, isLoading } = useGetPostQuery({
+    targetUser,
+    page,
+    limit,
+  });
 
-  const handleEyeClick = (post) => {
-    setSelectedPost(post);
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setSelectedPost(null);
-  };
+  // Transform API data to table format
+  const posts = (data?.data?.posts || []).map((post) => ({
+    key: post._id,
+    postInfo: post.postTitle,
+    img: imageUrl(post.post_image),
+    postedBy: {
+      name: post.postedBy?.name || 'Unknown',
+      img: imageUrl(post.postedBy?.img),
+      email: post.postedBy?.email || 'N/A',
+    },
+    inoformation: {
+      sprtType: post.sportType,
+      pradictionType: post.predictionType,
+    },
+    prediction: {
+      win_rate: post.winRate + '%',
+      odds_range: post.oddsRange,
+    },
+    email: post.postedBy?.email || '',
+    postedOn: new Date(post.createdAt).toLocaleDateString(),
+    targetUser:
+      post.targetUser.charAt(0).toUpperCase() +
+      post.targetUser.slice(1) +
+      ' User',
+    role:
+      post.targetUser.charAt(0).toUpperCase() +
+      post.targetUser.slice(1) +
+      ' User',
+  }));
 
   const columns = [
     {
@@ -119,7 +62,7 @@ function PostTable() {
       key: 'postInfo',
       render: (text, record) => (
         <div className="flex items-center">
-          <div className="w-24 h-14 overflow-hidden rounded-md  bg-[var(--bg-green-high)]">
+          <div className="w-24 h-14 overflow-hidden rounded-md bg-[var(--bg-green-high)]">
             <img src={record.img} alt={record.postInfo} />
           </div>
           <div className="ml-3">
@@ -154,9 +97,9 @@ function PostTable() {
       render: (text) => (
         <span
           className={`${
-            text === 'Gold User'
+            text.includes('Gold')
               ? 'gold px-3 rounded-md py-1 font-bold'
-              : text === 'Silver User'
+              : text.includes('Silver')
               ? 'silver px-5 rounded-md py-1'
               : 'bronze px-5 rounded-md py-1'
           } font-bold text-[var(--bg-green-high)] flex items-center justify-center`}
@@ -173,12 +116,15 @@ function PostTable() {
           <Button
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<FaEye />}
-            onClick={() => handleEyeClick(record)}
+            onClick={() => {
+              setSelectedPost(record);
+              setIsModalVisible(true);
+            }}
           />
           <Button
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<EditOutlined />}
-            onClick={() => setDetails(true)}
+            onClick={() => setDetailsVisible(true)}
           />
           <Button
             className="!border-red-500 !text-red-500"
@@ -190,6 +136,33 @@ function PostTable() {
     },
   ];
 
+  // Tab handler sets targetUser string for query params
+  const handleTabChange = (key) => {
+    setPage(1); // reset page when tab changes
+    switch (key) {
+      case '1':
+        setTargetUser('');
+        break;
+      case '2':
+        setTargetUser('gold');
+        break;
+      case '3':
+        setTargetUser('silver');
+        break;
+      case '4':
+        setTargetUser('bronze');
+        break;
+      default:
+        setTargetUser('');
+    }
+  };
+
+  // Handle pagination change from Ant Table
+  const handleTableChange = (pagination) => {
+    setPage(pagination.current);
+    setLimit(pagination.pageSize);
+  };
+
   return (
     <div>
       <Tabs defaultActiveKey="1" type="card" onChange={handleTabChange}>
@@ -198,18 +171,29 @@ function PostTable() {
         <Tabs.TabPane tab="Silver User" key="3" />
         <Tabs.TabPane tab="Bronze User" key="4" />
       </Tabs>
+
       <Table
         columns={columns}
-        dataSource={filteredPosts}
+        dataSource={posts}
+        loading={isLoading}
         rowKey="key"
-        pagination={true}
+        pagination={{
+          current: data?.data?.meta?.page || page,
+          pageSize: data?.data?.meta?.limit || limit,
+          total: data?.data?.meta?.total || 0,
+          showSizeChanger: false,
+        }}
+        onChange={handleTableChange}
         bordered
       />
 
       <Modal
         title={selectedPost?.postInfo}
         visible={isModalVisible}
-        onCancel={handleCancel}
+        onCancel={() => {
+          setIsModalVisible(false);
+          setSelectedPost(null);
+        }}
         centered
         footer={
           <div className="w-full flex gap-3 items-center justify-end">
@@ -219,7 +203,8 @@ function PostTable() {
               danger
               onClick={() => {
                 toast.success('Post deleted successfully');
-                handleCancel();
+                setIsModalVisible(false);
+                setSelectedPost(null);
               }}
             >
               Delete Post
@@ -228,8 +213,8 @@ function PostTable() {
               key="modify"
               className="!w-full !bg-[var(--bg-green-high)] !text-white"
               onClick={() => {
-                setDetails(true);
-                handleCancel();
+                setDetailsVisible(true);
+                setIsModalVisible(false);
               }}
             >
               Modify Post
@@ -239,7 +224,7 @@ function PostTable() {
       >
         <div className="flex items-start flex-col mb-3">
           <div className="w-full h-48 overflow-hidden rounded-md">
-            <img src={selectedPost?.img} />
+            <img className='w-full h-full object-cover' src={selectedPost?.img} alt={selectedPost?.postInfo} />
           </div>
           <div className="mt-3 text-2xl">
             <h2 className="font-bold">{selectedPost?.postInfo}</h2>
@@ -268,9 +253,9 @@ function PostTable() {
           <p>{selectedPost?.targetUser}</p>
           <div
             className={`${
-              selectedPost?.targetUser === 'Gold User'
+              selectedPost?.targetUser.includes('Gold')
                 ? 'gold'
-                : selectedPost?.targetUser === 'Silver User'
+                : selectedPost?.targetUser.includes('Silver')
                 ? 'silver'
                 : 'bronze'
             } px-3 py-1 text-xs rounded-md`}
@@ -279,9 +264,10 @@ function PostTable() {
           </div>
         </div>
       </Modal>
+
       <AddTipModal
-        visible={detils}
-        onCancel={handleCanceldetails}
+        visible={detailsVisible}
+        onCancel={() => setDetailsVisible(false)}
         details={true}
       />
     </div>

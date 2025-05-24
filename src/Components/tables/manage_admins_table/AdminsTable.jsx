@@ -319,10 +319,7 @@ const AdminsTable = () => {
                   type="primary"
                   danger
                   onClick={() => {
-                    setUserBlock(selectAdmin.auth_isActive);
-                    setBlockUserId(selectAdmin._id);
                     setUserDetailsModal(false);
-                    setShowModal(true);
                   }}
                   className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
                 >
