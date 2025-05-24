@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Space, Avatar, Button, Modal, Tabs, Form, Input } from 'antd';
+import {
+  Table,
+  Space,
+  Avatar,
+  Button,
+  Modal,
+  Tabs,
+  Form,
+  Input,
+  Popconfirm,
+} from 'antd';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { CgBlock } from 'react-icons/cg';
 import { IoIosWarning, IoIosMail } from 'react-icons/io';
-// import toast from 'react-hot-toast';
 import './alluserVanila.css';
-import { useGetAllUserQuery } from '../../../Redux/services/dashboard apis/userApis/userApis';
+import {
+  useBlockUserMutation,
+  useGetAllUserQuery,
+} from '../../../Redux/services/dashboard apis/userApis/userApis';
 import { imageUrl } from '../../../Utils/server';
+import toast from 'react-hot-toast';
 
 const AllUsers = ({ recentUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +30,7 @@ const AllUsers = ({ recentUser }) => {
   const { data: userData, isLoading: userDataLoading } = useGetAllUserQuery({
     searchTerm: searchQuery,
   });
+  const [updateUserStatus] = useBlockUserMutation();
 
   const mapSubscriptionToRole = (subscriptionType) => {
     switch (subscriptionType) {
@@ -34,20 +48,40 @@ const AllUsers = ({ recentUser }) => {
   const transformUserData = (apiUsers) => {
     if (!apiUsers) return [];
     return apiUsers.map((user) => ({
-      id: user._id,
-      name: user.name || user.authId?.name || 'N/A',
-      contactNumber: user.phoneNumber || 'N/A',
-      email: user.email || user.authId?.email || 'N/A',
-      joined: new Date(user.createdAt).toLocaleDateString(),
-      role: mapSubscriptionToRole(user.subscriptionPlan?.subscriptionType),
-      isBlocked: user.authId?.isBlocked || false,
-      profile_image: user.profile_image || null,
-      subscriptionType: user.subscriptionPlan?.subscriptionType || 'bronze',
+      id: user?._id,
+      userId: user?.authId?._id,
+      name: user?.name || user?.authId?.name || 'N/A',
+      contactNumber: user?.phoneNumber || 'N/A',
+      email: user?.email || user?.authId?.email || 'N/A',
+      joined: new Date(user?.createdAt).toLocaleDateString(),
+      role: mapSubscriptionToRole(user?.subscriptionPlan?.subscriptionType),
+      isBlocked: user?.authId?.isBlocked || false,
+      profile_image: user?.profile_image || null,
+      subscriptionType: user?.subscriptionPlan?.subscriptionType || 'bronze',
     }));
   };
 
   const users = transformUserData(userData?.data?.users);
 
+  const blockUser = async (id, status) => {
+    try {
+      if (!id) {
+        return;
+      }
+      const data = {
+        authId: id,
+        isBlocked: `${status === true ? 'no' : 'yes'}`,
+      };
+      const res = await updateUserStatus({ data });
+      if (res?.data?.success) {
+        toast.success(res?.data?.message || 'User updated successfully');
+      } else {
+        toast.error('something went wrong!');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     setFilteredUsers(users);
   }, [userData]);
@@ -138,16 +172,23 @@ const AllUsers = ({ recentUser }) => {
           >
             <UserOutlined />
           </Button>
-          <Button
-            onClick={() => {
-              alert(`User ID: ${record.id}`); // Alert user id on block button click
-            }}
-            className={`${
-              record.isBlocked ? 'bg-red-300' : 'bg-green-200'
-            } ant-btn ant-btn-default`}
+          <Popconfirm
+            placement="bottomRight"
+            title={`Are you sure you want to ${
+              record.isBlocked ? 'unblock' : 'block'
+            } this user?`}
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => blockUser(record.userId, record.isBlocked)}
           >
-            <CgBlock />
-          </Button>
+            <Button
+              className={`${
+                record.isBlocked ? '!bg-red-300' : '!bg-green-200'
+              } ant-btn ant-btn-default`}
+            >
+              <CgBlock />
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -159,16 +200,16 @@ const AllUsers = ({ recentUser }) => {
         setFilteredUsers(users);
         break;
       case '2':
-        setFilteredUsers(users.filter((user) => user.role === 'Gold User'));
+        setFilteredUsers(users.filter((user) => user?.role === 'Gold User'));
         break;
       case '3':
-        setFilteredUsers(users.filter((user) => user.role === 'Silver User'));
+        setFilteredUsers(users.filter((user) => user?.role === 'Silver User'));
         break;
       case '4':
-        setFilteredUsers(users.filter((user) => user.role === 'Bronze User'));
+        setFilteredUsers(users.filter((user) => user?.role === 'Bronze User'));
         break;
       case '5':
-        setFilteredUsers(users.filter((user) => user.isBlocked === true));
+        setFilteredUsers(users.filter((user) => user?.isBlocked === true));
         break;
       default:
         setFilteredUsers(users);

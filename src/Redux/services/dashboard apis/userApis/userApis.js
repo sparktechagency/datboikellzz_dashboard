@@ -8,26 +8,20 @@ export const userApis = baseApis.injectEndpoints({
         method: 'GET',
         params: { searchTerm },
       }),
+      providesTags:['user']
     }),
-    updateUserStatus: builder.mutation({
+    blockUser: builder.mutation({
       query: ({ data }) => ({
-        url: `/dashboard/block-unblock-user-driver`,
+        url: '/user/update-block-unblock-user',
         method: 'PATCH',
         body: data,
       }),
-    }),
-    getSingleUserOrDriver: builder.query({
-      query: ({ id }) => ({
-        url: `/dashboard/get-user`,
-        method: 'GET',
-        params: { userId: id },
-      }),
+      invalidatesTags:['user']
     }),
   }),
 });
 
 export const {
   useGetAllUserQuery,
-  useUpdateUserStatusMutation,
-  useGetSingleUserOrDriverQuery,
+  useBlockUserMutation
 } = userApis;

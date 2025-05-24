@@ -6,7 +6,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { FaRegCircle } from 'react-icons/fa6';
+import { FaLock, FaRegCircle } from 'react-icons/fa6';
 import { IoIosWarning } from 'react-icons/io';
 import toast from 'react-hot-toast';
 import Success from '../../Shared/Success';
@@ -14,20 +14,29 @@ import CreateNewAdmin from './CreateNewAdmin';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
 import { useGetAllAdminsQuery } from '../../../Redux/services/dashboard apis/createAdmin/adminApis';
 import { imageUrl } from '../../../Utils/server';
-
+import AdminPasswordChange from './AdminPasswordChange';
+import debounce from 'debounce';
 const AdminsTable = () => {
   const [showModal, setShowModal] = useState();
   const [isUserBlock, setUserBlock] = useState(false);
   const [blockUserId, setBlockUserId] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
   const [selectAdmin, setSelectAdmin] = useState(null);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
-  const { data: adminData, isLoading: dataLoading } = useGetAllAdminsQuery();
-
+  const [paramsData, setParamsData] = useState({
+    searchTerm: '',
+  });
+  const { data: adminData, isLoading: dataLoading } = useGetAllAdminsQuery({
+    searchTerm: paramsData.searchTerm,
+    page: currentPage,
+  });
+  const [passwordModal, setPasswordModal] = useState(false);
   const adminsData = adminData?.data?.admins?.map((admin) => ({
     _id: admin?._id,
+    auth_id: admin?.authId?._id || 'N/A',
     auth_name: admin?.authId?.name || 'N/A',
     auth_email: admin?.authId?.email || 'N/A',
     auth_role: admin?.authId?.role || 'N/A',
@@ -42,7 +51,7 @@ const AdminsTable = () => {
   }));
 
   const metaData = adminData?.data?.meta;
-  // console.log(metaData);
+
   const columns = [
     {
       title: 'Admin Name',
@@ -111,6 +120,16 @@ const AdminsTable = () => {
             size="small"
           />
           <Button
+            onClick={() => {
+              setSelectAdmin(record);
+              setPasswordModal(true);
+            }}
+            className="!bg-[var(--bg-green-high)]"
+            type="default"
+            icon={<FaLock className="!text-white" />}
+            size="small"
+          />
+          <Button
             danger
             type="default"
             icon={<DeleteOutlined />}
@@ -121,7 +140,7 @@ const AdminsTable = () => {
             onClick={() => {
               setShowModal(true);
               setUserBlock(record.status === 'Active');
-              setBlockUserId(record.key);
+              setBlockUserId(record.auth_id);
             }}
             type="default"
             icon={<FaRegCircle />}
@@ -131,12 +150,17 @@ const AdminsTable = () => {
       ),
     },
   ];
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleUnblockUser = async () => {
     if (!blockUserId) {
       return toast.error('Please select a user to block');
     }
     setShowSuccessModal(true);
-    setShowModal(false);
+    // setShowModal(false);
   };
 
   const handleBlockUser = async () => {
@@ -144,9 +168,17 @@ const AdminsTable = () => {
       return toast.error('Please select a user to block');
     }
     toast.success('User successfully blocked');
+    setShowSuccessModal(true);
     setShowModal(false);
   };
-  const handleSearch = () => {};
+  const debouncedSearch = debounce((searchTerm) => {
+    setCurrentPage(1);
+    setParamsData({ searchTerm });
+  }, 500);
+
+  const handleSearch = (e) => {
+    debouncedSearch(e.target.value);
+  };
   return (
     <div className="admin-table">
       <h1 className="text-2xl font-bold">Admins</h1>
@@ -155,8 +187,8 @@ const AdminsTable = () => {
           <Form className="!w-full !h-fit">
             <Form.Item>
               <Input.Search
-                placeholder="Search by name"
-                onSearch={handleSearch}
+                placeholder="Search by name or email"
+                onChange={handleSearch}
                 allowClear
               />
             </Form.Item>
@@ -173,13 +205,13 @@ const AdminsTable = () => {
       <Table
         columns={columns}
         dataSource={adminsData}
+        scroll={{ x: 1500 }}
         loading={dataLoading}
         pagination={{
-          position: ['bottomCenter'],
-          showSizeChanger: false,
-          defaultPageSize: 10,
-          showQuickJumper: false,
-          size: 'small',
+          pageSize: metaData?.limit,
+          current: currentPage,
+          total: metaData?.total,
+          onChange: handlePageChange,
         }}
       />
       <Modal
@@ -244,6 +276,9 @@ const AdminsTable = () => {
           data={selectAdmin}
           closeModal={setUpdateAdminInfo}
         />
+      </Modal>
+      <Modal centered open={passwordModal} footer={null} closeIcon={false}>
+        <AdminPasswordChange data={selectAdmin} closeModal={setPasswordModal} />
       </Modal>
       <Modal
         visible={userDetailsModal}

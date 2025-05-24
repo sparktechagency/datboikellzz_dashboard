@@ -17,6 +17,7 @@ const baseApis = createApi({
     'notification',
     'subscription',
     'admin',
+    'user',
   ],
   endpoints: () => ({}),
 });

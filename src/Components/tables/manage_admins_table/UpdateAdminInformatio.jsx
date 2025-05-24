@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Form, Input, Button, Divider } from 'antd';
+import { Form, Input, Button, Divider, Spin } from 'antd';
 import toast from 'react-hot-toast';
 import { imageUrl } from '../../../Utils/server';
 import { FaCameraRetro } from 'react-icons/fa6';
@@ -9,7 +9,6 @@ function UpdateAdminInformatio({ data, closeModal }) {
   const [image, setImage] = useState(null);
   const [upadteAdmin, { isLoading }] = useUpdateAdminMutation();
   const [form] = Form.useForm();
-
   const initialData = {
     fullName: data?.name || '',
     email: data?.email || '',
@@ -31,6 +30,10 @@ function UpdateAdminInformatio({ data, closeModal }) {
 
   const onFinish = async (values) => {
     const formData = new FormData();
+    if (!data?._id) {
+      return;
+    }
+    formData.append('adminId', data?._id);
     formData.append('fullName', values.fullName);
     formData.append('email', values.email);
     formData.append('phoneNumber', values.phoneNumber);
@@ -38,13 +41,8 @@ function UpdateAdminInformatio({ data, closeModal }) {
       formData.append('profile_image', image);
     }
 
-    // Debug log - replace this with actual API call
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
+    const res = await upadteAdmin({ data: formData }).unwrap();
 
-    const res = await upadteAdmin(formData);
-  
     if (res?.success) {
       toast.success(res?.message || 'Update successfully');
       closeModal();
@@ -94,7 +92,16 @@ function UpdateAdminInformatio({ data, closeModal }) {
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            style={{ display: 'none' }}
+            style={{
+              position: 'absolute',
+              borderRadius: '50%',
+              width: '100%',
+              height: '100%',
+              cursor: 'pointer',
+              opacity: 0,
+              left: 0,
+              top: 0,
+            }}
           />
         </div>
         <Form.Item
@@ -150,7 +157,7 @@ function UpdateAdminInformatio({ data, closeModal }) {
             className="!w-full !h-10 !text-white !bg-[var(--bg-green-high)]"
             htmlType="submit"
           >
-            Save
+            {isLoading ? <Spin size="small">Save...</Spin> : 'Save'}
           </Button>
         </div>
       </Form>

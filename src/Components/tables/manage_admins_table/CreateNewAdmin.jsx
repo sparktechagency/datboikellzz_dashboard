@@ -196,7 +196,7 @@ function CreateNewAdmin({ closeModal }) {
             <Button
               type="primary"
               htmlType="submit"
-              className="min-w-[120px] bg-blue-600"
+              className="min-w-[120px] !bg-[#022C22]"
               loading={isSubmitting}
             >
               Create Admin
