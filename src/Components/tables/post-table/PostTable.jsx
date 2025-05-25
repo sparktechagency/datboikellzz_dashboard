@@ -1,59 +1,74 @@
-import { Avatar, Space, Table, Tabs, Button, Modal } from 'antd';
+import {
+  Avatar,
+  Space,
+  Table,
+  Tabs,
+  Button,
+  Modal,
+  Image,
+  Popconfirm,
+} from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { FaEye } from 'react-icons/fa';
 import AddTipModal from '../../../pages/DashboardPages/manage-post/AddtipModal';
 import toast from 'react-hot-toast';
-import { useGetPostQuery } from '../../../Redux/services/post-admin-service/postApis';
+import {
+  useDeletePostMutation,
+  useGetPostQuery,
+} from '../../../Redux/services/post-admin-service/postApis';
 import { imageUrl } from '../../../Utils/server';
 
 function PostTable() {
-  // Controlled params for query
   const [targetUser, setTargetUser] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  // Modal and edit states
   const [detailsVisible, setDetailsVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { data, isLoading } = useGetPostQuery({ targetUser, page, limit });
+  const [deletePostApi] = useDeletePostMutation();
+  const postsData = data?.data?.posts || [];
+  const meta = data?.data?.meta || {};
+  const posts = postsData.map((post) => {
+    const postImage = imageUrl(post?.post_image);
 
-  // Fetch posts from API with query params
-  const { data, isLoading } = useGetPostQuery({
-    targetUser,
-    page,
-    limit,
+    const postedBy = post?.postedBy || {};
+    const profileImage = imageUrl(postedBy?.profile_image);
+
+    return {
+      key: post?._id,
+      postInfo: post?.postTitle,
+      img: postImage,
+      postedBy: {
+        name: postedBy.name || 'Unknown',
+        img: profileImage,
+        email: postedBy.email || 'N/A',
+      },
+      inoformation: {
+        sprtType: post?.sportType,
+        pradictionType: post?.predictionType,
+        predictionDescription: post?.predictionDescription,
+      },
+      prediction: {
+        win_rate: post?.winRate + '%',
+        odds_range: post?.oddsRange,
+      },
+      email: postedBy.email || '',
+      postedOn: new Date(post?.createdAt).toLocaleDateString(),
+      targetUser: post?.targetUser
+        ? post?.targetUser.charAt(0).toUpperCase() +
+          post?.targetUser.slice(1) +
+          ' User'
+        : 'Unknown',
+      role: post?.targetUser
+        ? post?.targetUser.charAt(0).toUpperCase() +
+          post?.targetUser.slice(1) +
+          ' User'
+        : 'Unknown',
+    };
   });
-
-  // Transform API data to table format
-  const posts = (data?.data?.posts || []).map((post) => ({
-    key: post._id,
-    postInfo: post.postTitle,
-    img: imageUrl(post.post_image),
-    postedBy: {
-      name: post.postedBy?.name || 'Unknown',
-      img: imageUrl(post.postedBy?.img),
-      email: post.postedBy?.email || 'N/A',
-    },
-    inoformation: {
-      sprtType: post.sportType,
-      pradictionType: post.predictionType,
-    },
-    prediction: {
-      win_rate: post.winRate + '%',
-      odds_range: post.oddsRange,
-    },
-    email: post.postedBy?.email || '',
-    postedOn: new Date(post.createdAt).toLocaleDateString(),
-    targetUser:
-      post.targetUser.charAt(0).toUpperCase() +
-      post.targetUser.slice(1) +
-      ' User',
-    role:
-      post.targetUser.charAt(0).toUpperCase() +
-      post.targetUser.slice(1) +
-      ' User',
-  }));
 
   const columns = [
     {
@@ -124,21 +139,39 @@ function PostTable() {
           <Button
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<EditOutlined />}
-            onClick={() => setDetailsVisible(true)}
+            onClick={() => {
+              setDetailsVisible(true);
+            }}
           />
-          <Button
-            className="!border-red-500 !text-red-500"
-            icon={<DeleteOutlined />}
-            onClick={() => toast.success('Post deleted successfully')}
-          />
+          <Popconfirm
+            title="Are you sure you want to delete this post?"
+            onConfirm={() => deletePost(record.key)}
+          >
+            <Button
+              className="!border-red-500 !text-red-500"
+              icon={<DeleteOutlined />}
+            />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
 
-  // Tab handler sets targetUser string for query params
+  const deletePost = async (postId) => {
+    try {
+      const res = await deletePostApi({ postId });
+
+      if (res?.data?.success) {
+        toast.success(res?.data?.message || 'Post deleted successfully!');
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // Tab change handler: set targetUser and reset page to 1
   const handleTabChange = (key) => {
-    setPage(1); // reset page when tab changes
+    setPage(1);
     switch (key) {
       case '1':
         setTargetUser('');
@@ -157,10 +190,10 @@ function PostTable() {
     }
   };
 
-  // Handle pagination change from Ant Table
+  // Pagination change handler
   const handleTableChange = (pagination) => {
-    setPage(pagination.current);
-    setLimit(pagination.pageSize);
+    if (pagination.current !== page) setPage(pagination.current);
+    if (pagination.pageSize !== limit) setLimit(pagination.pageSize);
   };
 
   return (
@@ -178,10 +211,11 @@ function PostTable() {
         loading={isLoading}
         rowKey="key"
         pagination={{
-          current: data?.data?.meta?.page || page,
-          pageSize: data?.data?.meta?.limit || limit,
-          total: data?.data?.meta?.total || 0,
+          current: meta.page || page,
+          pageSize: meta.limit || limit,
+          total: meta.total || 0,
           showSizeChanger: false,
+          showQuickJumper: false,
         }}
         onChange={handleTableChange}
         bordered
@@ -197,18 +231,23 @@ function PostTable() {
         centered
         footer={
           <div className="w-full flex gap-3 items-center justify-end">
-            <Button
-              key="delete"
-              className="!w-full"
-              danger
-              onClick={() => {
-                toast.success('Post deleted successfully');
-                setIsModalVisible(false);
-                setSelectedPost(null);
-              }}
+            <Popconfirm
+              title="Are you sure you want to delete this post?"
+              onConfirm={() => deletePost(selectedPost?.key)}
             >
-              Delete Post
-            </Button>
+              <Button
+                key="delete"
+                className="!w-full"
+                danger
+                onClick={() => {
+                  toast.success('Post deleted successfully');
+                  setIsModalVisible(false);
+                  setSelectedPost(null);
+                }}
+              >
+                Delete Post
+              </Button>
+            </Popconfirm>
             <Button
               key="modify"
               className="!w-full !bg-[var(--bg-green-high)] !text-white"
@@ -224,10 +263,13 @@ function PostTable() {
       >
         <div className="flex items-start flex-col mb-3">
           <div className="w-full h-48 overflow-hidden rounded-md">
-            <img className='w-full h-full object-cover' src={selectedPost?.img} alt={selectedPost?.postInfo} />
+            <Image src={selectedPost?.img} alt={selectedPost?.postInfo} />
           </div>
           <div className="mt-3 text-2xl">
             <h2 className="font-bold">{selectedPost?.postInfo}</h2>
+            <p className="text-sm">
+              {selectedPost?.inoformation?.predictionDescription}
+            </p>
           </div>
         </div>
         <h3>Information</h3>
@@ -268,6 +310,7 @@ function PostTable() {
       <AddTipModal
         visible={detailsVisible}
         onCancel={() => setDetailsVisible(false)}
+        postEditId={selectedPost?.key}
         details={true}
       />
     </div>

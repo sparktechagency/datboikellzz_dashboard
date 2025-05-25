@@ -10,7 +10,17 @@ const postApis = baseApis.injectEndpoints({
       }),
       providesTags: ['post'],
     }),
+    deletePost: builder.mutation({
+      query: ({ postId }) => ({
+        url: '/post/delete-post',
+        method: 'DELETE',
+        body: {
+          postId: postId,
+        },
+      }),
+      invalidatesTags: ['post'],
+    }),
   }),
 });
 
-export const { useGetPostQuery } = postApis;
+export const { useGetPostQuery, useDeletePostMutation } = postApis;

@@ -3,7 +3,7 @@ import { Modal, Button, Input, Select, Form, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
 
-const AddTipModal = ({ visible, onCancel, onSubmit, details }) => {
+const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
