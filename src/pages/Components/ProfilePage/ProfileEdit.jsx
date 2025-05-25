@@ -7,12 +7,15 @@ const ProfileEdit = ({ image, data, adminRole }) => {
   const [form] = Form.useForm();
   const [setProfileUpdate, { isLoading: isProfileUpdate }] =
     useUpdateProfileDataMutation();
-
   const onFinish = async (values) => {
+    if (adminRole === 'ADMIN') {
+      return toast.error('You are not allowed to update your profile');
+    }
     const updateData = {
       name: values?.name,
       phoneNumber: values?.phoneNumber,
     };
+    console.log(updateData);
     const formData = new FormData();
     Object.keys(updateData).forEach((key) => {
       formData.append(key, updateData[key]);
@@ -28,8 +31,6 @@ const ProfileEdit = ({ image, data, adminRole }) => {
       const res = await setProfileUpdate(formData);
       if (res?.data?.success) {
         toast.success(res?.data?.message || 'Profile updated successfully');
-      } else {
-        toast.error(res?.error?.data?.message || 'Something went wrong');
       }
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -38,7 +39,7 @@ const ProfileEdit = ({ image, data, adminRole }) => {
   return (
     <div>
       <p className="text-[var(--bg-green-high)] text-3xl text-center">
-        {adminRole === 'SUPER_ADMIN' && 'Edit Your Profile'}
+        Edit Your Profile
       </p>
       <Form
         className="text-white"
@@ -66,7 +67,7 @@ const ProfileEdit = ({ image, data, adminRole }) => {
             disabled={adminRole === 'ADMIN'}
             placeholder="Name"
             className={`p-2 w-full outline-none border-none h-11 text-[var(--white-600)] ${
-              adminRole === 'ADMIN' && 'cursor-not-allowed'
+              adminRole === 'ADMIN' ? 'cursor-not-allowed' : ''
             }`}
           />
         </Form.Item>
@@ -109,7 +110,7 @@ const ProfileEdit = ({ image, data, adminRole }) => {
             disabled={adminRole === 'ADMIN'}
             placeholder="Phone Number"
             className={`p-2 w-full outline-none border-none h-11 text-[var(--white-600)] ${
-              adminRole === 'ADMIN' && 'cursor-not-allowed'
+              adminRole === 'ADMIN' ? 'cursor-not-allowed' : ''
             }`}
           />
         </Form.Item>

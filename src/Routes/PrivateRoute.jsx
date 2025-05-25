@@ -35,6 +35,7 @@ const PrivateRoute = ({ children }) => {
             '/faq-management',
             '/privacy-policy',
             '/terms-condition',
+            '/feedback',
           ],
           ADMIN: [
             '/',
@@ -44,6 +45,7 @@ const PrivateRoute = ({ children }) => {
             '/faq-management',
             '/privacy-policy',
             '/terms-condition',
+            '/feedback',
           ],
         };
 

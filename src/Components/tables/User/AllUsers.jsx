@@ -21,7 +21,7 @@ import {
 import { imageUrl } from '../../../Utils/server';
 import toast from 'react-hot-toast';
 
-const AllUsers = ({ recentUser }) => {
+const AllUsers = ({ recentUser, limit }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
@@ -29,6 +29,7 @@ const AllUsers = ({ recentUser }) => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const { data: userData, isLoading: userDataLoading } = useGetAllUserQuery({
     searchTerm: searchQuery,
+    limit: limit ? limit : 10,
   });
   const [updateUserStatus] = useBlockUserMutation();
 
@@ -163,7 +164,7 @@ const AllUsers = ({ recentUser }) => {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button
+          <Button size='small'
             onClick={() => {
               setSelectedUser(record);
               setUserDetailsModal(true);
@@ -181,7 +182,7 @@ const AllUsers = ({ recentUser }) => {
             cancelText="No"
             onConfirm={() => blockUser(record.userId, record.isBlocked)}
           >
-            <Button
+            <Button size='small'
               className={`${
                 record.isBlocked ? '!bg-red-300' : '!bg-green-200'
               } ant-btn ant-btn-default`}
@@ -223,17 +224,19 @@ const AllUsers = ({ recentUser }) => {
 
   return (
     <div className="w-full overflow-x-auto">
-      <div className="max-w-[400px]">
-        <Form>
-          <Form.Item>
-            <Input.Search
-              placeholder="Search by name"
-              onChange={handleSearch}
-              allowClear
-            />
-          </Form.Item>
-        </Form>
-      </div>
+      {recentUser !== true && (
+        <div className="max-w-[400px]">
+          <Form>
+            <Form.Item>
+              <Input.Search
+                placeholder="Search by name"
+                onChange={handleSearch}
+                allowClear
+              />
+            </Form.Item>
+          </Form>
+        </div>
+      )}
 
       {recentUser !== true && (
         <Tabs defaultActiveKey="1" type="card" onChange={handleTabChange}>
@@ -250,11 +253,14 @@ const AllUsers = ({ recentUser }) => {
         dataSource={filteredUsers}
         rowKey="id"
         scroll={{ x: 1500 }}
-        pagination={{
-          pageSize: userData?.data?.meta?.limit || 10,
-          current: page,
-          onChange: handlePageChange,
-        }}
+        pagination={
+          recentUser !== true && {
+            pageSize: userData?.data?.meta?.limit || 10,
+            current: page,
+            onChange: handlePageChange,
+            size: 'small',
+          }
+        }
         bordered
         loading={userDataLoading}
       />

@@ -258,6 +258,7 @@ const AdminsTable = () => {
           current: currentPage,
           total: metaData?.total,
           onChange: handlePageChange,
+          size:'small'
         }}
       />
 

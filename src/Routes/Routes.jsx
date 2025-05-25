@@ -17,6 +17,7 @@ import EarningPage from '../pages/DashboardPages/EarningManage/EarningPage';
 import ManageAdmins from '../pages/DashboardPages/Manage_Admins/ManageAdmins';
 import Subscription from '../pages/DashboardPages/Subscription/Subscription';
 import Unauthorized from '../pages/Auth/Unauthorized.jsx'; // Create this component
+import Feedback from '../pages/DashboardPages/feedback/Feedback.jsx';
 
 export const Routes = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/terms-condition',
         element: <TermsCondition />,
+      },
+      {
+        path: '/feedback',
+        element: <Feedback />,
       },
     ],
   },

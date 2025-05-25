@@ -16,7 +16,7 @@ function RecentlyJoinedUsers() {
           </Link>
         </div>
       </div>
-      <AllUsers recentUser={true} />
+      <AllUsers limit={5} recentUser={true} />
     </div>
   );
 }

@@ -128,7 +128,7 @@ function PostTable() {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button
+          <Button size='small'
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<FaEye />}
             onClick={() => {
@@ -136,7 +136,7 @@ function PostTable() {
               setIsModalVisible(true);
             }}
           />
-          <Button
+          <Button size='small'
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<EditOutlined />}
             onClick={() => {
@@ -148,7 +148,7 @@ function PostTable() {
             title="Are you sure you want to delete this post?"
             onConfirm={() => deletePost(record.key)}
           >
-            <Button
+            <Button size='small'
               className="!border-red-500 !text-red-500"
               icon={<DeleteOutlined />}
             />
@@ -209,6 +209,7 @@ function PostTable() {
       <Table
         columns={columns}
         dataSource={posts}
+        scroll={{ x: 1500 }}
         loading={isLoading}
         rowKey="key"
         pagination={{
@@ -217,6 +218,7 @@ function PostTable() {
           total: meta.total || 0,
           showSizeChanger: false,
           showQuickJumper: false,
+          size: 'small',
         }}
         onChange={handleTableChange}
         bordered
@@ -304,7 +306,6 @@ function PostTable() {
             } px-3 py-1 text-xs rounded-md`}
           >
             {selectedPost?.targetUser}
-            {selectedPost?.key}
           </div>
         </div>
       </Modal>

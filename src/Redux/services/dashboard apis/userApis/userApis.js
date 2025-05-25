@@ -3,12 +3,12 @@ import baseApis from '../../../baseApis/baseApis';
 export const userApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getAllUser: builder.query({
-      query: ({ searchTerm }) => ({
+      query: ({ searchTerm, limit }) => ({
         url: '/user/get-all-users',
         method: 'GET',
-        params: { searchTerm },
+        params: { searchTerm, limit },
       }),
-      providesTags:['user']
+      providesTags: ['user'],
     }),
     blockUser: builder.mutation({
       query: ({ data }) => ({
@@ -16,12 +16,9 @@ export const userApis = baseApis.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags:['user']
+      invalidatesTags: ['user'],
     }),
   }),
 });
 
-export const {
-  useGetAllUserQuery,
-  useBlockUserMutation
-} = userApis;
+export const { useGetAllUserQuery, useBlockUserMutation } = userApis;

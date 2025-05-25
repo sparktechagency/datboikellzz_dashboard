@@ -9,13 +9,11 @@ import { useGetSuperAdminProfileQuery } from '../../../Redux/services/superAdmin
 import { jwtDecode } from 'jwt-decode';
 import { imageUrl } from '../../../Utils/server.js';
 
+const Tabs = ['Edit Profile', 'Change Password'];
+
 const Profile = () => {
-  const [adminRole, setAdminRole] = useState(null);
-  const Tabs =
-    adminRole === 'SUPER_ADMIN'
-      ? ['Edit Profile', 'Change Password']
-      : ['Profile', 'Change Password'];
   const [tab, setTab] = useState(Tabs[0]);
+  const [adminRole, setAdminRole] = useState(null);
   const adminSkip = adminRole === 'ADMIN';
   const superAdminSkip = adminRole === 'SUPER_ADMIN';
   const { data: adminData, isLoading: adminDataLoading } =
@@ -52,18 +50,20 @@ const Profile = () => {
         <div className="w-full center-center">
           <div
             onClick={() => {
-              if (tab === 'Edit Profile') {
+              if (tab === 'Edit Profile' && adminRole !== 'ADMIN') {
                 document.getElementById('fileInput').click();
               }
             }}
-            className="w-24 h-24 border-2 border-black p-1 cursor-pointer rounded-full relative"
+            className={`w-24 h-24 border-2 border-black p-1 ${
+              adminRole !== 'ADMIN' && 'cursor-pointer'
+            } rounded-full relative`}
           >
             <img
               className="w-full h-full object-cover rounded-full"
               src={profileImage}
               alt="Profile"
             />
-            {tab === 'Edit Profile' && (
+            {tab === 'Edit Profile' && adminRole !== 'ADMIN' && (
               <button
                 aria-label="Edit Profile Picture"
                 className="absolute right-0 bottom-2 rounded-full bg-[var(--bg-green-high)]  p-2"
@@ -108,9 +108,7 @@ const Profile = () => {
       </div>
 
       <div className="max-w-[700px] mx-auto bg-[var(--black-200)] p-4 rounded-md">
-        {adminRole === 'SUPER_ADMIN' ? (
-          tab === 'Edit Profile'
-        ) : tab === 'Profile' ? (
+        {tab === 'Edit Profile' ? (
           isLoading || adminDataLoading ? (
             <span className="loader-black"></span>
           ) : (

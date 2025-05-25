@@ -97,6 +97,7 @@ const TransactionTable = () => {
                 total: meta?.total,
                 onChange: handlePageChange,
                 showSizeChanger: false,
+                size: 'small',
               }
             : false
         }

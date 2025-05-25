@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Input, Select, Form, Upload } from 'antd';
+import { Modal, Button, Input, Select, Form, Upload, Row, Col } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
 import {
@@ -9,11 +9,10 @@ import {
   useSinglePostGetQuery,
   useUpdatePostMutation,
 } from '../../../Redux/services/post-admin-service/postApis';
-import { url } from '../../../Utils/server';
+import { imageUrl, url } from '../../../Utils/server';
 
 const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
   const [form] = Form.useForm();
-  const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
   const { data: postType, isLoading: postTypeLoading } = usePostTypeQuery();
@@ -22,83 +21,76 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
 
   const [createPost] = useCreatePostMutation(undefined, { skip: postEditId });
   const [updatePost] = useUpdatePostMutation(undefined, { skip: !postEditId });
-  console.log(postType?.data?.sportTypes);
-  const steps = [
-    {
-      title: 'Image Upload',
-      fields: ['postImage'],
-    },
-    {
-      title: 'Tip Info',
-      fields: ['tipTitle', 'sportType', 'predictionType'],
-    },
-    {
-      title: 'Win Rate',
-      fields: ['winRate', 'targetUser', 'oddsRange'],
-    },
-  ];
 
-  const formFields = {
-    tipTitle: {
+  const formFields = [
+    {
       label: 'Tip Title',
       name: 'tipTitle',
       rules: [{ required: true, message: 'Please enter the tip title' }],
       component: <Input placeholder="Enter the Tip Title" />,
+      span: 24,
     },
-    sportType: {
+    {
       label: 'Sport Type',
       name: 'sportType',
       rules: [{ required: true, message: 'Please select a sport type' }],
       component: (
-        <Select placeholder="Select One">
+        <Select loading={postTypeLoading} placeholder="Select One">
           {postType?.data?.sportTypes?.map((item) => (
-            <Select.Option value={item?.name}>{item?.name}asdas</Select.Option>
+            <Select.Option key={item} value={item}>
+              {item}
+            </Select.Option>
           ))}
         </Select>
       ),
+      span: 12,
     },
-    predictionType: {
+    {
       label: 'Prediction Type',
       name: 'predictionType',
       rules: [{ required: true, message: 'Please select a prediction type' }],
       component: (
-        <Select placeholder="Select One">
-          <Select.Option value="overUnder">Over/Under</Select.Option>
-          <Select.Option value="moneyline">Moneyline</Select.Option>
-          <Select.Option value="spread">Spread</Select.Option>
-          <Select.Option value="handicap">Handicap</Select.Option>
+        <Select loading={postTypeLoading} placeholder="Select One">
+          {postType?.data?.predictionTypes?.map((item) => (
+            <Select.Option key={item} value={item}>
+              {item}
+            </Select.Option>
+          ))}
         </Select>
       ),
+      span: 12,
     },
-    winRate: {
+    {
       label: 'Win Rate',
       name: 'winRate',
       rules: [{ required: true, message: 'Please enter the win rate' }],
       component: <Input placeholder="e.g. 75%" />,
+      span: 8,
     },
-    targetUser: {
+    {
       label: 'Target User',
       name: 'targetUser',
       rules: [{ required: true, message: 'Please select a target user' }],
       component: (
         <Select placeholder="Select One">
-          <Select.Option value="allUser">All User</Select.Option>
-          <Select.Option value="goldUser">Gold User</Select.Option>
-          <Select.Option value="silverUser">Silver User</Select.Option>
-          <Select.Option value="bronzeUser">Bronze User</Select.Option>
+          <Select.Option value="">All User</Select.Option>
+          <Select.Option value="gold">Gold User</Select.Option>
+          <Select.Option value="silver">Silver User</Select.Option>
+          <Select.Option value="bronze">Bronze User</Select.Option>
         </Select>
       ),
+      span: 8,
     },
-    oddsRange: {
+    {
       label: 'Odds Range',
       name: 'oddsRange',
       rules: [{ required: true, message: 'Please enter the odds range' }],
       component: <Input placeholder="e.g. 1.5 - 2.0" />,
+      span: 8,
     },
-    postImage: {
+    {
       label: 'Post Image',
       name: 'postImage',
-      rules: [{ required: true, message: 'Please upload a post image' }],
       component: (
         <Upload
           listType="picture-card"
@@ -112,25 +104,24 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
           )}
         </Upload>
       ),
+      span: 24,
     },
-  };
+  ];
 
-  // Pre-fill form when editing
   useEffect(() => {
     if (details && singlePost?.data) {
       const post = singlePost.data;
 
-      // Pre-fill Upload image
       if (post.post_image) {
         const fileName = post.post_image.split('\\').pop();
-        const imageUrl = `${url}/${post.post_image.replace(/\\/g, '/')}`;
+        const image = imageUrl(post?.post_image);
 
         setFileList([
           {
             uid: '-1',
             name: fileName,
             status: 'done',
-            url: imageUrl,
+            url: image,
           },
         ]);
       }
@@ -138,131 +129,125 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       form.setFieldsValue({
         tipTitle: post.postTitle || '',
         sportType: post.sportType?.toLowerCase() || '',
-        predictionType:
-          post.predictionType?.toLowerCase().replace(/\s/g, '') || '',
-        winRate: post.winRate ? `${post.winRate}%` : '',
-        targetUser: `${post.targetUser.toLowerCase()}User`,
+        predictionType: post.predictionType || '',
+        winRate: post?.winRate || '',
+        targetUser: post.targetUser || '',
         oddsRange: post.oddsRange || '',
       });
     }
-  }, [details, singlePost]);
-
-  const handleNext = async () => {
-    try {
-      await form.validateFields(steps[currentStep].fields);
-      setCurrentStep(currentStep + 1);
-    } catch (error) {
-      console.warn('Validation failed');
-    }
-  };
-
-  const handlePrevious = () => {
-    setCurrentStep(currentStep - 1);
-  };
+  }, [details, singlePost, form, postEditId]);
 
   const handleFinish = async () => {
     try {
       setLoading(true);
-
       const values = await form.validateFields();
-      const dataPayload = { ...values };
-      let file = null;
-      if (fileList.length > 0 && fileList[0].originFileObj) {
-        file = fileList[0].originFileObj;
-        dataPayload.postImageName = file.name;
+
+      const dataPayload = {
+        postTitle: values.tipTitle,
+        sportType: values.sportType,
+        predictionType: values.predictionType,
+        winRate: values.winRate,
+        targetUser: values.targetUser,
+        oddsRange: values.oddsRange,
+        predictionDescription: values.predictionDescription || '',
+      };
+
+      if (postEditId) {
+        dataPayload.postid = postEditId;
       }
 
       const formData = new FormData();
-      formData.append('data', JSON.stringify(dataPayload));
-      if (file) {
-        formData.append('postImage', file);
+
+      Object.keys(dataPayload).forEach((key) => {
+        formData.append(key, dataPayload[key]);
+      });
+
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        formData.append('post_Image', fileList[0].originFileObj);
       }
+
       if (!postEditId) {
-        await createPost(formData, dataPayload);
-      } else if (postEditId) {
-        await updatePost(formData, dataPayload);
+        await createPost({ data: formData });
+      } else {
+        await updatePost(formData);
       }
 
       form.resetFields();
       setFileList([]);
-      setCurrentStep(0);
       onCancel();
+      toast.success(`Tip ${postEditId ? 'updated' : 'created'} successfully!`);
     } catch (error) {
       toast.error('Submission failed');
+      console.error('Submission error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getFooterButtons = () => {
-    const isFirstStep = currentStep === 0;
-    const isLastStep = currentStep === steps.length - 1;
-
-    return (
-      <div className="flex justify-between gap-3">
-        {isFirstStep ? (
-          <Button onClick={onCancel} danger>
-            Cancel
-          </Button>
-        ) : (
-          <Button onClick={handlePrevious}>Previous</Button>
-        )}
-
-        {isLastStep ? (
-          <Button
-            type="primary"
-            onClick={handleFinish}
-            loading={loading}
-            className="!bg-[var(--bg-green-high)] !text-white"
-          >
-            {postEditId ? 'Update' : 'Save'}
-          </Button>
-        ) : (
-          <Button
-            type="primary"
-            onClick={handleNext}
-            className="!bg-[var(--bg-green-high)] !text-white"
-          >
-            Next
-          </Button>
-        )}
-      </div>
-    );
-  };
-
-  const renderStepFields = () => {
-    const currentFields = steps[currentStep].fields;
-    return currentFields.map((fieldName) => {
-      const field = formFields[fieldName];
-      return (
-        <Form.Item
-          key={field.name}
-          label={field.label}
-          name={field.name}
-          rules={field.rules}
-        >
-          {field.component}
-        </Form.Item>
-      );
-    });
-  };
-
   return (
     <Modal
-      title="Add New Tip"
+      title={
+        postEditId ? (
+          <div className="flex items-center flex-col justify-center">
+            <h2 className="text-2xl">Edit Tip Post</h2>
+            <p className="text-sm font-normal text-center ">
+              Update your prediction, odds, or match details. All changes will
+              reflect instantly for subscribed users.
+            </p>
+          </div>
+        ) : (
+          <div className="flex items-center flex-col justify-center">
+            <h2 className="text-2xl">Add New Tip</h2>
+            <p className="text-sm font-normal text-center ">
+              Share a new prediction with your users. Fill out the match
+              details, betting type, and insights to help users make informed
+              decisions.
+            </p>
+          </div>
+        )
+      }
       open={visible}
-      onCancel={() => {
-        form.resetFields();
-        setFileList([]);
-        setCurrentStep(0);
-        onCancel();
-      }}
-      footer={getFooterButtons()}
+      onCancel={false}
+      closeIcon={false}
+      footer={[
+        <Button
+          key="back"
+          onClick={() => {
+            form.resetFields();
+            setFileList([]);
+            onCancel();
+          }}
+          danger
+        >
+          Cancel
+        </Button>,
+        <Button
+          key="submit"
+          type="primary"
+          loading={loading}
+          onClick={handleFinish}
+          className="!bg-[var(--bg-green-high)] !text-white"
+        >
+          {postEditId ? 'Update' : 'Save'}
+        </Button>,
+      ]}
       centered
-      width={600}
+      width={800}
     >
       <Form form={form} layout="vertical" requiredMark={false}>
-        {renderStepFields()}
+        <Row gutter={16}>
+          {formFields.map((field) => (
+            <Col span={field.span} key={field.name}>
+              <Form.Item
+                label={field.label}
+                name={field.name}
+                rules={field.rules}
+              >
+                {field.component}
+              </Form.Item>
+            </Col>
+          ))}
+        </Row>
       </Form>
     </Modal>
   );
