@@ -140,6 +140,7 @@ function PostTable() {
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<EditOutlined />}
             onClick={() => {
+              setSelectedPost(record);
               setDetailsVisible(true);
             }}
           />
@@ -303,6 +304,7 @@ function PostTable() {
             } px-3 py-1 text-xs rounded-md`}
           >
             {selectedPost?.targetUser}
+            {selectedPost?.key}
           </div>
         </div>
       </Modal>

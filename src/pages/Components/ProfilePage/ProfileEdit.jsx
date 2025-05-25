@@ -3,16 +3,16 @@ import { Button, Form, Spin } from 'antd';
 import toast from 'react-hot-toast';
 import { useUpdateProfileDataMutation } from '../../../Redux/services/superAdminProfileApis';
 
-const ProfileEdit = ({ image, data }) => {
+const ProfileEdit = ({ image, data, adminRole }) => {
   const [form] = Form.useForm();
   const [setProfileUpdate, { isLoading: isProfileUpdate }] =
     useUpdateProfileDataMutation();
+
   const onFinish = async (values) => {
     const updateData = {
       name: values?.name,
       phoneNumber: values?.phoneNumber,
     };
-    console.log(updateData);
     const formData = new FormData();
     Object.keys(updateData).forEach((key) => {
       formData.append(key, updateData[key]);
@@ -28,6 +28,8 @@ const ProfileEdit = ({ image, data }) => {
       const res = await setProfileUpdate(formData);
       if (res?.data?.success) {
         toast.success(res?.data?.message || 'Profile updated successfully');
+      } else {
+        toast.error(res?.error?.data?.message || 'Something went wrong');
       }
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -36,7 +38,7 @@ const ProfileEdit = ({ image, data }) => {
   return (
     <div>
       <p className="text-[var(--bg-green-high)] text-3xl text-center">
-        Edit Your Profile
+        {adminRole === 'SUPER_ADMIN' && 'Edit Your Profile'}
       </p>
       <Form
         className="text-white"
@@ -50,10 +52,7 @@ const ProfileEdit = ({ image, data }) => {
           phoneNumber: data?.phoneNumber || '',
         }}
       >
-        <Form.Item
-          name="name"
-          label={<span className="text-black">Name</span>}
-        >
+        <Form.Item name="name" label={<span className="text-black">Name</span>}>
           <input
             style={{
               width: '100%',
@@ -64,8 +63,11 @@ const ProfileEdit = ({ image, data }) => {
               backgroundColor: '#fff',
               outline: 'none',
             }}
+            disabled={adminRole === 'ADMIN'}
             placeholder="Name"
-            className="p-2 w-full outline-none border-none h-11 text-[var(--white-600)]"
+            className={`p-2 w-full outline-none border-none h-11 text-[var(--white-600)] ${
+              adminRole === 'ADMIN' && 'cursor-not-allowed'
+            }`}
           />
         </Form.Item>
 
@@ -104,23 +106,28 @@ const ProfileEdit = ({ image, data }) => {
               backgroundColor: '#fff',
               outline: 'none',
             }}
+            disabled={adminRole === 'ADMIN'}
             placeholder="Phone Number"
-            className="p-2 w-full outline-none border-none h-11 text-[var(--white-600)]"
+            className={`p-2 w-full outline-none border-none h-11 text-[var(--white-600)] ${
+              adminRole === 'ADMIN' && 'cursor-not-allowed'
+            }`}
           />
         </Form.Item>
 
-        <Button
-          htmlType="submit"
-          disabled={isProfileUpdate}
-          style={{
-            backgroundColor: 'var(--bg-green-high)',
-            color: '#fff',
-            height: 40,
-          }}
-          className="!bg-[var(--bg-green-high] !hover:bg-[var(--bg-green-low] w-full"
-        >
-          {isProfileUpdate ? <Spin /> : 'Update Profile'}
-        </Button>
+        {adminRole === 'SUPER_ADMIN' && (
+          <Button
+            htmlType="submit"
+            disabled={isProfileUpdate}
+            style={{
+              backgroundColor: 'var(--bg-green-high)',
+              color: '#fff',
+              height: 40,
+            }}
+            className="!bg-[var(--bg-green-high] !hover:bg-[var(--bg-green-low] w-full"
+          >
+            {isProfileUpdate ? <Spin /> : 'Update Profile'}
+          </Button>
+        )}
       </Form>
     </div>
   );

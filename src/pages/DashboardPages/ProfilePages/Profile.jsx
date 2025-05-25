@@ -9,11 +9,13 @@ import { useGetSuperAdminProfileQuery } from '../../../Redux/services/superAdmin
 import { jwtDecode } from 'jwt-decode';
 import { imageUrl } from '../../../Utils/server.js';
 
-const Tabs = ['Edit Profile', 'Change Password'];
-
 const Profile = () => {
-  const [tab, setTab] = useState(Tabs[0]);
   const [adminRole, setAdminRole] = useState(null);
+  const Tabs =
+    adminRole === 'SUPER_ADMIN'
+      ? ['Edit Profile', 'Change Password']
+      : ['Profile', 'Change Password'];
+  const [tab, setTab] = useState(Tabs[0]);
   const adminSkip = adminRole === 'ADMIN';
   const superAdminSkip = adminRole === 'SUPER_ADMIN';
   const { data: adminData, isLoading: adminDataLoading } =
@@ -106,11 +108,14 @@ const Profile = () => {
       </div>
 
       <div className="max-w-[700px] mx-auto bg-[var(--black-200)] p-4 rounded-md">
-        {tab === 'Edit Profile' ? (
+        {adminRole === 'SUPER_ADMIN' ? (
+          tab === 'Edit Profile'
+        ) : tab === 'Profile' ? (
           isLoading || adminDataLoading ? (
             <span className="loader-black"></span>
           ) : (
             <ProfileEdit
+              adminRole={adminRole}
               image={image}
               defaultImage={profileImage}
               data={data?.data || adminData?.data}

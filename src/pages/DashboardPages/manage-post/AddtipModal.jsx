@@ -1,28 +1,31 @@
-import React, { useState } from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Input, Select, Form, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
+import {
+  useCreatePostMutation,
+  usePostTypeQuery,
+  useSinglePostGetQuery,
+  useUpdatePostMutation,
+} from '../../../Redux/services/post-admin-service/postApis';
+import { url } from '../../../Utils/server';
 
 const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const data = {
-    tipTitle: 'Exciting Tip',
-    tipDescription: 'An insightful prediction for the upcoming match.',
-    tipImage: '/images/tip.jpg',
-    postImage: '/images/post.jpg',
-    postImageName: 'post.jpg',
-    sportType: 'basketball',
-    predictionType: 'spread',
-    winRate: '75%',
-    targetUser: 'sportsFan123',
-    oddsRange: '1.5 - 2.0',
-  };
+  const [fileList, setFileList] = useState([]);
+  const { data: postType, isLoading: postTypeLoading } = usePostTypeQuery();
+  const { data: singlePost, isLoading: singlePostLoading } =
+    useSinglePostGetQuery({ postId: postEditId }, { skip: !postEditId });
+
+  const [createPost] = useCreatePostMutation(undefined, { skip: postEditId });
+  const [updatePost] = useUpdatePostMutation(undefined, { skip: !postEditId });
+  console.log(postType?.data?.sportTypes);
   const steps = [
     {
       title: 'Image Upload',
-      name: 'postImage',
       fields: ['postImage'],
     },
     {
@@ -48,11 +51,9 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       rules: [{ required: true, message: 'Please select a sport type' }],
       component: (
         <Select placeholder="Select One">
-          <Select.Option value="basketball">Basketball</Select.Option>
-          <Select.Option value="football">Football (Soccer)</Select.Option>
-          <Select.Option value="tennis">Tennis</Select.Option>
-          <Select.Option value="ufc">UFC</Select.Option>
-          <Select.Option value="nfl">NFL</Select.Option>
+          {postType?.data?.sportTypes?.map((item) => (
+            <Select.Option value={item?.name}>{item?.name}asdas</Select.Option>
+          ))}
         </Select>
       ),
     },
@@ -73,7 +74,7 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       label: 'Win Rate',
       name: 'winRate',
       rules: [{ required: true, message: 'Please enter the win rate' }],
-      component: <Input placeholder="Enter the Win Rate" />,
+      component: <Input placeholder="e.g. 75%" />,
     },
     targetUser: {
       label: 'Target User',
@@ -92,26 +93,66 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       label: 'Odds Range',
       name: 'oddsRange',
       rules: [{ required: true, message: 'Please enter the odds range' }],
-      component: <Input placeholder="Enter the Odds Range" />,
+      component: <Input placeholder="e.g. 1.5 - 2.0" />,
     },
     postImage: {
-      label: 'Upload Post Image',
+      label: 'Post Image',
       name: 'postImage',
       rules: [{ required: true, message: 'Please upload a post image' }],
       component: (
-        <Upload listType="picture-card" maxCount={1} beforeUpload={() => false}>
-          <Button icon={<UploadOutlined />}>Upload Picture</Button>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          beforeUpload={() => false}
+          onChange={({ fileList }) => setFileList(fileList)}
+          maxCount={1}
+        >
+          {fileList.length === 0 && (
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          )}
         </Upload>
       ),
     },
   };
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (details && singlePost?.data) {
+      const post = singlePost.data;
+
+      // Pre-fill Upload image
+      if (post.post_image) {
+        const fileName = post.post_image.split('\\').pop();
+        const imageUrl = `${url}/${post.post_image.replace(/\\/g, '/')}`;
+
+        setFileList([
+          {
+            uid: '-1',
+            name: fileName,
+            status: 'done',
+            url: imageUrl,
+          },
+        ]);
+      }
+
+      form.setFieldsValue({
+        tipTitle: post.postTitle || '',
+        sportType: post.sportType?.toLowerCase() || '',
+        predictionType:
+          post.predictionType?.toLowerCase().replace(/\s/g, '') || '',
+        winRate: post.winRate ? `${post.winRate}%` : '',
+        targetUser: `${post.targetUser.toLowerCase()}User`,
+        oddsRange: post.oddsRange || '',
+      });
+    }
+  }, [details, singlePost]);
 
   const handleNext = async () => {
     try {
       await form.validateFields(steps[currentStep].fields);
       setCurrentStep(currentStep + 1);
     } catch (error) {
-      console.error('Validation failed:', error);
+      console.warn('Validation failed');
     }
   };
 
@@ -122,51 +163,32 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
   const handleFinish = async () => {
     try {
       setLoading(true);
+
       const values = await form.validateFields();
-
       const dataPayload = { ...values };
-
       let file = null;
-      if (
-        values.postImage &&
-        values.postImage.fileList &&
-        values.postImage.fileList.length > 0
-      ) {
-        file = values.postImage.fileList[0].originFileObj;
-
-        delete dataPayload.postImage;
-
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        file = fileList[0].originFileObj;
         dataPayload.postImageName = file.name;
       }
 
-      console.log('All form data collected from all steps:', dataPayload);
-
       const formData = new FormData();
-
       formData.append('data', JSON.stringify(dataPayload));
-
       if (file) {
         formData.append('postImage', file);
       }
-
-      console.log('FormData created with the following keys:');
-      for (let key of formData.keys()) {
-        console.log(`- ${key}`);
+      if (!postEditId) {
+        await createPost(formData, dataPayload);
+      } else if (postEditId) {
+        await updatePost(formData, dataPayload);
       }
 
-      if (onSubmit) {
-        await onSubmit(formData, dataPayload);
-        toast.success('Tip added successfully!');
-      } else {
-        console.log('Form ready for API submission');
-      }
-
-      onCancel();
       form.resetFields();
+      setFileList([]);
       setCurrentStep(0);
+      onCancel();
     } catch (error) {
-      console.error('Submission failed:', error);
-      toast.error('Failed to add tip. Please try again.');
+      toast.error('Submission failed');
     } finally {
       setLoading(false);
     }
@@ -177,36 +199,29 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
     const isLastStep = currentStep === steps.length - 1;
 
     return (
-      <div className="flex justify-between gap-3 w-full">
+      <div className="flex justify-between gap-3">
         {isFirstStep ? (
-          <Button
-            className="!bg-red-50 !w-full !text-red-500"
-            onClick={onCancel}
-          >
+          <Button onClick={onCancel} danger>
             Cancel
           </Button>
         ) : (
-          <Button
-            className="!bg-red-50 !w-full !text-red-500"
-            onClick={handlePrevious}
-          >
-            Previous
-          </Button>
+          <Button onClick={handlePrevious}>Previous</Button>
         )}
+
         {isLastStep ? (
           <Button
-            className="!bg-[var(--bg-green-high)] !w-full !text-white"
             type="primary"
             onClick={handleFinish}
             loading={loading}
+            className="!bg-[var(--bg-green-high)] !text-white"
           >
-            Save
+            {postEditId ? 'Update' : 'Save'}
           </Button>
         ) : (
           <Button
-            className="!bg-[var(--bg-green-high)] !w-full !text-white"
             type="primary"
             onClick={handleNext}
+            className="!bg-[var(--bg-green-high)] !text-white"
           >
             Next
           </Button>
@@ -225,7 +240,6 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
           label={field.label}
           name={field.name}
           rules={field.rules}
-          className="mb-4"
         >
           {field.component}
         </Form.Item>
@@ -235,34 +249,19 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
 
   return (
     <Modal
-      centered
-      title={
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="text-2xl">Add New Tip</h1>
-          <div className="mb-6">
-            <p className="!font-normal !text-center mb-4">
-              Share a new prediction with your users. Fill out the match
-              details, betting type, and insights to help users make informed
-              decisions.
-            </p>
-          </div>
-        </div>
-      }
+      title="Add New Tip"
       open={visible}
       onCancel={() => {
         form.resetFields();
+        setFileList([]);
         setCurrentStep(0);
         onCancel();
       }}
       footer={getFooterButtons()}
+      centered
       width={600}
     >
-      <Form
-        initialValues={details && data}
-        requiredMark={false}
-        form={form}
-        layout="vertical"
-      >
+      <Form form={form} layout="vertical" requiredMark={false}>
         {renderStepFields()}
       </Form>
     </Modal>
