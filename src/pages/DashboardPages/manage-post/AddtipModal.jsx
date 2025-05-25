@@ -9,8 +9,8 @@ import {
   useSinglePostGetQuery,
   useUpdatePostMutation,
 } from '../../../Redux/services/post-admin-service/postApis';
-import { imageUrl, url } from '../../../Utils/server';
-
+import { imageUrl } from '../../../Utils/server';
+import TextArea from 'antd/es/input/TextArea';
 const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -18,11 +18,29 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
   const { data: postType, isLoading: postTypeLoading } = usePostTypeQuery();
   const { data: singlePost, isLoading: singlePostLoading } =
     useSinglePostGetQuery({ postId: postEditId }, { skip: !postEditId });
-
+  const [postId, setPostId] = useState(null);
   const [createPost] = useCreatePostMutation(undefined, { skip: postEditId });
   const [updatePost] = useUpdatePostMutation(undefined, { skip: !postEditId });
 
   const formFields = [
+    {
+      label: 'Post Image',
+      name: 'postImage',
+      component: (
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          beforeUpload={() => false}
+          onChange={({ fileList }) => setFileList(fileList)}
+          maxCount={1}
+        >
+          {fileList.length === 0 && (
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          )}
+        </Upload>
+      ),
+      span: 24,
+    },
     {
       label: 'Tip Title',
       name: 'tipTitle',
@@ -64,7 +82,7 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       label: 'Win Rate',
       name: 'winRate',
       rules: [{ required: true, message: 'Please enter the win rate' }],
-      component: <Input placeholder="e.g. 75%" />,
+      component: <Input type="number" placeholder="e.g. 75%" />,
       span: 8,
     },
     {
@@ -89,20 +107,17 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       span: 8,
     },
     {
-      label: 'Post Image',
-      name: 'postImage',
+      label: 'Prediction description',
+      name: 'predictionDescription',
+      rules: [
+        { required: true, message: 'Please enter the prediction description' },
+      ],
       component: (
-        <Upload
-          listType="picture-card"
-          fileList={fileList}
-          beforeUpload={() => false}
-          onChange={({ fileList }) => setFileList(fileList)}
-          maxCount={1}
-        >
-          {fileList.length === 0 && (
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          )}
-        </Upload>
+        <TextArea
+          rows={4}
+          placeholder="Enter the prediction description"
+          style={{ resize: 'none' }}
+        />
       ),
       span: 24,
     },
@@ -133,6 +148,8 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
         winRate: post?.winRate || '',
         targetUser: post.targetUser || '',
         oddsRange: post.oddsRange || '',
+        predictionDescription: post.predictionDescription || '',
+        postedBy: post.postedBy || '',
       });
     }
   }, [details, singlePost, form, postEditId]);
@@ -161,9 +178,11 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       Object.keys(dataPayload).forEach((key) => {
         formData.append(key, dataPayload[key]);
       });
+      toast.loading('Submitting...');
 
+      form.append('postedBy', postId);
       if (fileList.length > 0 && fileList[0].originFileObj) {
-        formData.append('post_Image', fileList[0].originFileObj);
+        formData.append('post_image', fileList[0].originFileObj);
       }
 
       if (!postEditId) {

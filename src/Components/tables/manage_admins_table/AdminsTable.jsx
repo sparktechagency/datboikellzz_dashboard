@@ -258,7 +258,7 @@ const AdminsTable = () => {
           current: currentPage,
           total: metaData?.total,
           onChange: handlePageChange,
-          size:'small'
+          size: 'small',
         }}
       />
 
@@ -316,18 +316,25 @@ const AdminsTable = () => {
             </div>
             <div className="mt-4 !w-full">
               <div className="flex items-center justify-between gap-3">
-                <Button
-                  type="primary"
-                  danger
-                  onClick={() => {
-                    setUserDetailsModal(false);
-                  }}
-                  className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
+                <Popconfirm
+                  placement="bottomRight"
+                  title={`Are you sure you want to ${
+                    selectAdmin.auth_isBlocked === true ? 'unblock' : 'block'
+                  } this user?`}
+                  onConfirm={() =>
+                    blockUser(selectAdmin.auth_id, selectAdmin.auth_isBlocked)
+                  }
                 >
-                  {selectAdmin.auth_isActive
-                    ? 'Block This User'
-                    : 'Unblock This User'}
-                </Button>
+                  <Button
+                    type="primary"
+                    danger
+                    className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
+                  >
+                    {selectAdmin.auth_isActive
+                      ? 'Block This User'
+                      : 'Unblock This User'}
+                  </Button>
+                </Popconfirm>
                 <Button
                   type="primary"
                   onClick={() => {

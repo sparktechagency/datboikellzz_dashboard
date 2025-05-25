@@ -32,13 +32,7 @@ const PrivacyPolicy = () => {
       <div>
         <div className="w-48 h-6 mb-3 rounded-md animate-pulse bg-gray-200"></div>
         <div className="w-full p-3 flex flex-col gap-2 min-h-[600px] animate-pulse rounded-md bg-gray-200">
-          {Array.from({ length: 22 }).map((_, x) => (
-            <div
-              key={x}
-              className="bg-gray-300 h-3 w-full animate-pulse"
-
-            ></div>
-          ))}
+          <div className="h-48 w-full"></div>
         </div>
         <div className="w-32 h-8 mt-3 rounded-md animate-pulse bg-gray-200"></div>
       </div>

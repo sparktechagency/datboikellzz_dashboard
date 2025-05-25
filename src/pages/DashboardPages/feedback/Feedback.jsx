@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import {
   Table,
   Modal,
-  Form,
-  Input,
+  // Form,
+  // Input,
   Button,
   Space,
   Popconfirm,
@@ -12,7 +12,7 @@ import {
 import {
   useGetAllFeedbackQuery,
   useDeleteFeedbackMutation,
-  useCreateFeedbackMutation,
+  // useCreateFeedbackMutation,
 } from '../../../Redux/services/dashboard apis/feedback/feedbackApis';
 import PageHeading from '../../../Components/Shared/PageHeading';
 import { FaEye, FaPlus, FaTrash } from 'react-icons/fa6';
@@ -26,7 +26,7 @@ function Feedback() {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
 
-  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  // const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
   const {
     data: feedbackData,
@@ -37,10 +37,10 @@ function Feedback() {
   const [deleteFeedback, { isLoading: deleteLoading }] =
     useDeleteFeedbackMutation();
 
-  const [createFeedback, { isLoading: createLoading }] =
-    useCreateFeedbackMutation();
+  // const [createFeedback, { isLoading: createLoading }] =
+  //   useCreateFeedbackMutation();
 
-  const [form] = Form.useForm();
+  // const [form] = Form.useForm();
 
   const onView = (record) => {
     setSelectedFeedback(record);
@@ -57,21 +57,21 @@ function Feedback() {
     }
   };
 
-  const openCreateModal = () => {
-    form.resetFields();
-    setIsCreateModalVisible(true);
-  };
+  // const openCreateModal = () => {
+  //   form.resetFields();
+  //   setIsCreateModalVisible(true);
+  // };
 
-  const onCreateSubmit = async (values) => {
-    try {
-      await createFeedback(values).unwrap();
-      toast.success('Feedback created');
-      setIsCreateModalVisible(false);
-      refetch();
-    } catch (error) {
-      toast.error(error?.data?.message || 'Failed to create feedback');
-    }
-  };
+  // const onCreateSubmit = async (values) => {
+  //   try {
+  //     await createFeedback(values).unwrap();
+  //     toast.success('Feedback created');
+  //     setIsCreateModalVisible(false);
+  //     refetch();
+  //   } catch (error) {
+  //     toast.error(error?.data?.message || 'Failed to create feedback');
+  //   }
+  // };
 
   const columns = [
     {
@@ -137,14 +137,14 @@ function Feedback() {
     <div>
       <div className="flex items-center rounded-md bg-white mb-3 justify-between">
         <PageHeading title="Feedback" />
-        <Button
+        {/* <Button
           icon={<FaPlus />}
           className="!bg-[var(--bg-green-high)] !text-white"
           onClick={openCreateModal}
           style={{ marginBottom: 16 }}
         >
           Create New Feedback
-        </Button>
+        </Button> */}
       </div>
       <Table
         columns={columns}
@@ -196,7 +196,7 @@ function Feedback() {
                 </span>
               </div>
             </div>
-            <p>
+            <p className='!mt-3 leading-none'>
               <strong>Subject:</strong> {selectedFeedback.subject}
             </p>
             <p>
@@ -207,7 +207,7 @@ function Feedback() {
       </Modal>
 
       {/* Create Feedback Modal */}
-      <Modal
+      {/* <Modal
         title="Create New Feedback"
         visible={isCreateModalVisible}
         onCancel={() => setIsCreateModalVisible(false)}
@@ -265,7 +265,7 @@ function Feedback() {
             </Space>
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

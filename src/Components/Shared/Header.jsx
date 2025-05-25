@@ -25,8 +25,8 @@ import {
   useUpdateStatusMutation,
 } from '../../Redux/services/dashboard apis/notification/notificationApis';
 import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
 const { Title } = Typography;
-
 function Header() {
   const [adminRole, setAdminRole] = useState(null);
   const { data: notificationsData, isLoading: notificationLoading } =

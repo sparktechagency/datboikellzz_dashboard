@@ -5,7 +5,7 @@ import { FaDollarSign } from 'react-icons/fa6';
 function EarningManage({total}) {
   return (
     <div>
-      <div className="relative w-full flex z-[999] overflow-hidden h-[250px] items-center justify-between bg-gradient-to-tr from-[#F6F6F6] via-white to-[var(--bg-green-low)]/70 p-12 rounded-xl">
+      <div className="relative w-full shadow-md flex z-[999] overflow-hidden h-[250px] items-center justify-between bg-gradient-to-tr from-[#F6F6F6] via-white to-[var(--bg-green-low)]/70 p-12 rounded-xl">
         <div className="absolute top-0 -z-1 left-0 w-full h-full">
           <img
             className="w-full h-full object-contain object-right-bottom"
