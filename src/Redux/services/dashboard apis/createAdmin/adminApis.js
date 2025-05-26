@@ -12,7 +12,6 @@ export const adminApis = baseApis.injectEndpoints({
     }),
     createNewAdmin: builder.mutation({
       query: (data) => {
-        console.log('createNewAdmin data:', data);
         return {
           url: '/admin/post-admin',
           method: 'POST',
@@ -23,7 +22,6 @@ export const adminApis = baseApis.injectEndpoints({
     }),
     updateAdmin: builder.mutation({
       query: ({ data }) => {
-        console.log('updateAdmin data:', data);
         return {
           url: '/admin/update-admin',
           method: 'PATCH',

@@ -8,7 +8,6 @@ const { Title, Text } = Typography;
 const ForgetPassword = () => {
   const route = useNavigate();
   const onFinish = (values) => {
-    console.log('Success:', values);
     localStorage.setItem('forgetEmail', values.email);
     route('/otp');
   };

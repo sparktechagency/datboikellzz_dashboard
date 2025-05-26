@@ -97,10 +97,9 @@ export default function SubscriptionManagement() {
       };
 
       const res = await updateSubscription({ data: updateData }).unwrap();
-      console.log(res);
-      if (res.success) {
+      if (res?.success) {
         toast.success(
-          res.message || 'Subscription price updated successfully!'
+          res?.message || 'Subscription price updated successfully!'
         );
         const updatedPlans = {
           ...plans,
@@ -167,8 +166,6 @@ export default function SubscriptionManagement() {
       setPlans(updatedPlans);
       setIsFeatureModalOpen(false);
       toast.success('Subscription features updated successfully!');
-
-      console.log('Updated features data:', updateData);
     } catch (error) {
       console.error('Error updating subscription features:', error);
       toast.error('Failed to update subscription features. Please try again.');

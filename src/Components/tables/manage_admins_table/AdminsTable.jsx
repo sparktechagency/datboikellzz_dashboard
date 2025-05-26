@@ -206,10 +206,11 @@ const AdminsTable = () => {
       if (res?.data?.success) {
         toast.success(res?.data?.message || 'User updated successfully');
       } else {
-        toast.error('something went wrong!');
+        toast.error(res?.data?.message || 'something went wrong!');
       }
     } catch (error) {
       console.log(error);
+      toast.error(error?.data?.message || 'something went wrong!');
     }
   };
 

@@ -190,7 +190,6 @@ const AddTipModal = ({ visible, onCancel, details, postEditId }) => {
         }
       } else {
         const res = await updatePost({ data: formData });
-        console.log(res);
         if (res?.data?.success) {
           toast.success(res?.data?.message || 'Tip updated successfully');
           form.resetFields();

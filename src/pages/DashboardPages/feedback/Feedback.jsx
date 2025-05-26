@@ -49,9 +49,14 @@ function Feedback() {
 
   const onDelete = async (id) => {
     try {
-      await deleteFeedback(id).unwrap();
-      toast.success('Feedback deleted');
-      refetch();
+      const data = {
+        feedbackId: id,
+      };
+      const res = await deleteFeedback({ data }).unwrap();
+      if (res?.success) {
+        toast.success(res?.message || 'Feedback deleted');
+        refetch();
+      }
     } catch (error) {
       toast.error(error?.data?.message || 'Failed to delete feedback');
     }
@@ -196,7 +201,7 @@ function Feedback() {
                 </span>
               </div>
             </div>
-            <p className='!mt-3 leading-none'>
+            <p className="!mt-3 leading-none">
               <strong>Subject:</strong> {selectedFeedback.subject}
             </p>
             <p>

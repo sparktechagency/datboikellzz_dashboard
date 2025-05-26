@@ -75,6 +75,7 @@ function Header() {
       }
     } catch (error) {
       console.log(error);
+      toast.error(error?.data?.message || 'Failed to delete notification');
     }
   };
   const menu = (
@@ -108,6 +109,7 @@ function Header() {
       }
     } catch (error) {
       console.log(error);
+      toast.error(error?.data?.message || 'Failed to mark notification');
     }
   };
 

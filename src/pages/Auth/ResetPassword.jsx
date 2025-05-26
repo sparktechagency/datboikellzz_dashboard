@@ -14,7 +14,6 @@ const ResetPassword = () => {
     if (values.password !== values.confirmPassword) {
       return Promise.reject(new Error('Passwords do not match!'));
     }
-    console.log('Success:', values);
     route('/login');
   };
 

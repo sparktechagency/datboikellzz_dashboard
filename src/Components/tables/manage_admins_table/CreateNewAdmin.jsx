@@ -34,12 +34,13 @@ function CreateNewAdmin({ closeModal }) {
     setIsSubmitting(true);
     try {
       const res = await createAdmin(formData).unwrap();
-      console.log(res);
-      toast.success('Admin created successfully');
-      form.resetFields();
-      setFile(null);
-      setFileList([]);
-      closeModal();
+      if (res?.success) {
+        toast.success(res?.message || 'Admin created successfully');
+        form.resetFields();
+        setFile(null);
+        setFileList([]);
+        closeModal();
+      }
     } catch (error) {
       console.error('Error creating admin:', error);
       toast.error(
@@ -140,9 +141,7 @@ function CreateNewAdmin({ closeModal }) {
           <Form.Item
             name="phoneNumber"
             label="Phone Number"
-            rules={[
-              { required: true, message: 'Phone number is required' },
-            ]}
+            rules={[{ required: true, message: 'Phone number is required' }]}
           >
             <Input placeholder="+1234567890" />
           </Form.Item>

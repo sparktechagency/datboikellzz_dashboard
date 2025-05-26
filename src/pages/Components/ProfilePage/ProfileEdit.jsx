@@ -15,7 +15,6 @@ const ProfileEdit = ({ image, data, adminRole }) => {
       name: values?.name,
       phoneNumber: values?.phoneNumber,
     };
-    console.log(updateData);
     const formData = new FormData();
     Object.keys(updateData).forEach((key) => {
       formData.append(key, updateData[key]);
