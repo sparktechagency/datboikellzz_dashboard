@@ -11,14 +11,14 @@ import {
 } from '../../../Redux/services/post-admin-service/postApis';
 import { imageUrl } from '../../../Utils/server';
 import TextArea from 'antd/es/input/TextArea';
-const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
+import { useParams } from 'react-router-dom';
+const AddTipModal = ({ visible, onCancel, details, postEditId }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
   const { data: postType, isLoading: postTypeLoading } = usePostTypeQuery();
   const { data: singlePost, isLoading: singlePostLoading } =
     useSinglePostGetQuery({ postId: postEditId }, { skip: !postEditId });
-  const [postId, setPostId] = useState(null);
   const [createPost] = useCreatePostMutation(undefined, { skip: postEditId });
   const [updatePost] = useUpdatePostMutation(undefined, { skip: !postEditId });
 
@@ -91,7 +91,6 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
       rules: [{ required: true, message: 'Please select a target user' }],
       component: (
         <Select placeholder="Select One">
-          <Select.Option value="">All User</Select.Option>
           <Select.Option value="gold">Gold User</Select.Option>
           <Select.Option value="silver">Silver User</Select.Option>
           <Select.Option value="bronze">Bronze User</Select.Option>
@@ -149,16 +148,15 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
         targetUser: post.targetUser || '',
         oddsRange: post.oddsRange || '',
         predictionDescription: post.predictionDescription || '',
-        postedBy: post.postedBy || '',
       });
     }
   }, [details, singlePost, form, postEditId]);
 
   const handleFinish = async () => {
+    if (singlePostLoading) return;
     try {
       setLoading(true);
       const values = await form.validateFields();
-
       const dataPayload = {
         postTitle: values.tipTitle,
         sportType: values.sportType,
@@ -169,32 +167,37 @@ const AddTipModal = ({ visible, onCancel, onSubmit, details, postEditId }) => {
         predictionDescription: values.predictionDescription || '',
       };
 
-      if (postEditId) {
-        dataPayload.postid = postEditId;
-      }
-
       const formData = new FormData();
 
       Object.keys(dataPayload).forEach((key) => {
         formData.append(key, dataPayload[key]);
       });
-      toast.loading('Submitting...');
+      if (postEditId) {
+        formData.append('postId', postEditId);
+      }
 
-      form.append('postedBy', postId);
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append('post_image', fileList[0].originFileObj);
       }
 
       if (!postEditId) {
-        await createPost({ data: formData });
+        const res = await createPost({ data: formData });
+        if (res?.data?.success) {
+          toast.success(res?.data?.message || 'Tip created successfully');
+          form.resetFields();
+          setFileList([]);
+          onCancel();
+        }
       } else {
-        await updatePost(formData);
+        const res = await updatePost({ data: formData });
+        console.log(res);
+        if (res?.data?.success) {
+          toast.success(res?.data?.message || 'Tip updated successfully');
+          form.resetFields();
+          setFileList([]);
+          onCancel();
+        }
       }
-
-      form.resetFields();
-      setFileList([]);
-      onCancel();
-      toast.success(`Tip ${postEditId ? 'updated' : 'created'} successfully!`);
     } catch (error) {
       toast.error('Submission failed');
       console.error('Submission error:', error);

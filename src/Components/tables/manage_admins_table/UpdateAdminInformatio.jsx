@@ -34,7 +34,7 @@ function UpdateAdminInformatio({ data, closeModal }) {
       return;
     }
     formData.append('adminId', data?._id);
-    formData.append('fullName', values.fullName);
+    formData.append('name', values.fullName);
     formData.append('email', values.email);
     formData.append('phoneNumber', values.phoneNumber);
     if (image) {

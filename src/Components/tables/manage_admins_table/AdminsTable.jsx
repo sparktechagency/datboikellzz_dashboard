@@ -316,7 +316,7 @@ const AdminsTable = () => {
             </div>
             <div className="mt-4 !w-full">
               <div className="flex items-center justify-between gap-3">
-                <Popconfirm
+                {/* <Popconfirm
                   placement="bottomRight"
                   title={`Are you sure you want to ${
                     selectAdmin.auth_isBlocked === true ? 'unblock' : 'block'
@@ -330,11 +330,11 @@ const AdminsTable = () => {
                     danger
                     className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
                   >
-                    {selectAdmin.auth_isActive
+                    {selectAdmin.auth_isBlocked
                       ? 'Block This User'
                       : 'Unblock This User'}
                   </Button>
-                </Popconfirm>
+                </Popconfirm> */}
                 <Button
                   type="primary"
                   onClick={() => {

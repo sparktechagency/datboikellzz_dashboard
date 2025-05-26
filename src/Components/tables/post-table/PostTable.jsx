@@ -18,12 +18,10 @@ import {
   useGetPostQuery,
 } from '../../../Redux/services/post-admin-service/postApis';
 import { imageUrl } from '../../../Utils/server';
-
 function PostTable() {
   const [targetUser, setTargetUser] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-
   const [detailsVisible, setDetailsVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -33,18 +31,20 @@ function PostTable() {
   const meta = data?.data?.meta || {};
   const posts = postsData.map((post) => {
     const postImage = imageUrl(post?.post_image);
-
     const postedBy = post?.postedBy || {};
-    const profileImage = imageUrl(postedBy?.profile_image);
+    const postedBySuperAdmin = post?.postedBySuperAdmin || {};
+    const profileImage = imageUrl(
+      postedBySuperAdmin?.profile_image || postedBy?.profile_image
+    );
 
     return {
       key: post?._id,
       postInfo: post?.postTitle,
       img: postImage,
       postedBy: {
-        name: postedBy.name || 'Unknown',
+        name: postedBySuperAdmin?.name || postedBy?.name || 'Unknown',
         img: profileImage,
-        email: postedBy.email || 'N/A',
+        email: postedBySuperAdmin?.email || postedBy?.email || 'N/A',
       },
       inoformation: {
         sprtType: post?.sportType,
@@ -55,7 +55,7 @@ function PostTable() {
         win_rate: post?.winRate + '%',
         odds_range: post?.oddsRange,
       },
-      email: postedBy.email || '',
+      email: postedBy?.email || '',
       postedOn: new Date(post?.createdAt).toLocaleDateString(),
       targetUser: post?.targetUser
         ? post?.targetUser.charAt(0).toUpperCase() +
@@ -92,10 +92,10 @@ function PostTable() {
       key: 'postedBy',
       render: (postedBy) => (
         <div className="flex items-center">
-          <Avatar src={postedBy.img} />
+          <Avatar src={postedBy?.img} />
           <div className="ml-3">
-            <h1 className="leading-4">{postedBy.name}</h1>
-            <h1 className="leading-4 opacity-70">{postedBy.email}</h1>
+            <h1 className="leading-4">{postedBy?.name}</h1>
+            <h1 className="leading-4 opacity-70">{postedBy?.email}</h1>
           </div>
         </div>
       ),
@@ -128,7 +128,8 @@ function PostTable() {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button size='small'
+          <Button
+            size="small"
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<FaEye />}
             onClick={() => {
@@ -136,7 +137,8 @@ function PostTable() {
               setIsModalVisible(true);
             }}
           />
-          <Button size='small'
+          <Button
+            size="small"
             className="!bg-[var(--bg-green-high)] !text-white"
             icon={<EditOutlined />}
             onClick={() => {
@@ -148,7 +150,8 @@ function PostTable() {
             title="Are you sure you want to delete this post?"
             onConfirm={() => deletePost(record.key)}
           >
-            <Button size='small'
+            <Button
+              size="small"
               className="!border-red-500 !text-red-500"
               icon={<DeleteOutlined />}
             />
