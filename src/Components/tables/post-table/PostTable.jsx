@@ -166,7 +166,12 @@ function PostTable() {
       const res = await deletePostApi({ postId });
 
       if (res?.data?.success) {
-        toast.success(res?.data?.message || 'Post deleted successfully!');
+        if (setIsModalVisible) {
+          setIsModalVisible(false);
+          setSelectedPost(null);
+          toast.success(res?.data?.message || 'Post deleted successfully!');
+        } else
+          toast.success(res?.data?.message || 'Post deleted successfully!');
       }
     } catch (error) {
       toast.error(error.message);
@@ -241,16 +246,7 @@ function PostTable() {
               title="Are you sure you want to delete this post?"
               onConfirm={() => deletePost(selectedPost?.key)}
             >
-              <Button
-                key="delete"
-                className="!w-full"
-                danger
-                onClick={() => {
-                  toast.success('Post deleted successfully');
-                  setIsModalVisible(false);
-                  setSelectedPost(null);
-                }}
-              >
+              <Button key="delete" className="!w-full" danger>
                 Delete Post
               </Button>
             </Popconfirm>

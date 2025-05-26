@@ -5,18 +5,39 @@ import { EyeTwoTone } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import BrandLogo from '../../Components/Shared/BrandLogo';
 import Logo from '../../assets/icons/DUDU.svg';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
+import { useResetPasswordMutation } from '../../Redux/services/AuthApis/authApis';
 
 const ResetPassword = () => {
-  const [password, setPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
   const route = useNavigate();
-  const onFinish = (values) => {
-    if (values.password !== values.confirmPassword) {
-      return Promise.reject(new Error('Passwords do not match!'));
+  const onFinish = async (values) => {
+    try {
+      if (values.password !== values.confirmPassword) {
+        return Promise.reject(new Error('Passwords do not match!'));
+      }
+      const data = {
+        email: localStorage.getItem('email'),
+        newPassword: values?.password,
+        confirmPassword: values?.confirmPassword,
+      };
+      const res = await resetPassword({ data }).unwrap();
+      if (res?.success) {
+        toast.success('Password reset successfully');
+        route('/login');
+      } else {
+        toast.error('Password reset failed');
+      }
+    } catch (error) {
+      console.error('Reset Password Error:', error);
+      toast.error(
+        error?.data?.message || error?.message || 'An unexpected error occurred'
+      );
     }
-    route('/login');
   };
-
   const handlePasswordChange = (e) => setPassword(e.target.value);
   const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
 
@@ -34,7 +55,7 @@ const ResetPassword = () => {
             name="password"
             rules={[
               { required: true, message: 'Please enter your password' },
-              { min: 8, message: 'Password must be at least 8 characters' },
+              { min: 6, message: 'Password must be at least 6 characters' },
             ]}
           >
             <Input.Password
@@ -97,7 +118,7 @@ const ResetPassword = () => {
             className="w-full !bg-[var(--bg-green-high)] hover:!bg-[var(--bg-green-high)] !text-white"
             style={{ marginTop: 10 }}
           >
-            Confirm
+            {isLoading ? <span className="loader"></span> : 'Confirm'}
           </Button>
         </Form>
       </Card>

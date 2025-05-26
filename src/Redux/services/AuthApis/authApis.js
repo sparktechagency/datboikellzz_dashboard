@@ -25,7 +25,7 @@ export const authApis = baseApis.injectEndpoints({
     }),
     verifyOtpCode: builder.mutation({
       query: ({ data }) => ({
-        url: '/verification/verify',
+        url: '/auth/forget-pass-otp-verify',
         method: 'POST',
         body: data,
       }),

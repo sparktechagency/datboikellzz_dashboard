@@ -193,6 +193,7 @@ const AddTipModal = ({ visible, onCancel, details, postEditId }) => {
         if (res?.data?.success) {
           toast.success(res?.data?.message || 'Tip updated successfully');
           form.resetFields();
+          localStorage.removeItem('postEditId');
           setFileList([]);
           onCancel();
         }

@@ -113,7 +113,11 @@ const Login = () => {
             className="w-full !bg-[var(--bg-green-high)] hover:!bg-[var(--bg-green-high)] !text-white"
             style={{ marginTop: 10 }}
           >
-            {isSubmitting ? 'Loading...' : 'Continue with Email'}
+            {isSubmitting ? (
+              <span className="loader"></span>
+            ) : (
+              'Continue with Email'
+            )}
           </Button>
         </Form>
       </Card>
