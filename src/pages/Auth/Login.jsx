@@ -57,7 +57,7 @@ const Login = () => {
             }}
           >
             <Input
-              placeholder="MichealScott@gmail.com"
+              placeholder="exmple@gmail.com"
               type="email"
               style={{
                 width: '100%',
