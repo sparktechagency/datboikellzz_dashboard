@@ -102,7 +102,7 @@ const AllUsers = ({ recentUser, limit }) => {
             icon={<UserOutlined />}
             src={imageUrl(record.profile_image)}
           />
-          {text}
+          {text.slice(0, 10)}
         </Space>
       ),
     },
@@ -278,7 +278,7 @@ const AllUsers = ({ recentUser, limit }) => {
             className="!w-24 !h-24"
             src={imageUrl(selectedUser?.profile_image)}
           />
-          <h1 className="text-2xl font-semibold">{selectedUser?.name}</h1>
+          <h1 className="text-2xl font-semibold">{selectedUser?.name.slice(0, 10)}</h1>
           <div className="mt-4 !w-full">
             <p className="font-semibold">Full Name</p>
             <p className="p-2 border border-[#64748B] rounded-md">

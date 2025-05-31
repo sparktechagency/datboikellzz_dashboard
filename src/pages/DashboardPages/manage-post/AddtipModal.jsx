@@ -5,18 +5,15 @@ import { UploadOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
 import {
   useCreatePostMutation,
-  usePostTypeQuery,
   useSinglePostGetQuery,
   useUpdatePostMutation,
 } from '../../../Redux/services/post-admin-service/postApis';
 import { imageUrl } from '../../../Utils/server';
 import TextArea from 'antd/es/input/TextArea';
-import { useParams } from 'react-router-dom';
 const AddTipModal = ({ visible, onCancel, details, postEditId }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
-  const { data: postType, isLoading: postTypeLoading } = usePostTypeQuery();
   const { data: singlePost, isLoading: singlePostLoading } =
     useSinglePostGetQuery({ postId: postEditId }, { skip: !postEditId });
   const [createPost] = useCreatePostMutation(undefined, { skip: postEditId });
@@ -51,31 +48,15 @@ const AddTipModal = ({ visible, onCancel, details, postEditId }) => {
     {
       label: 'Sport Type',
       name: 'sportType',
-      rules: [{ required: true, message: 'Please select a sport type' }],
-      component: (
-        <Select loading={postTypeLoading} placeholder="Select One">
-          {postType?.data?.sportTypes?.map((item) => (
-            <Select.Option key={item} value={item}>
-              {item}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
+      rules: [{ required: true, message: 'Please enter the sport type' }],
+      component: <Input placeholder="Enter the Sport Type" />,
       span: 12,
     },
     {
       label: 'Prediction Type',
       name: 'predictionType',
-      rules: [{ required: true, message: 'Please select a prediction type' }],
-      component: (
-        <Select loading={postTypeLoading} placeholder="Select One">
-          {postType?.data?.predictionTypes?.map((item) => (
-            <Select.Option key={item} value={item}>
-              {item}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
+      rules: [{ required: true, message: 'Please enter the prediction type' }],
+      component: <Input placeholder="Enter the Prediction Type" />,
       span: 12,
     },
     {

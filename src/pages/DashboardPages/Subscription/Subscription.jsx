@@ -216,24 +216,31 @@ export default function SubscriptionManagement() {
 
       {/* Plan Tabs */}
       <div className="w-full">
-        <div
-          className={`grid grid-cols-${availablePlanTypes.length} mb-8 border rounded-md overflow-hidden`}
-        >
-          {availablePlanTypes.map((planKey) => (
-            <button
-              key={planKey}
-              onClick={() => setSelectedPlan(planKey)}
-              className={`py-3 px-4 text-center transition-colors ${
-                selectedPlan === planKey
-                  ? 'bg-[#022C22] !text-white'
-                  : 'bg-white hover:bg-gray-50'
-              } cursor-pointer`}
-            >
-              {planKey.charAt(0).toUpperCase() + planKey.slice(1)}
-            </button>
-          ))}
-        </div>
-
+        {Array.isArray(availablePlanTypes) && (
+          <div
+            className={`!grid ${
+              availablePlanTypes?.length === 3
+                ? 'grid-cols-3'
+                : availablePlanTypes?.length === 2
+                ? 'grid-cols-2'
+                : 'grid-cols-1'
+            } mb-8 border rounded-md overflow-hidden`}
+          >
+            {availablePlanTypes.map((planKey) => (
+              <button
+                key={planKey}
+                onClick={() => setSelectedPlan(planKey)}
+                className={`py-3 px-4 text-center transition-colors ${
+                  selectedPlan === planKey
+                    ? 'bg-[#022C22] !text-white'
+                    : 'bg-white hover:bg-gray-50'
+                } cursor-pointer`}
+              >
+                {planKey.charAt(0).toUpperCase() + planKey.slice(1)}
+              </button>
+            ))}
+          </div>
+        )}
         {/* Plan Content */}
         {availablePlanTypes.map((planKey) => (
           <div
