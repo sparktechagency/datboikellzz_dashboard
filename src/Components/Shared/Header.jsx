@@ -25,7 +25,7 @@ import {
   useUpdateStatusMutation,
 } from '../../Redux/services/dashboard apis/notification/notificationApis';
 import toast from 'react-hot-toast';
-import Cookies from 'js-cookie';
+
 const { Title } = Typography;
 function Header() {
   const [adminRole, setAdminRole] = useState(null);
@@ -42,6 +42,7 @@ function Header() {
 
   const adminSkip = adminRole === null || adminRole === 'ADMIN';
   const superAdminSkip = adminRole === null || adminRole === 'SUPER_ADMIN';
+  
   const { data: adminData } = useGetProfileDataQuery(undefined, {
     skip: superAdminSkip,
   });

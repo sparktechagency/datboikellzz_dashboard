@@ -6,24 +6,16 @@ import {
   useGetAllSubscriptionQuery,
   useUpdateSubscriptionMutation,
 } from '../../../Redux/services/dashboard apis/subscription/subscriptionApis.js';
-import { Button } from 'antd';
-import { FaTrashAlt } from 'react-icons/fa';
-import DailySubscription from './DailySubscription.jsx';
 
-export default function SubscriptionManagement() {
+export default function DailySubscription() {
   const { data: subscriptionData, isLoading: subscriptionDataLoading } =
     useGetAllSubscriptionQuery();
 
   const [updateSubscription, { isLoading: isUpdating }] =
     useUpdateSubscriptionMutation();
   const [selectedPlan, setSelectedPlan] = useState('bronze');
-  const [selectedPlanDuration, setSelectedPlanDuration] = useState('Daily');
   const [plans, setPlans] = useState({});
   const [availablePlanTypes, setAvailablePlanTypes] = useState([]);
-  const [availablePlanDurations, setAvailablePlanDurations] = useState([
-    'Daily',
-    'Monthly',
-  ]);
 
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
@@ -211,24 +203,24 @@ export default function SubscriptionManagement() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Subscription Management</h1>
-        <p className="text-gray-500 mt-2">
-          Manage your subscription plans, pricing, and features
-        </p>
-      </div>
-      <div>
-        {Array.isArray(availablePlanDurations) && (
+    <div>
+      <div className="w-full">
+        {Array.isArray(availablePlanTypes) && (
           <div
-            className={`!grid grid-cols-${availablePlanDurations?.length} mb-8 border rounded-md overflow-hidden`}
+            className={`!grid ${
+              availablePlanTypes?.length === 3
+                ? 'grid-cols-3'
+                : availablePlanTypes?.length === 2
+                ? 'grid-cols-2'
+                : 'grid-cols-1'
+            } mb-8 border rounded-md overflow-hidden`}
           >
-            {availablePlanDurations.map((planKey) => (
+            {availablePlanTypes.map((planKey) => (
               <button
                 key={planKey}
-                onClick={() => setSelectedPlanDuration(planKey)}
+                onClick={() => setSelectedPlan(planKey)}
                 className={`py-3 px-4 text-center transition-colors ${
-                  selectedPlanDuration === planKey
+                  selectedPlan === planKey
                     ? 'bg-[#022C22] !text-white'
                     : 'bg-white hover:bg-gray-50'
                 } cursor-pointer`}
@@ -238,117 +230,84 @@ export default function SubscriptionManagement() {
             ))}
           </div>
         )}
-      </div>
-      {/* Plan Tabs */}
-      {selectedPlanDuration === 'Daily' ? (
-        <div className="w-full">
-          {Array.isArray(availablePlanTypes) && (
-            <div
-              className={`!grid ${
-                availablePlanTypes?.length === 3
-                  ? 'grid-cols-3'
-                  : availablePlanTypes?.length === 2
-                  ? 'grid-cols-2'
-                  : 'grid-cols-1'
-              } mb-8 border rounded-md overflow-hidden`}
-            >
-              {availablePlanTypes.map((planKey) => (
-                <button
-                  key={planKey}
-                  onClick={() => setSelectedPlan(planKey)}
-                  className={`py-3 px-4 text-center transition-colors ${
-                    selectedPlan === planKey
-                      ? 'bg-[#022C22] !text-white'
-                      : 'bg-white hover:bg-gray-50'
-                  } cursor-pointer`}
-                >
-                  {planKey.charAt(0).toUpperCase() + planKey.slice(1)}
-                </button>
-              ))}
-            </div>
-          )}
-          {/* Plan Content */}
-          {availablePlanTypes.map((planKey) => (
-            <div
-              key={planKey}
-              className={`mt-0 ${selectedPlan !== planKey ? 'hidden' : ''}`}
-            >
-              {plans[planKey] && (
-                <div className="border-2 rounded-lg shadow-sm">
-                  <div className="p-6 border-b">
-                    <div>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h2 className="text-2xl font-bold">
-                            {plans[planKey].displayName}
-                          </h2>
-                          <p className="text-gray-500">
-                            Subscription details and features
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Last updated:{' '}
-                            {new Date(
-                              plans[planKey].updatedAt
-                            ).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={handleOpenPriceModal}
-                            className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
-                          >
-                            <PencilIcon className="mr-2 h-4 w-4" />
-                            Update Price
-                          </button>
-                        </div>
+        {/* Plan Content */}
+        {availablePlanTypes.map((planKey) => (
+          <div
+            key={planKey}
+            className={`mt-0 ${selectedPlan !== planKey ? 'hidden' : ''}`}
+          >
+            {plans[planKey] && (
+              <div className="border-2 rounded-lg shadow-sm">
+                <div className="p-6 border-b">
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h2 className="text-2xl font-bold">
+                          {plans[planKey].displayName}
+                        </h2>
+                        <p className="text-gray-500">
+                          Subscription details and features
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Last updated:{' '}
+                          {new Date(
+                            plans[planKey].updatedAt
+                          ).toLocaleDateString()}
+                        </p>
                       </div>
-                      <div className="mb-6">
-                        <span className="text-[#022C22] text-4xl font-bold">
-                          $ {plans[planKey].price}
-                        </span>
-                        <span className="text-gray-500 ml-1">
-                          /{plans[planKey].period}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-2xl font-bold">Features</h3>
+                      <div className="flex items-center gap-2">
                         <button
-                          onClick={handleOpenFeatureModal}
-                          className="border border-[#022C22] text-[#022C22] cursor-pointer hover:bg-[#022C22] hover:!text-white px-4 py-2 rounded-md flex items-center"
+                          onClick={handleOpenPriceModal}
+                          className="bg-[#022C22] hover:bg-[#033c2e] cursor-pointer !text-white px-4 py-2 rounded-md flex items-center"
                         >
                           <PencilIcon className="mr-2 h-4 w-4" />
-                          Manage Features
+                          Update Price
                         </button>
                       </div>
-
-                      <ul className="space-y-3 mt-4">
-                        {plans[planKey].features.map((feature) => (
-                          <li
-                            key={feature.id}
-                            className="flex items-center gap-2"
-                          >
-                            <div className="flex-shrink-0 h-5 w-5 rounded-full bg-transparent border-1 border-[#022C22] flex items-center justify-center">
-                              <CheckIcon className="h-3 w-3 text-[#022C22]" />
-                            </div>
-                            <span>{feature.text}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    </div>
+                    <div className="mb-6">
+                      <span className="text-[#022C22] text-4xl font-bold">
+                        $ {plans[planKey].price}
+                      </span>
+                      <span className="text-gray-500 ml-1">
+                        /{plans[planKey].period}
+                      </span>
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <DailySubscription />
-      )}
+                <div className="p-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-2xl font-bold">Features</h3>
+                      <button
+                        onClick={handleOpenFeatureModal}
+                        className="border border-[#022C22] text-[#022C22] cursor-pointer hover:bg-[#022C22] hover:!text-white px-4 py-2 rounded-md flex items-center"
+                      >
+                        <PencilIcon className="mr-2 h-4 w-4" />
+                        Manage Features
+                      </button>
+                    </div>
 
+                    <ul className="space-y-3 mt-4">
+                      {plans[planKey].features.map((feature) => (
+                        <li
+                          key={feature.id}
+                          className="flex items-center gap-2"
+                        >
+                          <div className="flex-shrink-0 h-5 w-5 rounded-full bg-transparent border-1 border-[#022C22] flex items-center justify-center">
+                            <CheckIcon className="h-3 w-3 text-[#022C22]" />
+                          </div>
+                          <span>{feature.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
       {/* Price Update Modal */}
       {isPriceModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
