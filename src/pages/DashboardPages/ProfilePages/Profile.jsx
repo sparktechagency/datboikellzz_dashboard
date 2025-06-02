@@ -8,6 +8,7 @@ import { useGetProfileDataQuery } from '../../../Redux/services/profileApis.js';
 import { useGetSuperAdminProfileQuery } from '../../../Redux/services/superAdminProfileApis.js';
 import { jwtDecode } from 'jwt-decode';
 import { imageUrl } from '../../../Utils/server.js';
+import toast from 'react-hot-toast';
 
 const Tabs = ['Edit Profile', 'Change Password'];
 
@@ -16,12 +17,19 @@ const Profile = () => {
   const [adminRole, setAdminRole] = useState(null);
   const adminSkip = adminRole === 'ADMIN';
   const superAdminSkip = adminRole === 'SUPER_ADMIN';
-  const { data: adminData, isLoading: adminDataLoading } =
-    useGetProfileDataQuery(undefined, {
-      skip: superAdminSkip,
-    });
+  const {
+    data: adminData,
+    isLoading: adminDataLoading,
+    error: adminDataError,
+  } = useGetProfileDataQuery(undefined, {
+    skip: superAdminSkip,
+  });
 
-  const { data, isLoading } = useGetSuperAdminProfileQuery(undefined, {
+  const {
+    data,
+    isLoading,
+    error: superAdminError,
+  } = useGetSuperAdminProfileQuery(undefined, {
     skip: adminSkip,
   });
 
@@ -32,6 +40,18 @@ const Profile = () => {
   }, []);
 
   const [image, setImage] = useState(null);
+
+  if (adminDataError?.status === 401 || superAdminError?.status === 401) {
+    
+    toast.error(
+      superAdminError?.data?.message ||
+        adminDataError?.data?.message ||
+        'An unexpected error occurred'
+    );
+    localStorage.removeItem('accessToken');
+    window.location.href = '/login';
+    return;
+  }
   const handleImageUpload = (e) => {
     if (e.target.files?.[0]) {
       setImage(e.target.files[0]);

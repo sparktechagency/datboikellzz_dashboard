@@ -9,9 +9,15 @@ import RecentlyJoinedUsers from '../../../Components/tables/User/RecentlyJoinedU
 import { useGetTotalOverviewQuery } from '../../../Redux/services/dashboard apis/total-overview/totalOverviewApis';
 import Loader from '../../../Components/Shared/Loaders/Loader';
 import PageHeading from '../../../Components/Shared/PageHeading';
+import toast from 'react-hot-toast';
 function DashboardHome() {
-  const { data, isLoading } = useGetTotalOverviewQuery();
-
+  const { data, isLoading, error } = useGetTotalOverviewQuery();
+  if (error?.status === 401) {
+    toast.error(error?.data?.message || 'Unauthorized Access');
+    localStorage.removeItem('accessToken');
+    window.location.href = '/login';
+    return;
+  }
   const cardData = [
     {
       title: 'Total User',
