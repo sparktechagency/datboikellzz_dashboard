@@ -194,6 +194,15 @@ function PostTable() {
       case '4':
         setTargetUser('bronze');
         break;
+      case '5':
+        setTargetUser('quick_hit');
+        break;
+      case '6':
+        setTargetUser('triple_threat');
+        break;
+      case '7':
+        setTargetUser('jackpot_chase');
+        break;
       default:
         setTargetUser('');
     }
@@ -212,6 +221,9 @@ function PostTable() {
         <Tabs.TabPane tab="Gold User" key="2" />
         <Tabs.TabPane tab="Silver User" key="3" />
         <Tabs.TabPane tab="Bronze User" key="4" />
+        <Tabs.TabPane tab="quick_hit" key="5" />
+        <Tabs.TabPane tab="triple_threat" key="6" />
+        <Tabs.TabPane tab="jackpot_chase" key="7" />
       </Tabs>
 
       <Table

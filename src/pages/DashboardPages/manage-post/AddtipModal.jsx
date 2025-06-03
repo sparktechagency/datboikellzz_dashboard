@@ -75,6 +75,15 @@ const AddTipModal = ({ visible, onCancel, details, postEditId }) => {
           <Select.Option value="gold">Gold User</Select.Option>
           <Select.Option value="silver">Silver User</Select.Option>
           <Select.Option value="bronze">Bronze User</Select.Option>
+          <Select.Option value="quick_hit">
+            Quick Hit <small>(daily)</small>
+          </Select.Option>
+          <Select.Option value="triple_threat">
+            Triple Threat<small>(daily)</small>
+          </Select.Option>
+          <Select.Option value="jackpot_chase">
+            Jackpot Chase<small>(daily)</small>
+          </Select.Option>
         </Select>
       ),
       span: 8,
