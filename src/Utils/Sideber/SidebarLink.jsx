@@ -777,7 +777,7 @@ export const SidebarLinkAdmin = [
       ),
     },
   },
-   {
+  {
     path: '/feedback',
     label: 'Feedback',
     icon: {

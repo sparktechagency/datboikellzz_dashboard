@@ -18,6 +18,7 @@ import ManageAdmins from '../pages/DashboardPages/Manage_Admins/ManageAdmins';
 import Subscription from '../pages/DashboardPages/Subscription/Subscription';
 import Unauthorized from '../pages/Auth/Unauthorized.jsx'; // Create this component
 import Feedback from '../pages/DashboardPages/feedback/Feedback.jsx';
+import Announcement from '../pages/DashboardPages/Announcement/Announcement.jsx';
 
 export const Routes = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/manage-admins',
+        element: <Announcement />,
+      },
+      {
+        path: '/announcement',
         element: <ManageAdmins />,
       },
       {
