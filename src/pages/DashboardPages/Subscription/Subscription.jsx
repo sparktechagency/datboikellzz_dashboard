@@ -476,7 +476,6 @@ export default function SubscriptionManagement() {
                 >
                   <option value="daily">Daily</option>
                   <option value="month">Monthly</option>
-                  <option value="year">Yearly</option>
                 </select>
               </div>
             </div>

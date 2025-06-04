@@ -118,7 +118,11 @@ const ResetPassword = () => {
             className="w-full !bg-[var(--bg-green-high)] hover:!bg-[var(--bg-green-high)] !text-white"
             style={{ marginTop: 10 }}
           >
-            {isLoading ? <span className="loader"></span> : 'Confirm'}
+            {isLoading ? <div class="flex flex-row gap-2">
+  <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
+  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
+  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
+</div> : 'Confirm'}
           </Button>
         </Form>
       </Card>

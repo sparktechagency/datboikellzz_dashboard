@@ -51,11 +51,11 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/manage-admins',
-        element: <Announcement />,
+        element: <ManageAdmins />,
       },
       {
         path: '/announcement',
-        element: <ManageAdmins />,
+        element: <Announcement />,
       },
       {
         path: '/profile-setting',

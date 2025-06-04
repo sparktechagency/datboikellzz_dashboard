@@ -74,7 +74,11 @@ const Otp = () => {
               onClick={() => router('/otp')}
               className="text-[#3872F0] cursor-pointer hover:underline"
             >
-              {isLoading ? <span className="loader"></span> : 'Resend OTP'}
+              {isLoading ? <div class="flex flex-row gap-2">
+  <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
+  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
+  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
+</div> : 'Resend OTP'}
             </Text>
           </div>
         </div>
