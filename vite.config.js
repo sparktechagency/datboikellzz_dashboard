@@ -3,9 +3,12 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   server: {
-    host: '18.158.237.149',
+    host: '0.0.0.0',
+    port: '8003',
+  },
+  preview: {
+    host: '0.0.0.0',
     port: '8003',
   },
   plugins: [tailwindcss()],
 });
-
