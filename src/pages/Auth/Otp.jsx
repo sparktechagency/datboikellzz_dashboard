@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router';
 import BrandLogo from '../../Components/Shared/BrandLogo';
 import toast from 'react-hot-toast';
 import Logo from '../../assets/icons/DUDU.svg';
-import { useVerifyOtpCodeMutation } from '../../Redux/services/AuthApis/authApis';
+import {
+  useForgetEmailPostMutation,
+  useVerifyOtpCodeMutation,
+} from '../../Redux/services/AuthApis/authApis';
 
 const { Title, Text } = Typography;
 
 const Otp = () => {
   const router = useNavigate();
   const [verifyOtp, { isLoading }] = useVerifyOtpCodeMutation();
+  const [resendOtp] = useForgetEmailPostMutation();
   const [otp, setOtp] = useState('');
   const handleContinue = async () => {
     try {
@@ -40,6 +44,21 @@ const Otp = () => {
         error?.data?.message || error?.message || 'An unexpected error occurred'
       );
     }
+  };
+  const resendOtpHandler = async () => {
+    const email = localStorage.getItem('email');
+    const data = {
+      email: email,
+    };
+    await resendOtp({ data })
+      .unwrap()
+      .then((res) => {
+        if (res?.success) {
+          toast.success('please check your email for otp');
+        } else {
+          console.log('error', res);
+        }
+      });
   };
 
   return (
@@ -73,7 +92,7 @@ const Otp = () => {
           <div>
             <Text>Didn&apos;t receive the OTP? </Text>
             <Text
-              onClick={() => router('/otp')}
+              onClick={() => resendOtpHandler()}
               className="text-[#3872F0] cursor-pointer hover:underline"
             >
               {isLoading ? (
