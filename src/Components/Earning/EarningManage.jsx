@@ -1,6 +1,5 @@
 import React from 'react';
 import earningImage from '../../assets/icons/earning.svg';
-import { FaDollarSign } from 'react-icons/fa6';
 
 function EarningManage({total}) {
   return (

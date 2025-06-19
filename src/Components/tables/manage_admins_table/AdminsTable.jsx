@@ -13,13 +13,10 @@ import {
 import {
   UserOutlined,
   EditOutlined,
-  DeleteOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { FaLock, FaRegCircle } from 'react-icons/fa6';
-import { IoIosWarning } from 'react-icons/io';
 import toast from 'react-hot-toast';
-import Success from '../../Shared/Success';
 import CreateNewAdmin from './CreateNewAdmin';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
 import {
