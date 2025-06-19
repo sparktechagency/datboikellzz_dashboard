@@ -5,8 +5,8 @@ import 'antd/dist/reset.css';
 import { Link } from 'react-router';
 import BrandLogo from '../../Components/Shared/BrandLogo';
 import Logo from '../../assets/icons/DUDU.svg';
-import { useLoginUserMutation } from '../../Redux/services/AuthApis/authApis';
 import toast from 'react-hot-toast';
+import { useLoginUserMutation } from '../../Redux/services/AuthApis/authApis';
 
 const Login = () => {
   const [loginUser, { isLoading: isSubmitting }] = useLoginUserMutation();
@@ -115,10 +115,10 @@ const Login = () => {
           >
             {isSubmitting ? (
               <div class="flex flex-row gap-2">
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
-</div>
+                <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
+                <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
+                <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
+              </div>
             ) : (
               'Continue with Email'
             )}

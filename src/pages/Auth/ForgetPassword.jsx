@@ -3,10 +3,11 @@ import React from 'react';
 import { Form, Input, Button, Typography } from 'antd';
 import 'antd/dist/reset.css';
 import { useNavigate } from 'react-router';
-import { useForgetEmailPostMutation } from '../../../../navid-dashboard/src/Redux/services/authApis';
 import toast from 'react-hot-toast';
 import BrandLogo from '../../Components/Shared/BrandLogo';
 import Logo from '../../assets/icons/DUDU.svg';
+import { useForgetEmailPostMutation } from '../../Redux/services/AuthApis/authApis';
+
 const { Title, Text } = Typography;
 
 const ForgetPassword = () => {
@@ -18,13 +19,16 @@ const ForgetPassword = () => {
     const data = {
       email: values.email,
     };
-    const res = await forgotPassword({ data }).unwrap();
-    if (res?.success) {
-      toast.success('please check your email for otp');
-      route('/otp');
-    } else {
-      console.log('error', res);
-    }
+    await forgotPassword({ data })
+      .unwrap()
+      .then((res) => {
+        if (res?.success) {
+          toast.success('please check your email for otp');
+          route('/otp');
+        } else {
+          console.log('error', res);
+        }
+      });
   };
 
   return (
@@ -72,10 +76,10 @@ const ForgetPassword = () => {
           >
             {isLoading ? (
               <div class="flex flex-row gap-2">
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
-</div>
+                <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
+                <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
+                <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
+              </div>
             ) : (
               'Continue with Email'
             )}

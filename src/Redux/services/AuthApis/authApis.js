@@ -16,12 +16,14 @@ export const authApis = baseApis.injectEndpoints({
         body: data,
       }),
     }),
-    sendVerificationEmail: builder.mutation({
-      query: ({ data }) => ({
-        url: '/verification/create',
-        method: 'POST',
-        body: data,
-      }),
+    forgetEmailPost: builder.mutation({
+      query: ({ data }) => {
+        return {
+          url: '/auth/forgot-password',
+          method: 'POST',
+          body: data,
+        };
+      },
     }),
     verifyOtpCode: builder.mutation({
       query: ({ data }) => ({
@@ -53,7 +55,7 @@ export const authApis = baseApis.injectEndpoints({
 export const {
   useLoginUserMutation,
   useChangePasswordMutation,
-  useSendVerificationEmailMutation,
+  useForgetEmailPostMutation,
   useVerifyOtpCodeMutation,
   useResetPasswordMutation,
   useResendResetOtpMutation,

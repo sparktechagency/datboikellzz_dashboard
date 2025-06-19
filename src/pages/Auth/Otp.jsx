@@ -23,15 +23,17 @@ const Otp = () => {
         email,
         code: otp,
       };
-      const res = await verifyOtp({ data }).unwrap();
-
-      if (res?.success) {
-        toast.success('OTP verified successfully');
-        localStorage.setItem('resetToken', res?.data?.resetToken);
-        router('/reset-password');
-      } else {
-        toast.error('Invalid OTP');
-      }
+      await verifyOtp({ data })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success('OTP verified successfully');
+            localStorage.setItem('resetToken', res?.data?.resetToken);
+            router('/reset-password');
+          } else {
+            toast.error('Invalid OTP');
+          }
+        });
     } catch (error) {
       console.error('Verify OTP Error:', error);
       toast.error(
@@ -74,11 +76,15 @@ const Otp = () => {
               onClick={() => router('/otp')}
               className="text-[#3872F0] cursor-pointer hover:underline"
             >
-              {isLoading ? <div class="flex flex-row gap-2">
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
-  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
-</div> : 'Resend OTP'}
+              {isLoading ? (
+                <div class="flex flex-row gap-2">
+                  <div class="w-2 h-2 rounded-full bg-white animate-bounce"></div>
+                  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
+                  <div class="w-2 h-2 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
+                </div>
+              ) : (
+                'Resend OTP'
+              )}
             </Text>
           </div>
         </div>
