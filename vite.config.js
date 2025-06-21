@@ -8,41 +8,40 @@
 //   },
 //   plugins: [tailwindcss()],
 // });
-import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   optimizeDeps: {
-    include: ['react', 'react-dom', 'antd'],
+    include: ["react", "react-dom", "antd"],
   },
   server: {
-    host: '0.0.0.0',
+    // host: '0.0.0.0',
+    host: "3.76.70.78",
     // port: 8003,
     port: 8000,
   },
   preview: {
-    host: '0.0.0.0',
+    // host: '0.0.0.0',
+    host: "3.76.70.78",
     // port: 8003,
     port: 8000,
   },
-  plugins: [
-    react(),
-    tailwindcss()
-  ],
+  plugins: [react(), tailwindcss()],
   build: {
     rollupOptions: {
       onwarn(warning, defaultHandler) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") {
           return;
         }
         defaultHandler(warning);
-      }
-    }
+      },
+    },
   },
   esbuild: {
     supported: {
-      'top-level-await': true
-    }
-  }
+      "top-level-await": true,
+    },
+  },
 });
