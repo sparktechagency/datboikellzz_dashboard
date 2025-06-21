@@ -1,3 +1,13 @@
+// import { defineConfig } from 'vite';
+// import tailwindcss from '@tailwindcss/vite';
+
+// export default defineConfig({
+//   server: {
+//     host: '0.0.0.0',
+//     port: '8000',
+//   },
+//   plugins: [tailwindcss()],
+// });
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
@@ -15,7 +25,7 @@ export default defineConfig({
     port: 8003,
   },
   plugins: [
-    react(), 
+    react(),
     tailwindcss()
   ],
   build: {
