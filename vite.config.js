@@ -17,7 +17,7 @@ export default defineConfig({
     include: ["react", "react-dom", "antd"],
   },
   server: {
-    // host: "0.0.0.0",
+    host: "0.0.0.0",
     // port: 8003,
     port: 8000,
   },
