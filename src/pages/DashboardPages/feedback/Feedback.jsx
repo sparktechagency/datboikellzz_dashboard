@@ -86,13 +86,13 @@ function Feedback() {
       render: (text, record) => (
         <div className="flex items-center gap-1">
           <Image
-            src={imageUrl(record.user.profile_image)}
+            src={imageUrl(record?.user?.profile_image)}
             alt="user"
             className="!w-10 !h-10 !rounded-full !object-cover"
           />
           <div>
-            <h4 className="leading-none">{record.user.name}</h4>
-            <h4 className="opacity-70 leading-none">{record.user.email}</h4>
+            <h4 className="leading-none">{record?.user?.name}</h4>
+            <h4 className="opacity-70 leading-none">{record?.user?.email}</h4>
           </div>
         </div>
       ),
@@ -183,29 +183,29 @@ function Feedback() {
             <div className="w-full border border-gray-300 flex gap-3 items-center rounded-md p-1">
               <div className="w-24 h-24 ">
                 <img
-                  src={imageUrl(selectedFeedback.user.profile_image)}
+                  src={imageUrl(selectedFeedback?.user?.profile_image)}
                   alt=""
                   className="w-full h-full object-cover rounded-md"
                 />
               </div>
               <div className="flex items-start flex-col">
                 <span>
-                  <strong>User Name:</strong> {selectedFeedback.user.name}
+                  <strong>User Name:</strong> {selectedFeedback?.user?.name}
                 </span>
                 <span>
-                  <strong>User Email:</strong> {selectedFeedback.user.email}
+                  <strong>User Email:</strong> {selectedFeedback?.user?.email}
                 </span>
                 <span>
                   <strong>Date:</strong>{' '}
-                  {new Date(selectedFeedback.createdAt).toLocaleString()}
+                  {new Date(selectedFeedback?.createdAt).toLocaleString()}
                 </span>
               </div>
             </div>
             <p className="!mt-3 leading-none">
-              <strong>Subject:</strong> {selectedFeedback.subject}
+              <strong>Subject:</strong> {selectedFeedback?.subject}
             </p>
             <p>
-              <strong>Feedback:</strong> {selectedFeedback.feedback}
+              <strong>Feedback:</strong> {selectedFeedback?.feedback}
             </p>
           </>
         )}
