@@ -17,17 +17,15 @@ export default defineConfig({
     include: ["react", "react-dom", "antd"],
   },
   server: {
-    // host: '0.0.0.0',
-    host: "3.76.70.78",
+    // host: "0.0.0.0",
     // port: 8003,
     port: 8000,
   },
-  preview: {
-    // host: '0.0.0.0',
-    host: "3.76.70.78",
-    // port: 8003,
-    port: 8000,
-  },
+  // preview: {
+  //   host: "0.0.0.0",
+  //   // port: 8003,
+  //   port: 8000,
+  // },
   plugins: [react(), tailwindcss()],
   build: {
     rollupOptions: {
