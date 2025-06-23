@@ -21,11 +21,12 @@ export default defineConfig({
     // port: 8003,
     port: 8000,
   },
-  // preview: {
-  //   host: "0.0.0.0",
-  //   // port: 8003,
-  //   port: 8000,
-  // },
+  preview: {
+    // host: "0.0.0.0",
+    // port: 8003,
+    // port: 8000,
+    allowedHosts: ["admin.betwisepicks.com"],
+  },
   plugins: [react(), tailwindcss()],
   build: {
     rollupOptions: {
