@@ -1,5 +1,5 @@
 // export const url = import.meta.env.VITE_API_URL;
-export const url = "http://3.76.70.78:8001";
+export const url = "https://api.betwisepicks.com";
 
 export const imageUrl = (image) => {
   return image
